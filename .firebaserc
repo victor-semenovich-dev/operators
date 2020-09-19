@@ -1,0 +1,14 @@
+{
+  "projects": {
+    "default": "operators-5f1b2"
+  },
+  "targets": {
+    "operators-5f1b2": {
+      "hosting": {
+        "operators": [
+          "operators-geth"
+        ]
+      }
+    }
+  }
+}

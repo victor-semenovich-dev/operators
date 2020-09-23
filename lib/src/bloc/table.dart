@@ -20,13 +20,13 @@ class TableBloc {
       if (isActive) {
         int id = int.parse(childSnapshot.key);
         String title = childSnapshot.child('title').val();
-        Map<int, bool> participation = {};
-        childSnapshot.child('participation')?.forEach((participationSnapshot) {
-          int userId = int.parse(participationSnapshot.key);
-          bool value = participationSnapshot.val();
-          participation[userId] = value;
+        Map<int, EventUserState> state = {};
+        childSnapshot.child('state')?.forEach((stateSnapshot) {
+          int userId = int.parse(stateSnapshot.key);
+          bool canHelp = stateSnapshot.child('canHelp').val();
+          state[userId] = EventUserState(canHelp: canHelp);
         });
-        events.add(Event(id: id, title: title, participation: participation));
+        events.add(Event(id: id, title: title, state: state));
       }
     });
 
@@ -40,20 +40,20 @@ class TableBloc {
     return TableData(events: events, users: users);
   });
 
-  void toggleValue(User user, Event event) {
+  void toggleCanHelp(User user, Event event) {
     var newValue;
-    if (event.participation.containsKey(user.id)) {
-      var curValue = event.participation[user.id];
+    if (event.state.containsKey(user.id)) {
+      var curValue = event.state[user.id].canHelp;
       newValue = !curValue;
     } else {
       newValue = true;
     }
-    firebase.database().ref('events/${event.id}/participation/${user.id}')
+    firebase.database().ref('events/${event.id}/state/${user.id}/canHelp')
         .set(newValue);
   }
 
   void clearValue(User user, Event event) {
-    firebase.database().ref('events/${event.id}/participation/${user.id}')
+    firebase.database().ref('events/${event.id}/state/${user.id}')
         .remove();
   }
 }

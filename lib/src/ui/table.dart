@@ -89,15 +89,15 @@ class TableWidget extends StatelessWidget {
         Event event = tableData.events[i - 1];
         children.add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
-        if (event.participation.containsKey(userId)) {
-          if (event.participation[userId])
+        if (event.state.containsKey(userId)) {
+          if (event.state[userId].canHelp)
             color = Colors.green;
           else
             color = Colors.red[400];
         }
         children.add(Expanded(flex: 2,
           child: GestureDetector(
-            onTap: () => tableBloc.toggleValue(user, event),
+            onTap: () => tableBloc.toggleCanHelp(user, event),
             onLongPress: () => tableBloc.clearValue(user, event),
             child: Container(
                 color: color,

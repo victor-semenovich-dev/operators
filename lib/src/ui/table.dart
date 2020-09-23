@@ -45,13 +45,13 @@ class TableWidget extends StatelessWidget {
     List<Widget> children = <Widget>[];
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
-        children.add(Expanded(flex: 1,
+        children.add(Expanded(flex: 3,
           child: Container(color: COLOR_GREY, width: double.infinity, height: ROW_HEIGHT),
         ));
       } else {
         Event event = tableData.events[i - 1];
         children.add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
-        children.add(Expanded(flex: 1,
+        children.add(Expanded(flex: 2,
           child: Container(
             color: COLOR_GREY,
             width: double.infinity,
@@ -73,7 +73,7 @@ class TableWidget extends StatelessWidget {
     User user = tableData.getUserById(userId);
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
-        children.add(Expanded(flex: 1,
+        children.add(Expanded(flex: 3,
           child: Container(
             color: COLOR_GREY,
             width: double.infinity,
@@ -95,7 +95,7 @@ class TableWidget extends StatelessWidget {
           else
             color = Colors.red[400];
         }
-        children.add(Expanded(flex: 1,
+        children.add(Expanded(flex: 2,
           child: GestureDetector(
             onTap: () => tableBloc.toggleValue(user, event),
             onLongPress: () => tableBloc.clearValue(user, event),

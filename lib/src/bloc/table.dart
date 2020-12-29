@@ -6,8 +6,10 @@ import 'package:operators/src/data/table.dart';
 import 'package:operators/src/data/user.dart';
 
 class TableBloc {
+  static const baseUrl = '/';
 
-  Stream<TableData> tableStream = firebase.database().ref('/').onValue.map((event) {
+  Stream<TableData> tableStream =
+      firebase.database().ref(baseUrl).onValue.map((event) {
     final snapshot = event.snapshot;
     final eventsSnapshot = snapshot.child('events');
     final usersSnapshot = snapshot.child('users');
@@ -24,7 +26,8 @@ class TableBloc {
         childSnapshot.child('state')?.forEach((stateSnapshot) {
           int userId = int.parse(stateSnapshot.key);
           bool canHelp = stateSnapshot.child('canHelp').val();
-          state[userId] = EventUserState(canHelp: canHelp);
+          Role role = stringToRole(stateSnapshot.child('role').val());
+          state[userId] = EventUserState(canHelp: canHelp, role: role);
         });
         events.add(Event(id: id, title: title, state: state));
       }
@@ -43,17 +46,17 @@ class TableBloc {
   void toggleCanHelp(User user, Event event) {
     var newValue;
     if (event.state.containsKey(user.id)) {
-      var curValue = event.state[user.id].canHelp;
-      newValue = !curValue;
+      if (event.state[user.id].canHelp) {
+        newValue = false;
+      } else {
+        newValue = null;
+      }
     } else {
       newValue = true;
     }
-    firebase.database().ref('events/${event.id}/state/${user.id}/canHelp')
+    firebase
+        .database()
+        .ref('$baseUrl/events/${event.id}/state/${user.id}/canHelp')
         .set(newValue);
-  }
-
-  void clearValue(User user, Event event) {
-    firebase.database().ref('events/${event.id}/state/${user.id}')
-        .remove();
   }
 }

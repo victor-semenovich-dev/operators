@@ -36,7 +36,10 @@ class TableBloc {
     usersSnapshot.forEach((childSnapshot) {
       int id = int.parse(childSnapshot.key);
       String name = childSnapshot.child('name').val();
-      users.add(User(id: id, name: name));
+      bool isActive = childSnapshot.child('isActive').val() ?? true;
+      if (isActive) {
+        users.add(User(id: id, name: name));
+      }
     });
     users.sort((u1, u2) => u1.name.compareTo(u2.name));
 

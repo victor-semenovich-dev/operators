@@ -23,6 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl: ^0.16.1
   firebase: ^7.3.0
 
 dev_dependencies:

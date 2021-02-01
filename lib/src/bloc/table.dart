@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:firebase/firebase.dart' as firebase;
+import 'package:intl/intl.dart';
 import 'package:operators/src/data/event.dart';
 import 'package:operators/src/data/table.dart';
 import 'package:operators/src/data/user.dart';
@@ -17,11 +18,18 @@ class TableBloc {
     final events = <Event>[];
     final users = <User>[];
 
+    DateFormat format = DateFormat('yyyy-MM-dd HH:mm');
     eventsSnapshot.forEach((childSnapshot) {
       bool isActive = childSnapshot.child('isActive').val();
       if (isActive) {
         int id = int.parse(childSnapshot.key);
         String title = childSnapshot.child('title').val();
+        DateTime date;
+        if (childSnapshot.hasChild('date')) {
+          try {
+            date = format.parse(childSnapshot.child('date').val());
+          } catch (Exception) {}
+        }
         Map<int, EventUserState> state = {};
         childSnapshot.child('state')?.forEach((stateSnapshot) {
           int userId = int.parse(stateSnapshot.key);
@@ -29,7 +37,18 @@ class TableBloc {
           Role role = stringToRole(stateSnapshot.child('role').val());
           state[userId] = EventUserState(canHelp: canHelp, role: role);
         });
-        events.add(Event(id: id, title: title, state: state));
+        events.add(Event(id: id, title: title, date: date, state: state));
+      }
+    });
+    events.sort((e1, e2) {
+      if (e1.date == null && e2.date == null) {
+        return e1.id.compareTo(e2.id);
+      } else if (e1.date == null && e2.date != null) {
+        return -1;
+      } else if (e1.date != null && e2.date == null) {
+        return 1;
+      } else {
+        return e1.date.compareTo(e2.date);
       }
     });
 

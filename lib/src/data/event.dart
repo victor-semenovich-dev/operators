@@ -1,9 +1,10 @@
 class Event {
   final int id;
   final String title;
+  final DateTime date;
   final Map<int, EventUserState> state;
 
-  const Event({this.id, this.title, this.state});
+  const Event({this.id, this.title, this.date, this.state});
 }
 
 class EventUserState {

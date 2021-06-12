@@ -9,6 +9,23 @@ import 'package:operators/src/data/user.dart';
 class TableBloc {
   static const baseUrl = '/';
 
+  Stream<List<User>> usersStream =
+      firebase.database().ref(baseUrl).child('users').onValue.map((event) {
+    final users = <User>[];
+    final snapshot = event.snapshot;
+    snapshot.forEach((childSnapshot) {
+      int id = int.parse(childSnapshot.key);
+      String name = childSnapshot.child('name').val();
+      bool isActive = childSnapshot.child('isActive').val() ?? true;
+      String uid = childSnapshot.child('uid').val();
+      if (isActive) {
+        users.add(User(id: id, name: name, uid: uid));
+      }
+    });
+    users.sort((u1, u2) => u1.name.compareTo(u2.name));
+    return users;
+  });
+
   Stream<TableData> tableStream =
       firebase.database().ref(baseUrl).onValue.map((event) {
     final snapshot = event.snapshot;

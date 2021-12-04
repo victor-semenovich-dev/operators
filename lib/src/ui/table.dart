@@ -93,14 +93,14 @@ class TableWidget extends StatelessWidget {
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
         if (event.state.containsKey(userId)) {
-          if (event.state[userId].canHelp) {
-            if (event.state[userId].role == null) {
+          if (event.state[userId].role == null) {
+            if (event.state[userId].canHelp) {
               color = Colors.green;
             } else {
-              color = Colors.blue;
+              color = Colors.red[400];
             }
           } else {
-            color = Colors.red[400];
+            color = Colors.blue;
           }
         }
         children.add(Expanded(

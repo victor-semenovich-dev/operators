@@ -94,9 +94,9 @@ class TableWidget extends StatelessWidget {
         var color = Colors.white;
         if (event.state.containsKey(userId)) {
           if (event.state[userId].role == null) {
-            if (event.state[userId].canHelp) {
+            if (event.state[userId].canHelp == true) {
               color = Colors.green;
-            } else {
+            } else if (event.state[userId].canHelp == false) {
               color = Colors.red[400];
             }
           } else {

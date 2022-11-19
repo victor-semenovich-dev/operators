@@ -1,15 +1,16 @@
 import 'dart:async';
 
-import 'package:firebase/firebase.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthModel extends ChangeNotifier {
   String errorMessage;
-  User currentUser = auth().currentUser;
+  User currentUser = FirebaseAuth.instance.currentUser;
   StreamSubscription authStateSubscription;
 
   AuthModel() {
-    authStateSubscription = auth().onAuthStateChanged.listen((user) {
+    authStateSubscription =
+        FirebaseAuth.instance.authStateChanges().listen((user) {
       currentUser = user;
       notifyListeners();
     });
@@ -23,19 +24,20 @@ class AuthModel extends ChangeNotifier {
 
   void login(String email, String password) async {
     try {
-      await auth().signInWithEmailAndPassword(email, password);
+      await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: email, password: password);
       errorMessage = null;
-    } on FirebaseError catch (e) {
+    } on FirebaseAuthException catch (e) {
       errorMessage = e.message;
       notifyListeners();
     }
   }
 
   void logout() async {
-    await auth().signOut();
+    await FirebaseAuth.instance.signOut();
   }
 
   void resetPassword() {
-    auth().sendPasswordResetEmail(currentUser.email);
+    FirebaseAuth.instance.sendPasswordResetEmail(email: currentUser.email);
   }
 }

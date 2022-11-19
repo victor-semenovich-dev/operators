@@ -19,7 +19,7 @@ class TableBloc {
 
     _parseSnapshotData(
       data: snapshot.value,
-      preParseCondition: (id, map) => map['isActive'] == true,
+      preParseCondition: (id, map) => map['isActive'] != false,
       parseItem: (id, map) => _parseUser(id, map),
       processItem: (id, user) => users.add(user),
     );
@@ -57,7 +57,7 @@ class TableBloc {
 
     _parseSnapshotData(
       data: usersData,
-      preParseCondition: (id, map) => map['isActive'] == true,
+      preParseCondition: (id, map) => map['isActive'] != false,
       parseItem: (id, map) => _parseUser(id, map),
       processItem: (id, user) => users.add(user),
     );
@@ -134,7 +134,7 @@ class TableBloc {
   static EventUserState _parseEventUserState(Map data) {
     return EventUserState(
       canHelp: data['canHelp'],
-      role: stringToRole(data['role'].value),
+      role: stringToRole(data['role']),
     );
   }
 

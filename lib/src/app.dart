@@ -13,6 +13,7 @@ class OperatorsApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TableModel()),
       ],
       child: MaterialApp(
+        title: 'Участие операторов',
         home: HomeScreen(),
       ),
     );

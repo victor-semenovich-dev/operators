@@ -30,6 +30,13 @@
             {
               "client_id": "562136210693-89712tst944kfe0q72de0vl3nvtrhbad.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "562136210693-7v8cj432fc0p1f2qb20mv0n0f3ab6soa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "by.geth.operators"
+              }
             }
           ]
         }
@@ -59,6 +66,13 @@
             {
               "client_id": "562136210693-89712tst944kfe0q72de0vl3nvtrhbad.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "562136210693-7v8cj432fc0p1f2qb20mv0n0f3ab6soa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "by.geth.operators"
+              }
             }
           ]
         }
@@ -88,6 +102,13 @@
             {
               "client_id": "562136210693-89712tst944kfe0q72de0vl3nvtrhbad.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "562136210693-7v8cj432fc0p1f2qb20mv0n0f3ab6soa.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "by.geth.operators"
+              }
             }
           ]
         }

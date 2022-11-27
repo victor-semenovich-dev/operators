@@ -1,22 +1,23 @@
 class Event {
   final int id;
   final String title;
-  final DateTime date;
+  final DateTime? date;
   final Map<int, EventUserState> state;
 
-  const Event({this.id, this.title, this.date, this.state});
+  const Event(
+      {required this.id, required this.title, this.date, required this.state});
 }
 
 class EventUserState {
   final bool canHelp;
-  final Role role;
+  final Role? role;
 
-  const EventUserState({this.canHelp, this.role});
+  const EventUserState({required this.canHelp, required this.role});
 }
 
 enum Role { PC, CAMERA }
 
-Role stringToRole(String str) {
+Role? stringToRole(String? str) {
   switch (str) {
     case 'pc':
       return Role.PC;
@@ -27,7 +28,7 @@ Role stringToRole(String str) {
   }
 }
 
-String roleToString(Role role) {
+String? roleToString(Role role) {
   switch (role) {
     case Role.PC:
       return 'pc';

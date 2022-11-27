@@ -1,76 +1,98 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:operators/src/data/event.dart';
 import 'package:operators/src/data/table.dart';
 import 'package:operators/src/data/user.dart';
 
-class TableBloc {
+class TableModel extends ChangeNotifier {
   static const baseUrl = '/';
 
-  Stream<List<User>> usersStream = FirebaseDatabase.instance
-      .ref(baseUrl)
-      .child('users')
-      .onValue
-      .map((event) {
-    final users = <User>[];
-    final snapshot = event.snapshot;
+  late StreamSubscription _usersSubscription;
+  late StreamSubscription _tableSubscription;
 
-    _parseSnapshotData(
-      data: snapshot.value,
-      preParseCondition: (id, map) => map['isActive'] != false,
-      parseItem: (id, map) => _parseUser(id, map),
-      processItem: (id, user) => users.add(user),
-    );
-    users.sort((u1, u2) => u1.name.compareTo(u2.name));
-    return users;
-  });
+  List<User>? userList;
+  TableData? tableData;
 
-  Stream<TableData> tableStream =
-      FirebaseDatabase.instance.ref(baseUrl).onValue.map((event) {
-    final snapshot = event.snapshot;
-    final eventsData = snapshot.child('events').value;
-    final usersData = snapshot.child('users').value;
+  TableModel() {
+    _usersSubscription = FirebaseDatabase.instance
+        .ref(baseUrl)
+        .child('users')
+        .onValue
+        .map((event) {
+      final users = <User>[];
+      final snapshot = event.snapshot;
 
-    final events = <Event>[];
-    final users = <User>[];
-
-    _parseSnapshotData(
-      data: eventsData,
-      preParseCondition: (id, map) => map['isActive'] == true,
-      parseItem: (id, map) => _parseEvent(id, map),
-      processItem: (id, item) => events.add(item),
-    );
-
-    events.sort((e1, e2) {
-      if (e1.date == null && e2.date == null) {
-        return e1.id.compareTo(e2.id);
-      } else if (e1.date == null && e2.date != null) {
-        return -1;
-      } else if (e1.date != null && e2.date == null) {
-        return 1;
-      } else {
-        return e1.date.compareTo(e2.date);
-      }
+      _parseSnapshotData(
+        data: snapshot.value,
+        preParseCondition: (id, map) => map['isActive'] != false,
+        parseItem: (id, map) => _parseUser(id, map),
+        processItem: (id, user) => users.add(user),
+      );
+      users.sort((u1, u2) => u1.name.compareTo(u2.name));
+      return users;
+    }).listen((users) {
+      this.userList = users;
+      notifyListeners();
     });
 
-    _parseSnapshotData(
-      data: usersData,
-      preParseCondition: (id, map) => map['isActive'] != false,
-      parseItem: (id, map) => _parseUser(id, map),
-      processItem: (id, user) => users.add(user),
-    );
-    users.sort((u1, u2) => u1.name.compareTo(u2.name));
+    _tableSubscription =
+        FirebaseDatabase.instance.ref(baseUrl).onValue.map((event) {
+      final snapshot = event.snapshot;
+      final eventsData = snapshot.child('events').value;
+      final usersData = snapshot.child('users').value;
 
-    return TableData(events: events, users: users);
-  });
+      final events = <Event>[];
+      final users = <User>[];
+
+      _parseSnapshotData(
+        data: eventsData,
+        preParseCondition: (id, map) => map['isActive'] == true,
+        parseItem: (id, map) => _parseEvent(id, map),
+        processItem: (id, item) => events.add(item),
+      );
+
+      events.sort((e1, e2) {
+        if (e1.date == null && e2.date == null) {
+          return e1.id.compareTo(e2.id);
+        } else if (e1.date == null && e2.date != null) {
+          return -1;
+        } else if (e1.date != null && e2.date == null) {
+          return 1;
+        } else {
+          return e1.date!.compareTo(e2.date!);
+        }
+      });
+
+      _parseSnapshotData(
+        data: usersData,
+        preParseCondition: (id, map) => map['isActive'] != false,
+        parseItem: (id, map) => _parseUser(id, map),
+        processItem: (id, user) => users.add(user),
+      );
+      users.sort((u1, u2) => u1.name.compareTo(u2.name));
+
+      return TableData(events: events, users: users);
+    }).listen((tableData) {
+      this.tableData = tableData;
+      notifyListeners();
+    });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _usersSubscription.cancel();
+    _tableSubscription.cancel();
+  }
 
   static void _parseSnapshotData({
     dynamic data,
-    bool Function(int, Map) preParseCondition,
-    dynamic Function(int, Map) parseItem,
-    Function(int, dynamic) processItem,
+    bool Function(int, Map)? preParseCondition,
+    required dynamic Function(int, Map) parseItem,
+    required Function(int, dynamic) processItem,
   }) {
     try {
       if (data is List) {
@@ -83,12 +105,15 @@ class TableBloc {
       } else if (data is Map) {
         for (String key in data.keys) {
           int id = int.parse(key);
+          // if (id == 362) {
+          //   debugPrint('pause');
+          // }
           _parseSnapshotItem(
               id, data[key], parseItem, processItem, preParseCondition);
         }
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stacktrace) {
+      print('$e: $stacktrace');
     }
   }
 
@@ -97,15 +122,15 @@ class TableBloc {
     Map data,
     dynamic Function(int, Map) parseItem,
     Function(int, dynamic) processItem,
-    bool Function(int, Map) preParseCondition,
+    bool Function(int, Map)? preParseCondition,
   ) {
     try {
       if (preParseCondition == null || preParseCondition(id, data)) {
         final item = parseItem(id, data);
         processItem(id, item);
       }
-    } catch (e) {
-      print(e);
+    } catch (e, stacktrace) {
+      print('$e: $stacktrace');
     }
   }
 
@@ -113,7 +138,7 @@ class TableBloc {
     DateFormat format = DateFormat('yyyy-MM-dd HH:mm');
 
     String title = eventData['title'];
-    DateTime date;
+    DateTime? date;
     if (eventData.containsKey('date')) {
       try {
         date = format.parse(eventData['date'].value);
@@ -147,7 +172,7 @@ class TableBloc {
   void toggleCanHelp(User user, Event event) {
     var newValue;
     if (event.state.containsKey(user.id)) {
-      if (event.state[user.id].canHelp) {
+      if (event.state[user.id]?.canHelp == true) {
         newValue = false;
       } else {
         newValue = null;

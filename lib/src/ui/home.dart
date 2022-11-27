@@ -1,41 +1,32 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
-import 'package:operators/src/data/table.dart';
-import 'package:operators/src/data/user.dart';
 import 'package:operators/src/ui/authorization.dart';
 import 'package:operators/src/ui/table.dart';
 import 'package:provider/provider.dart';
 
 class HomeScreen extends StatelessWidget {
-  final tableBloc = TableBloc();
-
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthModel>(builder: (context, auth, child) {
+    return Consumer2<AuthModel, TableModel>(
+        builder: (context, auth, table, child) {
+      final user = table.userList
+          ?.firstWhereOrNull((user) => user.uid == auth.currentUser?.uid);
       return Scaffold(
         appBar: AppBar(
           title: auth.currentUser == null
               ? Text('Только просмотр')
-              : StreamBuilder<List<User>>(
-                  stream: tableBloc.usersStream,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      final user = snapshot.data.firstWhere(
-                          (user) => user.uid == auth.currentUser.uid);
-                      return Text(user.name);
-                    } else {
-                      return Container();
-                    }
-                  },
-                ),
+              : user == null
+                  ? Container()
+                  : Text(user.name),
           actions: [
             if (auth.currentUser == null)
               IconButton(
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) => AuthorizationWidget(),
+                    builder: (context) => AuthorizationWidget(auth: auth),
                   );
                 },
                 icon: Icon(Icons.login),
@@ -74,11 +65,7 @@ class HomeScreen extends StatelessWidget {
           ],
         ),
         body: SafeArea(
-          child: StreamBuilder<TableData>(
-              stream: tableBloc.tableStream,
-              builder: (context, snapshot) {
-                return TableWidget(tableBloc, snapshot.data);
-              }),
+          child: TableWidget(table, table.tableData),
         ),
       );
     });

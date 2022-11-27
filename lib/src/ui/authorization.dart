@@ -3,6 +3,10 @@ import 'package:operators/src/bloc/auth.dart';
 import 'package:provider/provider.dart';
 
 class AuthorizationWidget extends StatefulWidget {
+  final AuthModel auth;
+
+  const AuthorizationWidget({Key? key, required this.auth}) : super(key: key);
+
   @override
   _AuthorizationWidgetState createState() => _AuthorizationWidgetState();
 }
@@ -15,9 +19,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
   @override
   void initState() {
     super.initState();
-
-    final auth = Provider.of<AuthModel>(context, listen: false);
-    auth.addListener(_authListener);
+    widget.auth.addListener(_authListener);
   }
 
   @override
@@ -26,8 +28,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
     _emailController.dispose();
     _passwordController.dispose();
 
-    final auth = Provider.of<AuthModel>(context, listen: false);
-    auth.removeListener(_authListener);
+    widget.auth.removeListener(_authListener);
   }
 
   void _authListener() {
@@ -40,6 +41,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthModel>(builder: (context, auth, child) {
+      final errorMessage = auth.errorMessage;
       return AlertDialog(
         title: Text('Авторизация'),
         content: Wrap(
@@ -54,7 +56,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
                     decoration: InputDecoration(hintText: "Email"),
                     textInputAction: TextInputAction.next,
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Заполните поле';
                       }
                       return null;
@@ -67,23 +69,24 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
                     decoration: InputDecoration(hintText: "Пароль"),
                     textInputAction: TextInputAction.done,
                     onFieldSubmitted: (value) {
-                      if (_formKey.currentState.validate()) {
+                      final state = _formKey.currentState;
+                      if (state != null && state.validate()) {
                         auth.login(
                             _emailController.text, _passwordController.text);
                       }
                     },
                     validator: (value) {
-                      if (value.isEmpty) {
+                      if (value == null || value.isEmpty) {
                         return 'Заполните поле';
                       }
                       return null;
                     },
                   ),
-                  if (auth.errorMessage != null)
+                  if (errorMessage != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        auth.errorMessage,
+                        errorMessage,
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
@@ -102,7 +105,8 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
           TextButton(
             child: Text('Войти'),
             onPressed: () {
-              if (_formKey.currentState.validate()) {
+              final state = _formKey.currentState;
+              if (state != null && state.validate()) {
                 auth.login(_emailController.text, _passwordController.text);
               }
             },

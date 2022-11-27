@@ -3,5 +3,5 @@ class User {
   final String name;
   final String uid;
 
-  const User({this.id, this.name, this.uid});
+  const User({required this.id, required this.name, required this.uid});
 }

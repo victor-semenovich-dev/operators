@@ -5,9 +5,9 @@ class TableData {
   final List<User> users;
   final List<Event> events;
 
-  const TableData({this.users, this.events});
+  const TableData({required this.users, required this.events});
 
-  User getUserById(int id) {
+  User? getUserById(int id) {
     for (int i = 0; i < users.length; i++) {
       if (users[i].id == id) {
         return users[i];

@@ -4,9 +4,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthModel extends ChangeNotifier {
-  String errorMessage;
-  User currentUser = FirebaseAuth.instance.currentUser;
-  StreamSubscription authStateSubscription;
+  String? errorMessage;
+  User? currentUser = FirebaseAuth.instance.currentUser;
+  late StreamSubscription authStateSubscription;
 
   AuthModel() {
     authStateSubscription =
@@ -38,6 +38,9 @@ class AuthModel extends ChangeNotifier {
   }
 
   void resetPassword() {
-    FirebaseAuth.instance.sendPasswordResetEmail(email: currentUser.email);
+    final email = currentUser?.email;
+    if (email != null) {
+      FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+    }
   }
 }

@@ -64,9 +64,7 @@ class HomeScreen extends StatelessWidget {
               )
           ],
         ),
-        body: SafeArea(
-          child: TableWidget(table, table.tableData),
-        ),
+        body: TableWidget(table, table.tableData),
       );
     });
   }

@@ -20,19 +20,29 @@ class TableWidget extends StatelessWidget {
     }
 
     var rows = <Widget>[];
-    rows
-      ..add(Container(width: double.infinity, height: 1, color: Colors.black))
-      ..add(_eventsTitlesRow());
+    final dividerWidget =
+        Container(width: double.infinity, height: 1, color: Colors.black);
     tableData!.users.forEach((user) {
       rows
-        ..add(Container(width: double.infinity, height: 1, color: Colors.black))
-        ..add(_userRow(user.id));
+        ..add(_userRow(user.id))
+        ..add(dividerWidget);
     });
-    rows.add(Container(width: double.infinity, height: 1, color: Colors.black));
-    return SingleChildScrollView(
-      child: Column(
-        children: rows,
-      ),
+    return Column(
+      children: [
+        dividerWidget,
+        _eventsTitlesRow(),
+        dividerWidget,
+        Expanded(
+          child: SingleChildScrollView(
+            physics: ClampingScrollPhysics(),
+            child: SafeArea(
+              child: Column(
+                children: rows,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -139,5 +149,13 @@ class TableWidget extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+}
+
+class MyBehavior extends ScrollBehavior {
+  @override
+  Widget buildOverscrollIndicator(
+      BuildContext context, Widget child, ScrollableDetails details) {
+    return child;
   }
 }

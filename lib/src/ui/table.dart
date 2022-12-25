@@ -1,8 +1,13 @@
+import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/data/event.dart';
 import 'package:operators/src/data/table.dart';
 import 'package:operators/src/data/user.dart';
+import 'package:operators/src/ui/authorization.dart';
+import 'package:provider/provider.dart';
 
 class TableWidget extends StatelessWidget {
   static const double ROW_HEIGHT = 60;
@@ -115,20 +120,37 @@ class TableWidget extends StatelessWidget {
         }
         children.add(Expanded(
           flex: 2,
-          child: GestureDetector(
-            onTap: () {
-              if (!event.state.containsKey(user.id) ||
-                  event.state[user.id]?.role == null) {
-                tableModel.toggleCanHelp(user, event);
-              }
-            },
-            child: Container(
-              color: color,
-              width: double.infinity,
-              height: ROW_HEIGHT,
-              child: _getChildWidget(user, event),
-            ),
-          ),
+          child: Consumer<AuthModel>(builder: (context, authModel, child) {
+            return GestureDetector(
+              onTap: () {
+                if (!event.state.containsKey(user.id) ||
+                    event.state[user.id]?.role == null) {
+                  if (auth.FirebaseAuth.instance.currentUser?.uid == null) {
+                    showDialog(
+                      context: context,
+                      builder: (context) =>
+                          AuthorizationWidget(auth: authModel),
+                    );
+                  } else if (auth.FirebaseAuth.instance.currentUser?.uid ==
+                      user.uid) {
+                    tableModel.toggleCanHelp(user, event);
+                  } else {
+                    Fluttertoast.showToast(
+                      msg: 'Можно отмечаться только в своих ячейках',
+                      toastLength: Toast.LENGTH_LONG,
+                      timeInSecForIosWeb: 3,
+                    );
+                  }
+                }
+              },
+              child: Container(
+                color: color,
+                width: double.infinity,
+                height: ROW_HEIGHT,
+                child: _getChildWidget(user, event),
+              ),
+            );
+          }),
         ));
       }
     }

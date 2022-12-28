@@ -41,11 +41,11 @@ class HomeScreen extends StatelessWidget {
             if (auth.currentUser != null)
               PopupMenuButton<String>(
                 tooltip: 'Меню',
-                onSelected: (value) {
+                onSelected: (value) async {
                   switch (value) {
                     case 'password':
                       {
-                        auth.resetPassword();
+                        await auth.resetPassword();
                         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                           content: Text(
                               'Письмо со сбросом пароля отправлено на почту'),

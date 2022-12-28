@@ -97,7 +97,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
         ),
         actions: <Widget>[
           TextButton(
-            child: Text('Отмена'),
+            child: Text('Сброс пароля'),
             onPressed: () {
               Navigator.pop(context);
             },

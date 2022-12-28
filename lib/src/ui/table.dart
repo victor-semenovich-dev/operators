@@ -1,6 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/data/event.dart';
@@ -135,11 +134,11 @@ class TableWidget extends StatelessWidget {
                       user.uid) {
                     tableModel.toggleCanHelp(user, event);
                   } else {
-                    Fluttertoast.showToast(
-                      msg: 'Можно отмечаться только в своих ячейках',
-                      toastLength: Toast.LENGTH_LONG,
-                      timeInSecForIosWeb: 3,
-                    );
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(
+                        'Можно отмечаться только в своих ячейках',
+                      ),
+                    ));
                   }
                 }
               },

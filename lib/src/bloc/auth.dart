@@ -37,10 +37,10 @@ class AuthModel extends ChangeNotifier {
     await FirebaseAuth.instance.signOut();
   }
 
-  void resetPassword() {
+  Future<void> resetPassword() async {
     final email = currentUser?.email;
     if (email != null) {
-      FirebaseAuth.instance.sendPasswordResetEmail(email: email);
+      await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
     }
   }
 }

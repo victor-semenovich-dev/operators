@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:operators/src/bloc/auth.dart';
+import 'package:operators/src/ui/reset_password.dart';
 import 'package:provider/provider.dart';
 
 class AuthorizationWidget extends StatefulWidget {
@@ -100,6 +101,11 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
             child: Text('Сброс пароля'),
             onPressed: () {
               Navigator.pop(context);
+              showDialog(
+                context: context,
+                builder: (context) =>
+                    ResetPasswordWidget(initialEmail: _emailController.text),
+              );
             },
           ),
           TextButton(

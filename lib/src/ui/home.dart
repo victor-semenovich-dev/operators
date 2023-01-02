@@ -1,12 +1,24 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
+import 'package:operators/main.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/ui/authorization.dart';
 import 'package:operators/src/ui/table.dart';
 import 'package:provider/provider.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    saveFcmToken();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer2<AuthModel, TableModel>(

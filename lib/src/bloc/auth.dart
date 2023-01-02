@@ -4,7 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class AuthModel extends ChangeNotifier {
-  String? errorMessage;
   User? currentUser = FirebaseAuth.instance.currentUser;
   late StreamSubscription authStateSubscription;
 
@@ -22,15 +21,9 @@ class AuthModel extends ChangeNotifier {
     authStateSubscription.cancel();
   }
 
-  void login(String email, String password) async {
-    try {
-      await FirebaseAuth.instance
-          .signInWithEmailAndPassword(email: email, password: password);
-      errorMessage = null;
-    } on FirebaseAuthException catch (e) {
-      errorMessage = e.message;
-      notifyListeners();
-    }
+  Future<void> login(String email, String password) async {
+    await FirebaseAuth.instance
+        .signInWithEmailAndPassword(email: email, password: password);
   }
 
   void logout() async {

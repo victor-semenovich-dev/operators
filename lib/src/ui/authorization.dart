@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/ui/reset_password.dart';
@@ -16,11 +17,14 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     widget.auth.addListener(_authListener);
+    _emailController.addListener(() => setState(() => _errorMessage = null));
+    _passwordController.addListener(() => setState(() => _errorMessage = null));
   }
 
   @override
@@ -42,7 +46,6 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthModel>(builder: (context, auth, child) {
-      final errorMessage = auth.errorMessage;
       return AlertDialog(
         title: Text('Авторизация'),
         content: Wrap(
@@ -69,13 +72,7 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
                     obscureText: true,
                     decoration: InputDecoration(hintText: "Пароль"),
                     textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (value) {
-                      final state = _formKey.currentState;
-                      if (state != null && state.validate()) {
-                        auth.login(
-                            _emailController.text, _passwordController.text);
-                      }
-                    },
+                    onFieldSubmitted: (value) => _login(auth),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
                         return 'Заполните поле';
@@ -83,11 +80,11 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
                       return null;
                     },
                   ),
-                  if (errorMessage != null)
+                  if (_errorMessage != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        errorMessage,
+                        _errorMessage ?? '',
                         style: TextStyle(color: Colors.red),
                       ),
                     ),
@@ -110,15 +107,22 @@ class _AuthorizationWidgetState extends State<AuthorizationWidget> {
           ),
           TextButton(
             child: Text('Войти'),
-            onPressed: () {
-              final state = _formKey.currentState;
-              if (state != null && state.validate()) {
-                auth.login(_emailController.text, _passwordController.text);
-              }
-            },
+            onPressed: () => _login(auth),
           ),
         ],
       );
     });
+  }
+
+  _login(AuthModel auth) async {
+    try {
+      setState(() => _errorMessage = null);
+      final state = _formKey.currentState;
+      if (state != null && state.validate()) {
+        await auth.login(_emailController.text, _passwordController.text);
+      }
+    } on FirebaseAuthException catch (e) {
+      setState(() => _errorMessage = e.message);
+    }
   }
 }

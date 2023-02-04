@@ -35,7 +35,12 @@ void main() async {
 }
 
 void saveFcmToken() async {
-  final fcmToken = await FirebaseMessaging.instance.getToken();
+  final fcmToken = await FirebaseMessaging.instance.getToken(
+    vapidKey: kIsWeb
+        ? 'BNzLWzfJdWtA7l6uAfDkqDwX-I00QjykYZ5un3Zta7yeFGTgUUZyKZvbGpAoLmmpUSudghe0qW-lqxmqNyGh1W0'
+        : null,
+  );
+  debugPrint('fcm token - $fcmToken');
   final format = DateFormat('yyyy-MM-dd HH:mm:ss');
   final dateTime = format.format(DateTime.now());
   final uid = FirebaseAuth.instance.currentUser?.uid;

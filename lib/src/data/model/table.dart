@@ -1,5 +1,5 @@
-import 'package:operators/src/data/event.dart';
-import 'package:operators/src/data/user.dart';
+import 'package:operators/src/data/model/event.dart';
+import 'package:operators/src/data/model/user.dart';
 
 class TableData {
   final List<User> users;

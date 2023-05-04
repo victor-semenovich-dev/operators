@@ -2,10 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
-import 'package:operators/src/data/event.dart';
-import 'package:operators/src/data/table.dart';
-import 'package:operators/src/data/user.dart';
-import 'package:operators/src/ui/authorization.dart';
+import 'package:operators/src/data/model/event.dart';
+import 'package:operators/src/data/model/table.dart';
+import 'package:operators/src/data/model/user.dart';
+import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:provider/provider.dart';
 
 class TableWidget extends StatelessWidget {
@@ -127,8 +127,7 @@ class TableWidget extends StatelessWidget {
                   if (auth.FirebaseAuth.instance.currentUser?.uid == null) {
                     showDialog(
                       context: context,
-                      builder: (context) =>
-                          AuthorizationWidget(auth: authModel),
+                      builder: (context) => AuthorizationDialogProvider(),
                     );
                   } else if (auth.FirebaseAuth.instance.currentUser?.uid ==
                       user.uid) {

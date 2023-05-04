@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:operators/src/data/event.dart';
-import 'package:operators/src/data/table.dart';
-import 'package:operators/src/data/user.dart';
+import 'package:operators/src/data/model/event.dart';
+import 'package:operators/src/data/model/table.dart';
+import 'package:operators/src/data/model/user.dart';
 
 class TableModel extends ChangeNotifier {
   static const baseUrl = '/';

@@ -1,9 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
-import 'package:operators/main.dart';
 import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
-import 'package:operators/src/ui/authorization.dart';
+import 'package:operators/src/data/repository/fcm.dart';
+import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/table.dart';
 import 'package:provider/provider.dart';
 
@@ -16,7 +16,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    saveFcmToken();
+    context.read<FcmRepository>().updateUserFcmData();
   }
 
   @override
@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onPressed: () {
                   showDialog(
                     context: context,
-                    builder: (context) => AuthorizationWidget(auth: auth),
+                    builder: (context) => AuthorizationDialogProvider(),
                   );
                 },
                 icon: Icon(Icons.login),

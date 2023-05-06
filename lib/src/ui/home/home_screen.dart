@@ -48,18 +48,16 @@ class _HomeScreenState extends State<HomeScreen> {
                   tooltip: 'Авторизация',
                 ),
               if (state.isLoggedIn)
-                IconButton(
-                  onPressed: () => context.read<HomeCubit>().logout(),
-                  icon: Icon(Icons.logout),
-                  tooltip: 'Выход',
-                ),
-              if (state.isLoggedIn)
                 PopupMenuButton<String>(
                   tooltip: 'Меню',
                   onSelected: (value) async {
                     switch (value) {
                       case 'password':
                         context.read<HomeCubit>().resetPassword();
+                        break;
+                      case 'logout':
+                        context.read<HomeCubit>().logout();
+                        break;
                     }
                   },
                   itemBuilder: (context) {
@@ -67,7 +65,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       PopupMenuItem<String>(
                         value: 'password',
                         child: Text('Сменить пароль'),
-                      )
+                      ),
+                      PopupMenuItem<String>(
+                        value: 'logout',
+                        child: Text('Выход'),
+                      ),
                     ];
                   },
                 )

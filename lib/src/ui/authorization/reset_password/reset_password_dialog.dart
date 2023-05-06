@@ -1,29 +1,27 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:operators/src/bloc/auth.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:operators/src/ui/authorization/reset_password/reset_password_bloc.dart';
 
-class ResetPasswordWidget extends StatefulWidget {
+class ResetPasswordDialog extends StatefulWidget {
   final String initialEmail;
 
-  const ResetPasswordWidget({Key? key, required this.initialEmail})
+  const ResetPasswordDialog({Key? key, required this.initialEmail})
       : super(key: key);
 
   @override
-  State<ResetPasswordWidget> createState() => _ResetPasswordWidgetState();
+  State<ResetPasswordDialog> createState() => _ResetPasswordDialogState();
 }
 
-class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
+class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
-  String? _errorMessage;
 
   @override
   void initState() {
     super.initState();
     _emailController.text = widget.initialEmail;
     _emailController.addListener(() {
-      setState(() => _errorMessage = null);
+      context.read<ResetPasswordCubit>().consumeError();
     });
   }
 
@@ -35,7 +33,15 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AuthModel>(builder: (context, auth, child) {
+    return BlocConsumer<ResetPasswordCubit, ResetPasswordState>(
+        listener: (context, state) {
+      if (state.isResetCompleted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text('Письмо со сбросом пароля отправлено на почту'),
+        ));
+      }
+    }, builder: (context, state) {
       return AlertDialog(
         title: Text('Сброс пароля'),
         content: Wrap(
@@ -50,7 +56,7 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(hintText: "Email"),
                     textInputAction: TextInputAction.done,
-                    onFieldSubmitted: (value) => _resetPassword(auth),
+                    onFieldSubmitted: (value) => _resetPassword(),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
                         return 'Заполните поле';
@@ -58,11 +64,11 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
                       return null;
                     },
                   ),
-                  if (_errorMessage != null)
+                  if (state.error != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 8.0),
                       child: Text(
-                        _errorMessage ?? '',
+                        state.error ?? '',
                         style: TextStyle(color: Colors.red),
                       ),
                     )
@@ -74,27 +80,18 @@ class _ResetPasswordWidgetState extends State<ResetPasswordWidget> {
         actions: <Widget>[
           TextButton(
             child: Text('Сбросить пароль'),
-            onPressed: () => _resetPassword(auth),
+            onPressed: () => _resetPassword(),
           ),
         ],
       );
     });
   }
 
-  _resetPassword(AuthModel auth) async {
-    setState(() => _errorMessage = null);
+  _resetPassword() async {
     final state = _formKey.currentState;
     if (state != null && state.validate()) {
       final email = _emailController.text;
-      try {
-        await auth.resetPassword(customEmail: email);
-        Navigator.pop(context);
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Письмо со сбросом пароля отправлено на почту'),
-        ));
-      } on FirebaseAuthException catch (e) {
-        setState(() => _errorMessage = e.message);
-      }
+      context.read<ResetPasswordCubit>().resetPassword(email);
     }
   }
 }

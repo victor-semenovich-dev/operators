@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/ui/authorization/authorization_bloc.dart';
-import 'package:operators/src/ui/reset_password.dart';
+import 'package:operators/src/ui/authorization/reset_password/reset_password_provider.dart';
 
 class AuthorizationDialog extends StatefulWidget {
   const AuthorizationDialog({Key? key}) : super(key: key);
@@ -19,10 +19,10 @@ class _AuthorizationDialogState extends State<AuthorizationDialog> {
   void initState() {
     super.initState();
     _emailController.addListener(
-      () => BlocProvider.of<AuthorizationCubit>(context).consumeError(),
+      () => context.read<AuthorizationCubit>().consumeError(),
     );
     _passwordController.addListener(
-      () => BlocProvider.of<AuthorizationCubit>(context).consumeError(),
+      () => context.read<AuthorizationCubit>().consumeError(),
     );
   }
 
@@ -96,8 +96,8 @@ class _AuthorizationDialogState extends State<AuthorizationDialog> {
                 Navigator.pop(context);
                 showDialog(
                   context: context,
-                  builder: (context) =>
-                      ResetPasswordWidget(initialEmail: _emailController.text),
+                  builder: (context) => ResetPasswordDialogProvider(
+                      initialEmail: _emailController.text),
                 );
               },
             ),
@@ -112,7 +112,7 @@ class _AuthorizationDialogState extends State<AuthorizationDialog> {
   }
 
   _login() async {
-    final cubit = BlocProvider.of<AuthorizationCubit>(context);
+    final cubit = context.read<AuthorizationCubit>();
     final state = _formKey.currentState;
     if (state != null && state.validate()) {
       cubit.login(_emailController.text, _passwordController.text);

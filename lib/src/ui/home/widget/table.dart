@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
@@ -11,13 +10,13 @@ class TableWidget extends StatelessWidget {
   static const Color COLOR_GREY = Color(0xFFBDBDBD);
 
   final HomeState state;
-  final TableModel tableModel;
-  final TableData? tableData;
+  final Function(TableUser user, TableEvent event) onToggleCanHelp;
 
-  const TableWidget(this.tableModel, this.tableData, this.state);
+  const TableWidget(this.state, this.onToggleCanHelp);
 
   @override
   Widget build(BuildContext context) {
+    final tableData = state.tableData;
     if (tableData == null) {
       return Center(child: CircularProgressIndicator());
     }
@@ -25,15 +24,15 @@ class TableWidget extends StatelessWidget {
     var rows = <Widget>[];
     final dividerWidget =
         Container(width: double.infinity, height: 1, color: Colors.black);
-    tableData!.users.forEach((user) {
+    tableData.users.forEach((user) {
       rows
-        ..add(_userRow(context, user.id))
+        ..add(_userRow(context, tableData, user.id))
         ..add(dividerWidget);
     });
     return Column(
       children: [
         dividerWidget,
-        _eventsTitlesRow(),
+        _eventsTitlesRow(tableData),
         dividerWidget,
         Expanded(
           child: SingleChildScrollView(
@@ -49,9 +48,9 @@ class TableWidget extends StatelessWidget {
     );
   }
 
-  Widget _eventsTitlesRow() {
+  Widget _eventsTitlesRow(TableData tableData) {
     List<Widget> children = <Widget>[];
-    for (int i = 0; i <= tableData!.events.length; i++) {
+    for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
         children.add(Expanded(
           flex: 3,
@@ -59,7 +58,7 @@ class TableWidget extends StatelessWidget {
               color: COLOR_GREY, width: double.infinity, height: ROW_HEIGHT),
         ));
       } else {
-        Event event = tableData!.events[i - 1];
+        TableEvent event = tableData.events[i - 1];
         children
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         children.add(Expanded(
@@ -81,10 +80,10 @@ class TableWidget extends StatelessWidget {
     return Row(children: children);
   }
 
-  Widget _userRow(BuildContext context, int userId) {
+  Widget _userRow(BuildContext context, TableData tableData, int userId) {
     List<Widget> children = <Widget>[];
-    User user = tableData!.getUserById(userId)!;
-    for (int i = 0; i <= tableData!.events.length; i++) {
+    TableUser user = tableData.getUserById(userId)!;
+    for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
         children.add(Expanded(
           flex: 3,
@@ -101,7 +100,7 @@ class TableWidget extends StatelessWidget {
           ),
         ));
       } else {
-        Event event = tableData!.events[i - 1];
+        TableEvent event = tableData.events[i - 1];
         children
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
@@ -128,7 +127,7 @@ class TableWidget extends StatelessWidget {
                       builder: (context) => AuthorizationDialogProvider(),
                     );
                   } else if (state.currentFirebaseUser?.uid == user.uid) {
-                    tableModel.toggleCanHelp(user, event);
+                    onToggleCanHelp(user, event);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                       content: Text(
@@ -150,7 +149,7 @@ class TableWidget extends StatelessWidget {
     return Row(children: children);
   }
 
-  Widget _getChildWidget(User user, Event event) {
+  Widget _getChildWidget(TableUser user, TableEvent event) {
     if (event.state.containsKey(user.id) &&
         event.state[user.id]?.role != null) {
       switch (event.state[user.id]?.role) {

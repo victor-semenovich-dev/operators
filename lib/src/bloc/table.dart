@@ -13,7 +13,7 @@ class TableModel extends ChangeNotifier {
   late StreamSubscription _usersSubscription;
   late StreamSubscription _tableSubscription;
 
-  List<User>? userList;
+  List<TableUser>? userList;
   TableData? tableData;
 
   TableModel() {
@@ -22,7 +22,7 @@ class TableModel extends ChangeNotifier {
         .child('users')
         .onValue
         .map((event) {
-      final users = <User>[];
+      final users = <TableUser>[];
       final snapshot = event.snapshot;
 
       _parseSnapshotData(
@@ -44,8 +44,8 @@ class TableModel extends ChangeNotifier {
       final eventsData = snapshot.child('events').value;
       final usersData = snapshot.child('users').value;
 
-      final events = <Event>[];
-      final users = <User>[];
+      final events = <TableEvent>[];
+      final users = <TableUser>[];
 
       _parseSnapshotData(
         data: eventsData,
@@ -134,7 +134,7 @@ class TableModel extends ChangeNotifier {
     }
   }
 
-  static Event _parseEvent(int id, Map eventData) {
+  static TableEvent _parseEvent(int id, Map eventData) {
     DateFormat format = DateFormat('yyyy-MM-dd HH:mm');
 
     String title = eventData['title'];
@@ -153,7 +153,7 @@ class TableModel extends ChangeNotifier {
         processItem: (id, item) => state[id] = item,
       );
     }
-    return Event(id: id, title: title, date: date, state: state);
+    return TableEvent(id: id, title: title, date: date, state: state);
   }
 
   static EventUserState _parseEventUserState(Map data) {
@@ -163,13 +163,13 @@ class TableModel extends ChangeNotifier {
     );
   }
 
-  static User _parseUser(int id, Map userData) {
+  static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
     String uid = userData['uid'];
-    return User(id: id, name: name, uid: uid);
+    return TableUser(id: id, name: name, uid: uid);
   }
 
-  void toggleCanHelp(User user, Event event) {
+  void toggleCanHelp(TableUser user, TableEvent event) {
     var newValue;
     if (event.state.containsKey(user.id)) {
       if (event.state[user.id]?.canHelp == true) {

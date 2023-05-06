@@ -18,6 +18,7 @@ final _privateConstructorUsedError = UnsupportedError(
 mixin _$HomeState {
   User? get currentFirebaseUser => throw _privateConstructorUsedError;
   bool get isResetPasswordCompleted => throw _privateConstructorUsedError;
+  TableData? get tableData => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -29,7 +30,10 @@ abstract class $HomeStateCopyWith<$Res> {
   factory $HomeStateCopyWith(HomeState value, $Res Function(HomeState) then) =
       _$HomeStateCopyWithImpl<$Res, HomeState>;
   @useResult
-  $Res call({User? currentFirebaseUser, bool isResetPasswordCompleted});
+  $Res call(
+      {User? currentFirebaseUser,
+      bool isResetPasswordCompleted,
+      TableData? tableData});
 }
 
 /// @nodoc
@@ -47,6 +51,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
   $Res call({
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
+    Object? tableData = freezed,
   }) {
     return _then(_value.copyWith(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -57,6 +62,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.isResetPasswordCompleted
           : isResetPasswordCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      tableData: freezed == tableData
+          ? _value.tableData
+          : tableData // ignore: cast_nullable_to_non_nullable
+              as TableData?,
     ) as $Val);
   }
 }
@@ -68,7 +77,10 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       __$$_HomeStateCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({User? currentFirebaseUser, bool isResetPasswordCompleted});
+  $Res call(
+      {User? currentFirebaseUser,
+      bool isResetPasswordCompleted,
+      TableData? tableData});
 }
 
 /// @nodoc
@@ -84,6 +96,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
   $Res call({
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
+    Object? tableData = freezed,
   }) {
     return _then(_$_HomeState(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -94,6 +107,10 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value.isResetPasswordCompleted
           : isResetPasswordCompleted // ignore: cast_nullable_to_non_nullable
               as bool,
+      tableData: freezed == tableData
+          ? _value.tableData
+          : tableData // ignore: cast_nullable_to_non_nullable
+              as TableData?,
     ));
   }
 }
@@ -102,7 +119,9 @@ class __$$_HomeStateCopyWithImpl<$Res>
 
 class _$_HomeState extends _HomeState {
   const _$_HomeState(
-      {this.currentFirebaseUser = null, this.isResetPasswordCompleted = false})
+      {this.currentFirebaseUser = null,
+      this.isResetPasswordCompleted = false,
+      this.tableData = null})
       : super._();
 
   @override
@@ -111,10 +130,13 @@ class _$_HomeState extends _HomeState {
   @override
   @JsonKey()
   final bool isResetPasswordCompleted;
+  @override
+  @JsonKey()
+  final TableData? tableData;
 
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, tableData: $tableData)';
   }
 
   @override
@@ -126,12 +148,14 @@ class _$_HomeState extends _HomeState {
                 other.currentFirebaseUser == currentFirebaseUser) &&
             (identical(
                     other.isResetPasswordCompleted, isResetPasswordCompleted) ||
-                other.isResetPasswordCompleted == isResetPasswordCompleted));
+                other.isResetPasswordCompleted == isResetPasswordCompleted) &&
+            (identical(other.tableData, tableData) ||
+                other.tableData == tableData));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, currentFirebaseUser, isResetPasswordCompleted);
+  int get hashCode => Object.hash(
+      runtimeType, currentFirebaseUser, isResetPasswordCompleted, tableData);
 
   @JsonKey(ignore: true)
   @override
@@ -143,13 +167,16 @@ class _$_HomeState extends _HomeState {
 abstract class _HomeState extends HomeState {
   const factory _HomeState(
       {final User? currentFirebaseUser,
-      final bool isResetPasswordCompleted}) = _$_HomeState;
+      final bool isResetPasswordCompleted,
+      final TableData? tableData}) = _$_HomeState;
   const _HomeState._() : super._();
 
   @override
   User? get currentFirebaseUser;
   @override
   bool get isResetPasswordCompleted;
+  @override
+  TableData? get tableData;
   @override
   @JsonKey(ignore: true)
   _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>

@@ -1,10 +1,10 @@
-class Event {
+class TableEvent {
   final int id;
   final String title;
   final DateTime? date;
   final Map<int, EventUserState> state;
 
-  const Event(
+  const TableEvent(
       {required this.id, required this.title, this.date, required this.state});
 }
 

@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/fcm.dart';
-import 'package:operators/src/ui/home.dart';
+import 'package:operators/src/ui/home/home_provider.dart';
 import 'package:provider/provider.dart';
 
 class OperatorsApp extends StatelessWidget {
@@ -12,7 +11,6 @@ class OperatorsApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthModel()),
         ChangeNotifierProvider(create: (context) => TableModel()),
       ],
       child: MultiRepositoryProvider(
@@ -26,7 +24,7 @@ class OperatorsApp extends StatelessWidget {
         ],
         child: MaterialApp(
           title: 'Участие операторов',
-          home: HomeScreen(),
+          home: HomeScreenProvider(),
         ),
       ),
     );

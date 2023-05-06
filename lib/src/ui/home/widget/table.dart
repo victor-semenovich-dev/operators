@@ -1,21 +1,20 @@
-import 'package:firebase_auth/firebase_auth.dart' as auth;
 import 'package:flutter/material.dart';
-import 'package:operators/src/bloc/auth.dart';
 import 'package:operators/src/bloc/table.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:operators/src/ui/home/home_bloc.dart';
 
 class TableWidget extends StatelessWidget {
   static const double ROW_HEIGHT = 60;
   static const Color COLOR_GREY = Color(0xFFBDBDBD);
 
+  final HomeState state;
   final TableModel tableModel;
   final TableData? tableData;
 
-  const TableWidget(this.tableModel, this.tableData);
+  const TableWidget(this.tableModel, this.tableData, this.state);
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class TableWidget extends StatelessWidget {
         Container(width: double.infinity, height: 1, color: Colors.black);
     tableData!.users.forEach((user) {
       rows
-        ..add(_userRow(user.id))
+        ..add(_userRow(context, user.id))
         ..add(dividerWidget);
     });
     return Column(
@@ -82,7 +81,7 @@ class TableWidget extends StatelessWidget {
     return Row(children: children);
   }
 
-  Widget _userRow(int userId) {
+  Widget _userRow(BuildContext context, int userId) {
     List<Widget> children = <Widget>[];
     User user = tableData!.getUserById(userId)!;
     for (int i = 0; i <= tableData!.events.length; i++) {
@@ -118,19 +117,17 @@ class TableWidget extends StatelessWidget {
           }
         }
         children.add(Expanded(
-          flex: 2,
-          child: Consumer<AuthModel>(builder: (context, authModel, child) {
-            return GestureDetector(
+            flex: 2,
+            child: GestureDetector(
               onTap: () {
                 if (!event.state.containsKey(user.id) ||
                     event.state[user.id]?.role == null) {
-                  if (auth.FirebaseAuth.instance.currentUser?.uid == null) {
+                  if (!state.isLoggedIn) {
                     showDialog(
                       context: context,
                       builder: (context) => AuthorizationDialogProvider(),
                     );
-                  } else if (auth.FirebaseAuth.instance.currentUser?.uid ==
-                      user.uid) {
+                  } else if (state.currentFirebaseUser?.uid == user.uid) {
                     tableModel.toggleCanHelp(user, event);
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -147,9 +144,7 @@ class TableWidget extends StatelessWidget {
                 height: ROW_HEIGHT,
                 child: _getChildWidget(user, event),
               ),
-            );
-          }),
-        ));
+            )));
       }
     }
     return Row(children: children);

@@ -19,6 +19,7 @@ mixin _$HomeState {
   User? get currentFirebaseUser => throw _privateConstructorUsedError;
   bool get isResetPasswordCompleted => throw _privateConstructorUsedError;
   TableData? get tableData => throw _privateConstructorUsedError;
+  bool get isAdmin => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -33,7 +34,8 @@ abstract class $HomeStateCopyWith<$Res> {
   $Res call(
       {User? currentFirebaseUser,
       bool isResetPasswordCompleted,
-      TableData? tableData});
+      TableData? tableData,
+      bool isAdmin});
 }
 
 /// @nodoc
@@ -52,6 +54,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
     Object? tableData = freezed,
+    Object? isAdmin = null,
   }) {
     return _then(_value.copyWith(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -66,6 +69,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.tableData
           : tableData // ignore: cast_nullable_to_non_nullable
               as TableData?,
+      isAdmin: null == isAdmin
+          ? _value.isAdmin
+          : isAdmin // ignore: cast_nullable_to_non_nullable
+              as bool,
     ) as $Val);
   }
 }
@@ -80,7 +87,8 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
   $Res call(
       {User? currentFirebaseUser,
       bool isResetPasswordCompleted,
-      TableData? tableData});
+      TableData? tableData,
+      bool isAdmin});
 }
 
 /// @nodoc
@@ -97,6 +105,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
     Object? tableData = freezed,
+    Object? isAdmin = null,
   }) {
     return _then(_$_HomeState(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -111,6 +120,10 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value.tableData
           : tableData // ignore: cast_nullable_to_non_nullable
               as TableData?,
+      isAdmin: null == isAdmin
+          ? _value.isAdmin
+          : isAdmin // ignore: cast_nullable_to_non_nullable
+              as bool,
     ));
   }
 }
@@ -121,7 +134,8 @@ class _$_HomeState extends _HomeState {
   const _$_HomeState(
       {this.currentFirebaseUser = null,
       this.isResetPasswordCompleted = false,
-      this.tableData = null})
+      this.tableData = null,
+      this.isAdmin = false})
       : super._();
 
   @override
@@ -133,10 +147,13 @@ class _$_HomeState extends _HomeState {
   @override
   @JsonKey()
   final TableData? tableData;
+  @override
+  @JsonKey()
+  final bool isAdmin;
 
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, tableData: $tableData)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, tableData: $tableData, isAdmin: $isAdmin)';
   }
 
   @override
@@ -150,12 +167,13 @@ class _$_HomeState extends _HomeState {
                     other.isResetPasswordCompleted, isResetPasswordCompleted) ||
                 other.isResetPasswordCompleted == isResetPasswordCompleted) &&
             (identical(other.tableData, tableData) ||
-                other.tableData == tableData));
+                other.tableData == tableData) &&
+            (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin));
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType, currentFirebaseUser, isResetPasswordCompleted, tableData);
+  int get hashCode => Object.hash(runtimeType, currentFirebaseUser,
+      isResetPasswordCompleted, tableData, isAdmin);
 
   @JsonKey(ignore: true)
   @override
@@ -168,7 +186,8 @@ abstract class _HomeState extends HomeState {
   const factory _HomeState(
       {final User? currentFirebaseUser,
       final bool isResetPasswordCompleted,
-      final TableData? tableData}) = _$_HomeState;
+      final TableData? tableData,
+      final bool isAdmin}) = _$_HomeState;
   const _HomeState._() : super._();
 
   @override
@@ -177,6 +196,8 @@ abstract class _HomeState extends HomeState {
   bool get isResetPasswordCompleted;
   @override
   TableData? get tableData;
+  @override
+  bool get isAdmin;
   @override
   @JsonKey(ignore: true)
   _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>

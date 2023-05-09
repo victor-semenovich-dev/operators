@@ -20,6 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
 
   late StreamSubscription _firebaseUserSubscription;
   late StreamSubscription _tableDataSubscription;
+  late StreamSubscription _isAdminSubscription;
 
   HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository)
       : super(HomeState()) {
@@ -29,6 +30,9 @@ class HomeCubit extends Cubit<HomeState> {
     });
     _tableDataSubscription = tableRepository.tableStream.listen((tableData) {
       emit(state.copyWith(tableData: tableData));
+    });
+    _isAdminSubscription = authRepository.isAdminStream.listen((isAdmin) {
+      emit(state.copyWith(isAdmin: isAdmin));
     });
   }
 
@@ -57,6 +61,7 @@ class HomeCubit extends Cubit<HomeState> {
   Future<void> close() async {
     await _firebaseUserSubscription.cancel();
     await _tableDataSubscription.cancel();
+    await _isAdminSubscription.cancel();
     return super.close();
   }
 }
@@ -69,6 +74,7 @@ class HomeState with _$HomeState {
     @Default(null) User? currentFirebaseUser,
     @Default(false) bool isResetPasswordCompleted,
     @Default(null) TableData? tableData,
+    @Default(false) bool isAdmin,
   }) = _HomeState;
 
   bool get isLoggedIn => currentFirebaseUser != null;

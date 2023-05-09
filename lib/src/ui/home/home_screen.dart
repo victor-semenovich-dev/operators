@@ -47,6 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icon(Icons.login),
                   tooltip: 'Авторизация',
                 ),
+              if (state.isAdmin)
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.sync),
+                  tooltip: 'Обновить',
+                ),
               if (state.isLoggedIn)
                 PopupMenuButton<String>(
                   tooltip: 'Меню',

@@ -8,6 +8,7 @@ import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/data/repository/auth.dart';
+import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
 
@@ -17,12 +18,13 @@ class HomeCubit extends Cubit<HomeState> {
   final FcmRepository fcmRepository;
   final AuthRepository authRepository;
   final TableRepository tableRepository;
+  final EventsRepository eventsRepository;
 
   late StreamSubscription _firebaseUserSubscription;
   late StreamSubscription _tableDataSubscription;
   late StreamSubscription _isAdminSubscription;
 
-  HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository)
+  HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository, this.eventsRepository)
       : super(HomeState()) {
     _firebaseUserSubscription =
         authRepository.userStream.listen((firebaseUser) {
@@ -55,6 +57,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   void consumeResetPasswordState() {
     emit(state.copyWith(isResetPasswordCompleted: false));
+  }
+
+  void updateEvents() {
+    eventsRepository.updateEvents();
   }
 
   @override

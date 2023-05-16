@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
@@ -47,9 +48,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icon(Icons.login),
                   tooltip: 'Авторизация',
                 ),
-              if (state.isAdmin)
+              if (state.isAdmin && !kIsWeb)
                 IconButton(
-                  onPressed: () {},
+                  onPressed: () => context.read<HomeCubit>().updateEvents(),
                   icon: Icon(Icons.sync),
                   tooltip: 'Обновить',
                 ),

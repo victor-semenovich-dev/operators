@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focused_menu/focused_menu.dart';
 import 'package:focused_menu/modals.dart';
+import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
@@ -114,10 +116,14 @@ class TableWidget extends StatelessWidget {
         children
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
+        var showRating = false;
         if (event.state.containsKey(userId)) {
           if (event.state[userId]?.role == null) {
             if (event.state[userId]?.canHelp == true) {
               color = Colors.green;
+              if (state.isAdmin) {
+                showRating = true;
+              }
             } else if (event.state[userId]?.canHelp == false) {
               color = Colors.red[400]!;
             }
@@ -125,72 +131,77 @@ class TableWidget extends StatelessWidget {
             color = Colors.blue;
           }
         }
+        final itemWidget = GestureDetector(
+          onTap: () {
+            if (!event.state.containsKey(user.id) ||
+                event.state[user.id]?.role == null) {
+              if (!state.isLoggedIn) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AuthorizationDialogProvider(),
+                );
+              } else if (state.currentFirebaseUser?.uid == user.uid) {
+                onToggleCanHelp(user, event);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  content: Text(
+                    'Можно отмечаться только в своих ячейках',
+                  ),
+                ));
+              }
+            }
+          },
+          child: Container(
+            color: color,
+            width: double.infinity,
+            height: ROW_HEIGHT,
+            child: _getChildWidget(context, user, event, showRating),
+          ),
+        );
         children.add(
           Expanded(
             flex: 2,
-            child: FocusedMenuHolder(
-              menuWidth: MediaQuery.of(context).size.width * 0.50,
-              menuItems: [
-                if (event.state[userId]?.canHelp == true)
-                  FocusedMenuItem(
-                    title: Text('Роль: компьютер'),
-                    onPressed: () => onRoleSelected(user, event, Role.PC),
-                  ),
-                if (event.state[userId]?.canHelp == true)
-                  FocusedMenuItem(
-                    title: Text('Роль: камера'),
-                    onPressed: () => onRoleSelected(user, event, Role.CAMERA),
-                  ),
-                if (event.state[userId]?.canHelp == true)
-                  FocusedMenuItem(
-                    title: Text('Роль: ничего'),
-                    onPressed: () => onRoleSelected(user, event, null),
-                  ),
-                if (event.state[userId]?.role == null)
-                  FocusedMenuItem(
-                    title: Text('Отметка: зелёный'),
-                    onPressed: () => onCanHelpSelected(user, event, true),
-                  ),
-                if (event.state[userId]?.role == null)
-                  FocusedMenuItem(
-                    title: Text('Отметка: красный'),
-                    onPressed: () => onCanHelpSelected(user, event, false),
-                  ),
-                if (event.state[userId]?.role == null)
-                  FocusedMenuItem(
-                    title: Text('Отметка: ничего'),
-                    onPressed: () => onCanHelpSelected(user, event, null),
-                  ),
-              ],
-              onPressed: () {},
-              child: GestureDetector(
-                onTap: () {
-                  if (!event.state.containsKey(user.id) ||
-                      event.state[user.id]?.role == null) {
-                    if (!state.isLoggedIn) {
-                      showDialog(
-                        context: context,
-                        builder: (context) => AuthorizationDialogProvider(),
-                      );
-                    } else if (state.currentFirebaseUser?.uid == user.uid) {
-                      onToggleCanHelp(user, event);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                          'Можно отмечаться только в своих ячейках',
+            child: state.isAdmin
+                ? FocusedMenuHolder(
+                    menuWidth: MediaQuery.of(context).size.width * 0.50,
+                    menuItems: [
+                      if (event.state[userId]?.canHelp == true)
+                        FocusedMenuItem(
+                          title: Text('Роль: компьютер'),
+                          onPressed: () => onRoleSelected(user, event, Role.PC),
                         ),
-                      ));
-                    }
-                  }
-                },
-                child: Container(
-                  color: color,
-                  width: double.infinity,
-                  height: ROW_HEIGHT,
-                  child: _getChildWidget(user, event),
-                ),
-              ),
-            ),
+                      if (event.state[userId]?.canHelp == true)
+                        FocusedMenuItem(
+                          title: Text('Роль: камера'),
+                          onPressed: () =>
+                              onRoleSelected(user, event, Role.CAMERA),
+                        ),
+                      if (event.state[userId]?.canHelp == true)
+                        FocusedMenuItem(
+                          title: Text('Роль: ничего'),
+                          onPressed: () => onRoleSelected(user, event, null),
+                        ),
+                      if (event.state[userId]?.role == null)
+                        FocusedMenuItem(
+                          title: Text('Отметка: зелёный'),
+                          onPressed: () => onCanHelpSelected(user, event, true),
+                        ),
+                      if (event.state[userId]?.role == null)
+                        FocusedMenuItem(
+                          title: Text('Отметка: красный'),
+                          onPressed: () =>
+                              onCanHelpSelected(user, event, false),
+                        ),
+                      if (event.state[userId]?.role == null)
+                        FocusedMenuItem(
+                          title: Text('Отметка: ничего'),
+                          onPressed: () => onCanHelpSelected(user, event, null),
+                        ),
+                    ],
+                    onPressed: () {},
+                    child: itemWidget,
+                  )
+                : itemWidget,
           ),
         );
       }
@@ -198,7 +209,29 @@ class TableWidget extends StatelessWidget {
     return Row(children: children);
   }
 
-  Widget _getChildWidget(TableUser user, TableEvent event) {
+  Widget _getChildWidget(
+      BuildContext context, TableUser user, TableEvent event, bool showRating) {
+    Widget defaultWidget = Container();
+    if (showRating) {
+      final rating = context.read<HomeCubit>().getRating(user, event);
+      defaultWidget = Container(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              rating.value.toString(),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            if (rating.lastDate != null)
+              Text(
+                DateFormat('dd.MM HH:mm').format(rating.lastDate!),
+                textAlign: TextAlign.center,
+              )
+          ],
+        ),
+      );
+    }
+
     if (event.state.containsKey(user.id) &&
         event.state[user.id]?.role != null) {
       switch (event.state[user.id]?.role) {
@@ -207,10 +240,10 @@ class TableWidget extends StatelessWidget {
         case Role.CAMERA:
           return Icon(Icons.videocam_outlined, size: 48);
         default:
-          return Container();
+          return defaultWidget;
       }
     } else {
-      return Container();
+      return defaultWidget;
     }
   }
 }

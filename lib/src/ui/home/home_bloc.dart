@@ -24,6 +24,7 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _firebaseUserSubscription;
   late StreamSubscription _tableDataSubscription;
   late StreamSubscription _isAdminSubscription;
+  late StreamSubscription _eventsSubscription;
 
   HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
       this.eventsRepository)
@@ -37,6 +38,9 @@ class HomeCubit extends Cubit<HomeState> {
     });
     _isAdminSubscription = authRepository.isAdminStream.listen((isAdmin) {
       emit(state.copyWith(isAdmin: isAdmin));
+    });
+    tableRepository.eventsStream.listen((events) {
+      emit(state.copyWith(allEvents: events));
     });
   }
 
@@ -54,6 +58,20 @@ class HomeCubit extends Cubit<HomeState> {
 
   void onCanHelpSelected(TableUser user, TableEvent event, bool? canHelp) {
     tableRepository.setCanHelp(user, event, canHelp);
+  }
+
+  Rating getRating(TableUser user, TableEvent event) {
+    int value = 0;
+    DateTime? lastDate;
+    state.allEvents.forEach((e) {
+      if (e.date.isBefore(event.date) && e.state[user.id]?.role != null) {
+        value++;
+        if (lastDate == null || e.date.isAfter(lastDate!)) {
+          lastDate = e.date;
+        }
+      }
+    });
+    return Rating(value, lastDate);
   }
 
   void logout() {
@@ -78,6 +96,7 @@ class HomeCubit extends Cubit<HomeState> {
     await _firebaseUserSubscription.cancel();
     await _tableDataSubscription.cancel();
     await _isAdminSubscription.cancel();
+    await _eventsSubscription.cancel();
     return super.close();
   }
 }
@@ -91,10 +110,18 @@ class HomeState with _$HomeState {
     @Default(false) bool isResetPasswordCompleted,
     @Default(null) TableData? tableData,
     @Default(false) bool isAdmin,
+    @Default([]) List<TableEvent> allEvents,
   }) = _HomeState;
 
   bool get isLoggedIn => currentFirebaseUser != null;
 
   TableUser? get currentUser => tableData?.users
       .firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
+}
+
+class Rating {
+  final int value;
+  final DateTime? lastDate;
+
+  Rating(this.value, this.lastDate);
 }

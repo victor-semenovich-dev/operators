@@ -8,19 +8,19 @@ class SyncEventsUseCase {
 
   SyncEventsUseCase(this.eventsRepository, this.tableRepository);
 
-  void perform() async {
+  Future<void> perform() async {
     final futureEvents = (await eventsRepository.loadFutureEvents())
         .where((e) => e.date.difference(DateTime.now()) < Duration(days: 7));
     final allTableEvents = await tableRepository.eventsStream.first;
 
     final now = DateTime.now();
-    allTableEvents.forEach((event) {
+    for (final event in allTableEvents) {
       if (now.difference(event.date) > Duration(days: 60)) {
-        tableRepository.deleteEvent(event.id);
+        await tableRepository.deleteEvent(event.id);
       }
-    });
+    }
 
-    futureEvents.forEach((futureEvent) {
+    for (final futureEvent in futureEvents) {
       TableEvent? tableEvent;
       for (final e in allTableEvents) {
         if (futureEvent.date == e.date) {
@@ -29,10 +29,11 @@ class SyncEventsUseCase {
         }
       }
       if (tableEvent == null) {
-        tableRepository.addEvent(futureEvent.date, futureEvent.title);
+        await tableRepository.addEvent(futureEvent.date, futureEvent.title);
       } else {
-        tableRepository.updateEvent(tableEvent.id, futureEvent.title, true);
+        await tableRepository.updateEvent(
+            tableEvent.id, futureEvent.title, true);
       }
-    });
+    }
   }
 }

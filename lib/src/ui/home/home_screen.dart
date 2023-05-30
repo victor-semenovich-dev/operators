@@ -1,6 +1,8 @@
+import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
@@ -17,6 +19,26 @@ class _HomeScreenState extends State<HomeScreen> {
     context.read<HomeCubit>().updateUserFcmData();
   }
 
+  Future<void> _initBackgroundFetch() async {
+    await BackgroundFetch.configure(
+      BackgroundFetchConfig(
+        minimumFetchInterval: 24 * 60,
+        startOnBoot: true,
+        requiredNetworkType: NetworkType.ANY,
+      ),
+      (String taskId) async {
+        final useCase = SyncEventsUseCase(context.read(), context.read());
+        await useCase.perform();
+        BackgroundFetch.finish(taskId);
+      },
+      (String taskId) async {
+        // timeout
+        BackgroundFetch.finish(taskId);
+      },
+    );
+    await BackgroundFetch.start();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
@@ -26,6 +48,13 @@ class _HomeScreenState extends State<HomeScreen> {
             content: Text('Письмо со сбросом пароля отправлено на почту'),
           ));
           context.read<HomeCubit>().consumeResetPasswordState();
+        }
+        if (!kIsWeb) {
+          if (state.isAdmin) {
+            _initBackgroundFetch();
+          } else {
+            BackgroundFetch.stop();
+          }
         }
       },
       builder: (context, state) {

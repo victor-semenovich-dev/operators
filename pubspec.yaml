@@ -34,6 +34,7 @@ dependencies:
   stream_transform: ^2.1.0
   rxdart: ^0.27.7
   focused_menu: ^1.0.5
+  background_fetch: ^1.1.6
 
 dev_dependencies:
   build_runner: ^2.3.3

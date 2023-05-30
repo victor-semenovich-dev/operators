@@ -3,22 +3,28 @@ import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
+import 'package:rxdart/rxdart.dart';
 
 class TableRepository {
   static const baseUrl = '/';
 
   late DatabaseReference _dbRef;
-  late Stream<TableData> tableStream;
+  final _tableSubject = BehaviorSubject<TableData>();
+  late Stream<TableData> tableStream = _tableSubject.stream;
+
+  final _eventsSubject = BehaviorSubject<List<TableEvent>>();
+  late Stream<List<TableEvent>> eventsStream = _eventsSubject.stream;
 
   TableRepository() {
     _dbRef = FirebaseDatabase.instance.ref(baseUrl);
-    tableStream = _dbRef.onValue.map((event) {
+
+    _dbRef.onValue.listen((event) {
       final snapshot = event.snapshot;
       final eventsData = snapshot.child('events').value;
       final usersData = snapshot.child('users').value;
 
       final users = <TableUser>[];
-      final events = <TableEvent>[];
+      final allEvents = <TableEvent>[];
 
       _parseSnapshotData(
         data: usersData,
@@ -30,23 +36,18 @@ class TableRepository {
 
       _parseSnapshotData(
         data: eventsData,
-        preParseCondition: (id, map) => map['isActive'] == true,
+        preParseCondition: (id, map) => true,
         parseItem: (id, map) => _parseEvent(id, map),
-        processItem: (id, item) => events.add(item),
+        processItem: (id, item) => allEvents.add(item),
       );
+
+      final events = allEvents.where((event) => event.isActive).toList();
       events.sort((e1, e2) {
-        if (e1.date == null && e2.date == null) {
-          return e1.id.compareTo(e2.id);
-        } else if (e1.date == null && e2.date != null) {
-          return -1;
-        } else if (e1.date != null && e2.date == null) {
-          return 1;
-        } else {
-          return e1.date!.compareTo(e2.date!);
-        }
+        return e1.date.compareTo(e2.date);
       });
 
-      return TableData(events: events, users: users);
+      _tableSubject.add(TableData(events: events, users: users));
+      _eventsSubject.add(allEvents);
     });
   }
 
@@ -64,6 +65,10 @@ class TableRepository {
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(newValue);
   }
 
+  Future<void> deleteEvent(int eventId) {
+    return _dbRef.child('events/$eventId').remove();
+  }
+
   static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
     String uid = userData['uid'];
@@ -74,12 +79,8 @@ class TableRepository {
     DateFormat format = DateFormat('yyyy-MM-dd HH:mm');
 
     String title = eventData['title'];
-    DateTime? date;
-    if (eventData.containsKey('date')) {
-      try {
-        date = format.parse(eventData['date'].value);
-      } catch (e) {}
-    }
+    DateTime date = format.parse(eventData['date']);
+    bool isActive = eventData['isActive'];
     Map<int, EventUserState> state = {};
 
     if (eventData.containsKey('state')) {
@@ -89,7 +90,8 @@ class TableRepository {
         processItem: (id, item) => state[id] = item,
       );
     }
-    return TableEvent(id: id, title: title, date: date, state: state);
+    return TableEvent(
+        id: id, title: title, date: date, isActive: isActive, state: state);
   }
 
   static EventUserState _parseEventUserState(Map data) {

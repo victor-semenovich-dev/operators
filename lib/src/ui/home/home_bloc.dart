@@ -11,6 +11,7 @@ import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
+import 'package:operators/src/data/usecase/sync_events.dart';
 
 part '../../../generated/src/ui/home/home_bloc.freezed.dart';
 
@@ -24,7 +25,8 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _tableDataSubscription;
   late StreamSubscription _isAdminSubscription;
 
-  HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository, this.eventsRepository)
+  HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
+      this.eventsRepository)
       : super(HomeState()) {
     _firebaseUserSubscription =
         authRepository.userStream.listen((firebaseUser) {
@@ -60,7 +62,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void updateEvents() {
-    eventsRepository.updateEvents();
+    SyncEventsUseCase(eventsRepository, tableRepository).perform();
   }
 
   @override

@@ -15,6 +15,8 @@ class TableRepository {
   final _eventsSubject = BehaviorSubject<List<TableEvent>>();
   late Stream<List<TableEvent>> eventsStream = _eventsSubject.stream;
 
+  static DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+
   TableRepository() {
     _dbRef = FirebaseDatabase.instance.ref(baseUrl);
 
@@ -65,6 +67,28 @@ class TableRepository {
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(newValue);
   }
 
+  Future<void> addEvent(DateTime date, String title) async {
+    final tableEvents = await eventsStream.first;
+    int maxId = 0;
+    for (final event in tableEvents) {
+      if (event.id > maxId) {
+        maxId = event.id;
+      }
+    }
+    final id = maxId + 1;
+
+    await _dbRef.child('events/$id').set({
+      'date': _dateFormat.format(date),
+      'title': title,
+      'isActive': true,
+    });
+  }
+
+  Future<void> updateEvent(int id, String title, bool isActive) async {
+    await _dbRef.child('events/$id/title').set(title);
+    await _dbRef.child('events/$id/isActive').set(isActive);
+  }
+
   Future<void> deleteEvent(int eventId) {
     return _dbRef.child('events/$eventId').remove();
   }
@@ -76,10 +100,8 @@ class TableRepository {
   }
 
   static TableEvent _parseEvent(int id, Map eventData) {
-    DateFormat format = DateFormat('yyyy-MM-dd HH:mm');
-
     String title = eventData['title'];
-    DateTime date = format.parse(eventData['date']);
+    DateTime date = _dateFormat.parse(eventData['date']);
     bool isActive = eventData['isActive'];
     Map<int, EventUserState> state = {};
 

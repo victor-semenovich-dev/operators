@@ -67,6 +67,16 @@ class TableRepository {
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(newValue);
   }
 
+  void setRole(TableUser user, TableEvent event, Role? role) {
+    _dbRef
+        .child('events/${event.id}/state/${user.id}/role')
+        .set(roleToString(role));
+  }
+
+  void setCanHelp(TableUser user, TableEvent event, bool? canHelp) {
+    _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(canHelp);
+  }
+
   Future<void> addEvent(DateTime date, String title) async {
     final tableEvents = await eventsStream.first;
     int maxId = 0;

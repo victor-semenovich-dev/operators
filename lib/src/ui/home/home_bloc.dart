@@ -48,6 +48,14 @@ class HomeCubit extends Cubit<HomeState> {
     tableRepository.toggleCanHelp(user, event);
   }
 
+  void onRoleSelected(TableUser user, TableEvent event, Role? role) {
+    tableRepository.setRole(user, event, role);
+  }
+
+  void onCanHelpSelected(TableUser user, TableEvent event, bool? canHelp) {
+    tableRepository.setCanHelp(user, event, canHelp);
+  }
+
   void logout() {
     authRepository.logout();
   }

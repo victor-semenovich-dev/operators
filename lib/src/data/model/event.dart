@@ -51,7 +51,7 @@ Role? stringToRole(String? str) {
   }
 }
 
-String? roleToString(Role role) {
+String? roleToString(Role? role) {
   switch (role) {
     case Role.PC:
       return 'pc';

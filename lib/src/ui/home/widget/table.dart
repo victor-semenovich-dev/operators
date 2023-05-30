@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:focused_menu/focused_menu.dart';
+import 'package:focused_menu/modals.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
@@ -11,8 +13,16 @@ class TableWidget extends StatelessWidget {
 
   final HomeState state;
   final Function(TableUser user, TableEvent event) onToggleCanHelp;
+  final Function(TableUser user, TableEvent event, Role? role) onRoleSelected;
+  final Function(TableUser user, TableEvent event, bool? canHelp)
+      onCanHelpSelected;
 
-  const TableWidget(this.state, this.onToggleCanHelp);
+  const TableWidget(
+    this.state,
+    this.onToggleCanHelp,
+    this.onRoleSelected,
+    this.onCanHelpSelected,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -105,7 +115,7 @@ class TableWidget extends StatelessWidget {
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
         if (event.state.containsKey(userId)) {
-          if (event.state[userId]!.role == null) {
+          if (event.state[userId]?.role == null) {
             if (event.state[userId]?.canHelp == true) {
               color = Colors.green;
             } else if (event.state[userId]?.canHelp == false) {
@@ -115,35 +125,74 @@ class TableWidget extends StatelessWidget {
             color = Colors.blue;
           }
         }
-        children.add(Expanded(
+        children.add(
+          Expanded(
             flex: 2,
-            child: GestureDetector(
-              onTap: () {
-                if (!event.state.containsKey(user.id) ||
-                    event.state[user.id]?.role == null) {
-                  if (!state.isLoggedIn) {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AuthorizationDialogProvider(),
-                    );
-                  } else if (state.currentFirebaseUser?.uid == user.uid) {
-                    onToggleCanHelp(user, event);
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                      content: Text(
-                        'Можно отмечаться только в своих ячейках',
-                      ),
-                    ));
+            child: FocusedMenuHolder(
+              menuWidth: MediaQuery.of(context).size.width * 0.50,
+              menuItems: [
+                if (event.state[userId]?.canHelp == true)
+                  FocusedMenuItem(
+                    title: Text('Роль: компьютер'),
+                    onPressed: () => onRoleSelected(user, event, Role.PC),
+                  ),
+                if (event.state[userId]?.canHelp == true)
+                  FocusedMenuItem(
+                    title: Text('Роль: камера'),
+                    onPressed: () => onRoleSelected(user, event, Role.CAMERA),
+                  ),
+                if (event.state[userId]?.canHelp == true)
+                  FocusedMenuItem(
+                    title: Text('Роль: ничего'),
+                    onPressed: () => onRoleSelected(user, event, null),
+                  ),
+                if (event.state[userId]?.role == null)
+                  FocusedMenuItem(
+                    title: Text('Отметка: зелёный'),
+                    onPressed: () => onCanHelpSelected(user, event, true),
+                  ),
+                if (event.state[userId]?.role == null)
+                  FocusedMenuItem(
+                    title: Text('Отметка: красный'),
+                    onPressed: () => onCanHelpSelected(user, event, false),
+                  ),
+                if (event.state[userId]?.role == null)
+                  FocusedMenuItem(
+                    title: Text('Отметка: ничего'),
+                    onPressed: () => onCanHelpSelected(user, event, null),
+                  ),
+              ],
+              onPressed: () {},
+              child: GestureDetector(
+                onTap: () {
+                  if (!event.state.containsKey(user.id) ||
+                      event.state[user.id]?.role == null) {
+                    if (!state.isLoggedIn) {
+                      showDialog(
+                        context: context,
+                        builder: (context) => AuthorizationDialogProvider(),
+                      );
+                    } else if (state.currentFirebaseUser?.uid == user.uid) {
+                      onToggleCanHelp(user, event);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                          'Можно отмечаться только в своих ячейках',
+                        ),
+                      ));
+                    }
                   }
-                }
-              },
-              child: Container(
-                color: color,
-                width: double.infinity,
-                height: ROW_HEIGHT,
-                child: _getChildWidget(user, event),
+                },
+                child: Container(
+                  color: color,
+                  width: double.infinity,
+                  height: ROW_HEIGHT,
+                  child: _getChildWidget(user, event),
+                ),
               ),
-            )));
+            ),
+          ),
+        );
       }
     }
     return Row(children: children);

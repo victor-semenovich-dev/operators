@@ -82,7 +82,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
             ],
           ),
-          body: TableWidget(state, context.read<HomeCubit>().toggleCanHelp),
+          body: TableWidget(
+            state,
+            context.read<HomeCubit>().toggleCanHelp,
+            context.read<HomeCubit>().onRoleSelected,
+            context.read<HomeCubit>().onCanHelpSelected,
+          ),
         );
       },
     );

@@ -18,12 +18,14 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, Role? role) onRoleSelected;
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
+  final Function(TableEvent event) onNotificationClick;
 
   const TableWidget(
     this.state,
     this.onToggleCanHelp,
     this.onRoleSelected,
     this.onCanHelpSelected,
+    this.onNotificationClick,
   );
 
   @override
@@ -44,7 +46,7 @@ class TableWidget extends StatelessWidget {
     return Column(
       children: [
         dividerWidget,
-        _eventsTitlesRow(tableData),
+        _eventsTitlesRow(context, tableData),
         dividerWidget,
         Expanded(
           child: SingleChildScrollView(
@@ -60,7 +62,7 @@ class TableWidget extends StatelessWidget {
     );
   }
 
-  Widget _eventsTitlesRow(TableData tableData) {
+  Widget _eventsTitlesRow(BuildContext context, TableData tableData) {
     List<Widget> children = <Widget>[];
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
@@ -73,20 +75,34 @@ class TableWidget extends StatelessWidget {
         TableEvent event = tableData.events[i - 1];
         children
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
-        children.add(Expanded(
-          flex: 2,
-          child: Container(
-            color: COLOR_GREY,
-            width: double.infinity,
-            height: ROW_HEIGHT,
-            padding: EdgeInsets.all(4),
-            child: Center(
-              child: Text(event.title,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-            ),
+        final baseWidget = Container(
+          color: COLOR_GREY,
+          width: double.infinity,
+          height: ROW_HEIGHT,
+          padding: EdgeInsets.all(4),
+          child: Center(
+            child: Text(event.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold)),
           ),
-        ));
+        );
+        children.add(
+          Expanded(
+              flex: 2,
+              child: state.isAdmin
+                  ? FocusedMenuHolder(
+                      child: baseWidget,
+                      onPressed: () {},
+                      menuItems: [
+                        FocusedMenuItem(
+                          title: Text('Уведомление'),
+                          onPressed: () => onNotificationClick(event),
+                        )
+                      ],
+                      menuWidth: MediaQuery.of(context).size.width * 0.50,
+                    )
+                  : baseWidget),
+        );
       }
     }
     return Row(children: children);

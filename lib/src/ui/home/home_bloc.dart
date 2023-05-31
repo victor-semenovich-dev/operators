@@ -25,6 +25,7 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _tableDataSubscription;
   late StreamSubscription _isAdminSubscription;
   late StreamSubscription _eventsSubscription;
+  late StreamSubscription _usersSubscription;
 
   HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
       this.eventsRepository)
@@ -39,8 +40,11 @@ class HomeCubit extends Cubit<HomeState> {
     _isAdminSubscription = authRepository.isAdminStream.listen((isAdmin) {
       emit(state.copyWith(isAdmin: isAdmin));
     });
-    tableRepository.eventsStream.listen((events) {
+    _eventsSubscription = tableRepository.eventsStream.listen((events) {
       emit(state.copyWith(allEvents: events));
+    });
+    _usersSubscription = tableRepository.usersStream.listen((users) {
+      emit(state.copyWith(allUsers: users));
     });
   }
 
@@ -76,6 +80,28 @@ class HomeCubit extends Cubit<HomeState> {
     return Rating(value, lastDate);
   }
 
+  String getNotificationText(TableEvent event) {
+    final buffer = StringBuffer();
+    final allUsers = state.allUsers;
+    var isFirst = true;
+    final sortedEntries = event.state.entries.sorted(
+        (a, b) => (a.value.role?.index ?? -1) - (b.value.role?.index ?? -1));
+    for (final entry in sortedEntries) {
+      if (entry.value.role != null) {
+        if (!isFirst) {
+          buffer.write('\n');
+        }
+        final userName =
+            allUsers.firstWhereOrNull((user) => user.id == entry.key)?.name ??
+                '?';
+        final roleStr = roleToReadableString(entry.value.role) ?? '?';
+        buffer.write('$userName - $roleStr');
+        isFirst = false;
+      }
+    }
+    return buffer.toString();
+  }
+
   void logout() {
     authRepository.logout();
   }
@@ -99,6 +125,7 @@ class HomeCubit extends Cubit<HomeState> {
     await _tableDataSubscription.cancel();
     await _isAdminSubscription.cancel();
     await _eventsSubscription.cancel();
+    await _usersSubscription.cancel();
     return super.close();
   }
 }
@@ -113,6 +140,7 @@ class HomeState with _$HomeState {
     @Default(null) TableData? tableData,
     @Default(false) bool isAdmin,
     @Default([]) List<TableEvent> allEvents,
+    @Default([]) List<TableUser> allUsers,
   }) = _HomeState;
 
   bool get isLoggedIn => currentFirebaseUser != null;

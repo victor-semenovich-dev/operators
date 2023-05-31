@@ -15,6 +15,9 @@ class TableRepository {
   final _eventsSubject = BehaviorSubject<List<TableEvent>>();
   late Stream<List<TableEvent>> eventsStream = _eventsSubject.stream;
 
+  final _usersSubject = BehaviorSubject<List<TableUser>>();
+  late Stream<List<TableUser>> usersStream = _usersSubject.stream;
+
   static DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
   TableRepository() {
@@ -25,16 +28,15 @@ class TableRepository {
       final eventsData = snapshot.child('events').value;
       final usersData = snapshot.child('users').value;
 
-      final users = <TableUser>[];
+      final allUsers = <TableUser>[];
       final allEvents = <TableEvent>[];
 
       _parseSnapshotData(
         data: usersData,
-        preParseCondition: (id, map) => map['isActive'] != false,
+        preParseCondition: (id, map) => true,
         parseItem: (id, map) => _parseUser(id, map),
-        processItem: (id, user) => users.add(user),
+        processItem: (id, user) => allUsers.add(user),
       );
-      users.sort((u1, u2) => u1.name.compareTo(u2.name));
 
       _parseSnapshotData(
         data: eventsData,
@@ -44,12 +46,14 @@ class TableRepository {
       );
 
       final events = allEvents.where((event) => event.isActive).toList();
-      events.sort((e1, e2) {
-        return e1.date.compareTo(e2.date);
-      });
+      events.sort((e1, e2) => e1.date.compareTo(e2.date));
+
+      final users = allUsers.where((user) => user.isActive).toList();
+      users.sort((u1, u2) => u1.name.compareTo(u2.name));
 
       _tableSubject.add(TableData(events: events, users: users));
       _eventsSubject.add(allEvents);
+      _usersSubject.add(allUsers);
     });
   }
 
@@ -106,13 +110,14 @@ class TableRepository {
   static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
     String uid = userData['uid'];
-    return TableUser(id: id, name: name, uid: uid);
+    bool isActive = userData['isActive'] != false;
+    return TableUser(id: id, name: name, uid: uid, isActive: isActive);
   }
 
   static TableEvent _parseEvent(int id, Map eventData) {
     String title = eventData['title'];
     DateTime date = _dateFormat.parse(eventData['date']);
-    bool isActive = eventData['isActive'];
+    bool isActive = eventData['isActive'] != false;
     Map<int, EventUserState> state = {};
 
     if (eventData.containsKey('state')) {

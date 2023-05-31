@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
+import 'package:operators/src/ui/home/widget/notification.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -116,6 +117,17 @@ class _HomeScreenState extends State<HomeScreen> {
             context.read<HomeCubit>().toggleCanHelp,
             context.read<HomeCubit>().onRoleSelected,
             context.read<HomeCubit>().onCanHelpSelected,
+            (event) {
+              final text = context.read<HomeCubit>().getNotificationText(event);
+              showDialog(
+                context: context,
+                builder: (context) => NotificationDialog(
+                  title: event.title,
+                  body: text,
+                  onSendClick: () {},
+                ),
+              );
+            },
           ),
         );
       },

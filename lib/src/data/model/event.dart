@@ -61,3 +61,14 @@ String? roleToString(Role? role) {
       return null;
   }
 }
+
+String? roleToReadableString(Role? role) {
+  switch (role) {
+    case Role.PC:
+      return 'компьютер';
+    case Role.CAMERA:
+      return 'камера';
+    default:
+      return null;
+  }
+}

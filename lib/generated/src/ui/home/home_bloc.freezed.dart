@@ -21,6 +21,7 @@ mixin _$HomeState {
   TableData? get tableData => throw _privateConstructorUsedError;
   bool get isAdmin => throw _privateConstructorUsedError;
   List<TableEvent> get allEvents => throw _privateConstructorUsedError;
+  List<TableUser> get allUsers => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -37,7 +38,8 @@ abstract class $HomeStateCopyWith<$Res> {
       bool isResetPasswordCompleted,
       TableData? tableData,
       bool isAdmin,
-      List<TableEvent> allEvents});
+      List<TableEvent> allEvents,
+      List<TableUser> allUsers});
 }
 
 /// @nodoc
@@ -58,6 +60,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? tableData = freezed,
     Object? isAdmin = null,
     Object? allEvents = null,
+    Object? allUsers = null,
   }) {
     return _then(_value.copyWith(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -80,6 +83,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.allEvents
           : allEvents // ignore: cast_nullable_to_non_nullable
               as List<TableEvent>,
+      allUsers: null == allUsers
+          ? _value.allUsers
+          : allUsers // ignore: cast_nullable_to_non_nullable
+              as List<TableUser>,
     ) as $Val);
   }
 }
@@ -96,7 +103,8 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       bool isResetPasswordCompleted,
       TableData? tableData,
       bool isAdmin,
-      List<TableEvent> allEvents});
+      List<TableEvent> allEvents,
+      List<TableUser> allUsers});
 }
 
 /// @nodoc
@@ -115,6 +123,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? tableData = freezed,
     Object? isAdmin = null,
     Object? allEvents = null,
+    Object? allUsers = null,
   }) {
     return _then(_$_HomeState(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -137,6 +146,10 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value._allEvents
           : allEvents // ignore: cast_nullable_to_non_nullable
               as List<TableEvent>,
+      allUsers: null == allUsers
+          ? _value._allUsers
+          : allUsers // ignore: cast_nullable_to_non_nullable
+              as List<TableUser>,
     ));
   }
 }
@@ -149,8 +162,10 @@ class _$_HomeState extends _HomeState {
       this.isResetPasswordCompleted = false,
       this.tableData = null,
       this.isAdmin = false,
-      final List<TableEvent> allEvents = const []})
+      final List<TableEvent> allEvents = const [],
+      final List<TableUser> allUsers = const []})
       : _allEvents = allEvents,
+        _allUsers = allUsers,
         super._();
 
   @override
@@ -174,9 +189,18 @@ class _$_HomeState extends _HomeState {
     return EqualUnmodifiableListView(_allEvents);
   }
 
+  final List<TableUser> _allUsers;
+  @override
+  @JsonKey()
+  List<TableUser> get allUsers {
+    if (_allUsers is EqualUnmodifiableListView) return _allUsers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_allUsers);
+  }
+
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers)';
   }
 
   @override
@@ -193,7 +217,8 @@ class _$_HomeState extends _HomeState {
                 other.tableData == tableData) &&
             (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin) &&
             const DeepCollectionEquality()
-                .equals(other._allEvents, _allEvents));
+                .equals(other._allEvents, _allEvents) &&
+            const DeepCollectionEquality().equals(other._allUsers, _allUsers));
   }
 
   @override
@@ -203,7 +228,8 @@ class _$_HomeState extends _HomeState {
       isResetPasswordCompleted,
       tableData,
       isAdmin,
-      const DeepCollectionEquality().hash(_allEvents));
+      const DeepCollectionEquality().hash(_allEvents),
+      const DeepCollectionEquality().hash(_allUsers));
 
   @JsonKey(ignore: true)
   @override
@@ -218,7 +244,8 @@ abstract class _HomeState extends HomeState {
       final bool isResetPasswordCompleted,
       final TableData? tableData,
       final bool isAdmin,
-      final List<TableEvent> allEvents}) = _$_HomeState;
+      final List<TableEvent> allEvents,
+      final List<TableUser> allUsers}) = _$_HomeState;
   const _HomeState._() : super._();
 
   @override
@@ -231,6 +258,8 @@ abstract class _HomeState extends HomeState {
   bool get isAdmin;
   @override
   List<TableEvent> get allEvents;
+  @override
+  List<TableUser> get allUsers;
   @override
   @JsonKey(ignore: true)
   _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>

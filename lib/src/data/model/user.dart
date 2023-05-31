@@ -1,7 +1,7 @@
 class TableUser {
   final int id;
   final String name;
-  final String uid;
+  final String? uid;
   final bool isActive;
 
   const TableUser({

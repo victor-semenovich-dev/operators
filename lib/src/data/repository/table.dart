@@ -109,7 +109,7 @@ class TableRepository {
 
   static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
-    String uid = userData['uid'];
+    String? uid = userData['uid'];
     bool isActive = userData['isActive'] != false;
     return TableUser(id: id, name: name, uid: uid, isActive: isActive);
   }

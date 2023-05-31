@@ -118,13 +118,14 @@ class _HomeScreenState extends State<HomeScreen> {
             context.read<HomeCubit>().onRoleSelected,
             context.read<HomeCubit>().onCanHelpSelected,
             (event) {
-              final text = context.read<HomeCubit>().getNotificationText(event);
+              final cubit = context.read<HomeCubit>();
+              final text = cubit.getNotificationText(event);
               showDialog(
                 context: context,
                 builder: (context) => NotificationDialog(
                   title: event.title,
                   body: text,
-                  onSendClick: () {},
+                  onSendClick: () => cubit.sendNotification(event.title, text),
                 ),
               );
             },

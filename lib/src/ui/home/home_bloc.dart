@@ -102,6 +102,10 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
+  void sendNotification(String title, String body) {
+    fcmRepository.sendNotification(title, body);
+  }
+
   void logout() {
     authRepository.logout();
   }

@@ -6,7 +6,10 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
+import 'package:operators/src/data/model/fcm_token.dart';
 import 'package:operators/src/data/remote/dto/fcm_notification.dart';
+import 'package:operators/src/data/remote/dto/fcm_token_data.dart';
+import 'package:operators/src/data/remote/dto/fcm_tokens.dart';
 import 'package:operators/src/data/remote/dto/fcm_topic.dart';
 import 'package:operators/src/data/remote/interceptor/fcm.dart';
 import 'package:operators/src/data/remote/service/fcm.dart';
@@ -51,12 +54,51 @@ class FcmRepository {
 
   Future<bool> sendNotification(String title, String body) async {
     final service = _chopper.getService<FcmService>();
-    final response = await service.send(
+    final responseForTopic = await service.send(
       FcmSendToTopicDTO(
         '/topics/release',
         FcmNotificationDTO(title, body, 'default'),
       ).toJson(),
     );
-    return response.isSuccessful;
+
+    final fcmTokens = await _getAndClearTokens();
+    final webTokens = fcmTokens
+        .where((token) => token.platform == DevicePlatform.WEB)
+        // .where((token) => token.uid == 'Ng0JWZrxfahk6qDFdflGL0HDVQz1')
+        .map((token) => token.token)
+        .toList();
+    debugPrint('${webTokens.length} tokens: $webTokens');
+
+    final responseForTokens = await service.send(
+      FcmSendToTokensDTO(
+        webTokens,
+        FcmNotificationDTO(title, body, 'default'),
+      ).toJson(),
+    );
+
+    return responseForTopic.isSuccessful && responseForTokens.isSuccessful;
+  }
+
+  /// get FCM tokens and remove old tokens
+  Future<List<FcmToken>> _getAndClearTokens() async {
+    List<FcmToken> resultList = [];
+    final snapshot = await FirebaseDatabase.instance.ref('fcm').get();
+    if (snapshot.value is Map) {
+      final fcmMap = snapshot.value as Map;
+      fcmMap.forEach((token, data) {
+        if (data is Map) {
+          final tokenData = FcmTokenData.fromJson(data);
+          if (DateTime.now().difference(tokenData.dateTime) >
+              Duration(days: 60)) {
+            // token is too old
+            FirebaseDatabase.instance.ref('fcm/$token').remove();
+          } else {
+            resultList.add(FcmToken(
+                token, tokenData.dateTime, tokenData.platform, tokenData.uid));
+          }
+        }
+      });
+    }
+    return resultList;
   }
 }

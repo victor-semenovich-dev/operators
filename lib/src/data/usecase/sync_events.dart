@@ -29,7 +29,8 @@ class SyncEventsUseCase {
         }
       }
       if (tableEvent == null) {
-        await tableRepository.addEvent(futureEvent.date, futureEvent.title);
+        await tableRepository.addOrUpdateEvent(
+            futureEvent.date, futureEvent.title);
       } else {
         await tableRepository.updateEvent(
             tableEvent.id, futureEvent.title, true);

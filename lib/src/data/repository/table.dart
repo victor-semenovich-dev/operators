@@ -81,10 +81,14 @@ class TableRepository {
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(canHelp);
   }
 
-  Future<void> addEvent(DateTime date, String title) async {
+  Future<void> addOrUpdateEvent(DateTime date, String title) async {
     final tableEvents = await eventsStream.first;
     int maxId = 0;
     for (final event in tableEvents) {
+      if (event.date == date) {
+        await updateEvent(event.id, title, true);
+        return;
+      }
       if (event.id > maxId) {
         maxId = event.id;
       }

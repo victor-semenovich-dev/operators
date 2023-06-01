@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
+import 'package:operators/src/ui/home/widget/add_edit_event.dart';
 import 'package:operators/src/ui/home/widget/notification.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
@@ -86,6 +87,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: Icon(Icons.login),
                   tooltip: 'Авторизация',
+                ),
+              if (state.isAdmin)
+                IconButton(
+                  onPressed: () => showDialog(
+                    context: context,
+                    builder: (context) => AddEditEventDialog(
+                      onConfirmClick: (dateTime, title) {},
+                    ),
+                  ),
+                  icon: Icon(Icons.add),
+                  tooltip: 'Добавить',
                 ),
               if (state.isAdmin && !kIsWeb)
                 IconButton(

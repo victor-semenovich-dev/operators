@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/fcm.dart';
@@ -18,6 +19,12 @@ class OperatorsApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Участие операторов',
+        localizationsDelegates: [
+          GlobalMaterialLocalizations.delegate,
+        ],
+        supportedLocales: [
+          const Locale('ru'),
+        ],
         home: HomeScreenProvider(),
       ),
     );

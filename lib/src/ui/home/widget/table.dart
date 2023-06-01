@@ -8,6 +8,7 @@ import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class TableWidget extends StatelessWidget {
   static const double ROW_HEIGHT = 60;
@@ -69,7 +70,25 @@ class TableWidget extends StatelessWidget {
         children.add(Expanded(
           flex: 3,
           child: Container(
-              color: COLOR_GREY, width: double.infinity, height: ROW_HEIGHT),
+            color: COLOR_GREY,
+            width: double.infinity,
+            height: ROW_HEIGHT,
+            child: FutureBuilder<PackageInfo>(
+              future: PackageInfo.fromPlatform(),
+              builder: (context, snapshot) {
+                final packageInfo = snapshot.data;
+                if (packageInfo != null) {
+                  return Center(
+                    child: Text(
+                      'v${packageInfo.version} (${packageInfo.buildNumber})',
+                    ),
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
+          ),
         ));
       } else {
         TableEvent event = tableData.events[i - 1];

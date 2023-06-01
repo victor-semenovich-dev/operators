@@ -29,7 +29,7 @@ class _AddEditEventDialogState extends State<AddEditEventDialog> {
       _dateTime = (widget.initialDateTime ?? DateTime.now())
           .copyWith(second: 0, millisecond: 0, microsecond: 0);
       _timeOfDay = TimeOfDay.fromDateTime(_dateTime);
-      _titleController.text = _buildTitle();
+      _titleController.text = widget.initialTitle ?? _buildTitle();
     });
   }
 

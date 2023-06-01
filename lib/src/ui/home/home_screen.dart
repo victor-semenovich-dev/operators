@@ -14,12 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // TODO updated FCM state on login/logout
-    context.read<HomeCubit>().updateUserFcmData();
-  }
+  HomeState? _lastState;
 
   Future<void> _initBackgroundFetch() async {
     await BackgroundFetch.configure(
@@ -66,6 +61,11 @@ class _HomeScreenState extends State<HomeScreen> {
             BackgroundFetch.stop();
           }
         }
+        if (_lastState == null ||
+            _lastState?.currentUser?.id != state.currentUser?.id) {
+          context.read<HomeCubit>().updateUserFcmData();
+        }
+        _lastState = state;
       },
       builder: (context, state) {
         return Scaffold(

@@ -21,15 +21,19 @@ class TableWidget extends StatelessWidget {
       onCanHelpSelected;
   final Function(TableEvent event) onNotificationClick;
   final Function(TableEvent event) onEditClick;
+  final Function(TableEvent event) onHideClick;
+  final Function(TableEvent event) onDeleteClick;
 
-  const TableWidget(
-    this.state,
-    this.onToggleCanHelp,
-    this.onRoleSelected,
-    this.onCanHelpSelected,
-    this.onNotificationClick,
-    this.onEditClick,
-  );
+  const TableWidget({
+    required this.state,
+    required this.onToggleCanHelp,
+    required this.onRoleSelected,
+    required this.onCanHelpSelected,
+    required this.onNotificationClick,
+    required this.onEditClick,
+    required this.onHideClick,
+    required this.onDeleteClick,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -122,6 +126,14 @@ class TableWidget extends StatelessWidget {
                         FocusedMenuItem(
                           title: Text('Редактировать'),
                           onPressed: () => onEditClick(event),
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Скрыть'),
+                          onPressed: () => onHideClick(event),
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Удалить'),
+                          onPressed: () => onDeleteClick(event),
                         ),
                       ],
                       menuWidth: MediaQuery.of(context).size.width * 0.50,

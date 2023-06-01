@@ -6,6 +6,7 @@ import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
+import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/notification.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
@@ -135,12 +136,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ],
           ),
           body: TableWidget(
-            state,
-            context.read<HomeCubit>().toggleCanHelp,
-            context.read<HomeCubit>().onRoleSelected,
-            context.read<HomeCubit>().onCanHelpSelected,
-            (event) {
-              final cubit = context.read<HomeCubit>();
+            state: state,
+            onToggleCanHelp: context.read<HomeCubit>().toggleCanHelp,
+            onRoleSelected: context.read<HomeCubit>().onRoleSelected,
+            onCanHelpSelected: context.read<HomeCubit>().onCanHelpSelected,
+            onNotificationClick: (event) {
               final text = cubit.getNotificationText(event);
               showDialog(
                 context: context,
@@ -151,8 +151,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            (event) {
-              final cubit = context.read<HomeCubit>();
+            onEditClick: (event) {
               showDialog(
                 context: context,
                 builder: (context) => AddEditEventDialog(
@@ -160,6 +159,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   initialTitle: event.title,
                   onConfirmClick: (dateTime, title) =>
                       cubit.updateEvent(event.id, dateTime, title),
+                ),
+              );
+            },
+            onHideClick: (event) {
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  message: 'Скрыть событие "${event.title}"?',
+                  onConfirmationClick: () => cubit.hideEvent(event),
+                ),
+              );
+            },
+            onDeleteClick: (event) {
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  message:
+                      'Удалить событие "${event.title}"? Отметки пользователей также будут удалены.',
+                  onConfirmationClick: () => cubit.deleteEvent(event),
                 ),
               );
             },

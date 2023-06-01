@@ -147,6 +147,10 @@ class HomeCubit extends Cubit<HomeState> {
     tableRepository.addOrUpdateEvent(dateTime, title);
   }
 
+  void updateEvent(int id, DateTime dateTime, String title) {
+    tableRepository.updateEvent(id, date: dateTime, title: title);
+  }
+
   @override
   Future<void> close() async {
     await _firebaseUserSubscription.cancel();

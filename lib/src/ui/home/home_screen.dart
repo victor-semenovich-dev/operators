@@ -151,6 +151,18 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
+            (event) {
+              final cubit = context.read<HomeCubit>();
+              showDialog(
+                context: context,
+                builder: (context) => AddEditEventDialog(
+                  initialDateTime: event.date,
+                  initialTitle: event.title,
+                  onConfirmClick: (dateTime, title) =>
+                      cubit.updateEvent(event.id, dateTime, title),
+                ),
+              );
+            },
           ),
         );
       },

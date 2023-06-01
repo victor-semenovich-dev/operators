@@ -32,8 +32,8 @@ class SyncEventsUseCase {
         await tableRepository.addOrUpdateEvent(
             futureEvent.date, futureEvent.title);
       } else {
-        await tableRepository.updateEvent(
-            tableEvent.id, futureEvent.title, true);
+        await tableRepository.updateEvent(tableEvent.id,
+            title: futureEvent.title, isActive: true);
       }
     }
   }

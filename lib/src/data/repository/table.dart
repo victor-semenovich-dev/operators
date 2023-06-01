@@ -90,7 +90,7 @@ class TableRepository {
         debugPrint('449');
       }
       if (event.date == date) {
-        await updateEvent(event.id, title, true);
+        await updateEvent(event.id, title: title, isActive: true);
         return;
       }
       if (event.id > maxId) {
@@ -106,9 +106,21 @@ class TableRepository {
     });
   }
 
-  Future<void> updateEvent(int id, String title, bool isActive) async {
-    await _dbRef.child('events/$id/title').set(title);
-    await _dbRef.child('events/$id/isActive').set(isActive);
+  Future<void> updateEvent(
+    int id, {
+    String? title,
+    DateTime? date,
+    bool? isActive,
+  }) async {
+    if (title != null) {
+      await _dbRef.child('events/$id/title').set(title);
+    }
+    if (isActive != null) {
+      await _dbRef.child('events/$id/isActive').set(isActive);
+    }
+    if (date != null) {
+      await _dbRef.child('events/$id/date').set(_dateFormat.format(date));
+    }
   }
 
   Future<void> deleteEvent(int eventId) {

@@ -20,6 +20,7 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
   final Function(TableEvent event) onNotificationClick;
+  final Function(TableEvent event) onEditClick;
 
   const TableWidget(
     this.state,
@@ -27,6 +28,7 @@ class TableWidget extends StatelessWidget {
     this.onRoleSelected,
     this.onCanHelpSelected,
     this.onNotificationClick,
+    this.onEditClick,
   );
 
   @override
@@ -116,7 +118,11 @@ class TableWidget extends StatelessWidget {
                         FocusedMenuItem(
                           title: Text('Уведомление'),
                           onPressed: () => onNotificationClick(event),
-                        )
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Редактировать'),
+                          onPressed: () => onEditClick(event),
+                        ),
                       ],
                       menuWidth: MediaQuery.of(context).size.width * 0.50,
                     )

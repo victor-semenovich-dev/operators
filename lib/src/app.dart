@@ -21,6 +21,8 @@ class OperatorsApp extends StatelessWidget {
         title: 'Участие операторов',
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
         ],
         supportedLocales: [
           const Locale('ru'),

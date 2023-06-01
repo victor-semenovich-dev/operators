@@ -18,23 +18,24 @@ class AddEditEventDialog extends StatefulWidget {
 }
 
 class _AddEditEventDialogState extends State<AddEditEventDialog> {
-  final DateFormat _dateFormat = DateFormat('dd.MM (EE)', 'ru');
-
   late DateTime _dateTime;
-
+  late TimeOfDay _timeOfDay;
   final TextEditingController _titleController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
     setState(() {
-      _dateTime = widget.initialDateTime ?? DateTime.now();
+      _dateTime = (widget.initialDateTime ?? DateTime.now())
+          .copyWith(second: 0, millisecond: 0, microsecond: 0);
+      _timeOfDay = TimeOfDay.fromDateTime(_dateTime);
       _titleController.text = _buildTitle();
     });
   }
 
   String _buildTitle() {
-    return '${DateFormat('dd.MM').format(_dateTime)} (${DateFormat('EE', 'ru').format(_dateTime).toUpperCase()})';
+    return '${DateFormat('dd.MM').format(_dateTime)} '
+        '(${DateFormat('EE', 'ru').format(_dateTime).toUpperCase()})';
   }
 
   @override
@@ -58,10 +59,8 @@ class _AddEditEventDialogState extends State<AddEditEventDialog> {
                   );
                   if (result != null) {
                     setState(() {
-                      _dateTime = _dateTime.copyWith(
-                          year: result.year,
-                          month: result.month,
-                          day: result.day);
+                      _dateTime = result.copyWith(
+                          hour: _timeOfDay.hour, minute: _timeOfDay.minute);
                       _titleController.text = _buildTitle();
                     });
                   }
@@ -76,8 +75,9 @@ class _AddEditEventDialogState extends State<AddEditEventDialog> {
                   );
                   if (result != null) {
                     setState(() {
+                      _timeOfDay = result;
                       _dateTime = _dateTime.copyWith(
-                          hour: result.hour, minute: result.minute);
+                          hour: _timeOfDay.hour, minute: _timeOfDay.minute);
                     });
                   }
                 },

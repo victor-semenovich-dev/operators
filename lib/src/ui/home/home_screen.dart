@@ -55,7 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ));
           context.read<HomeCubit>().consumeSendNotificationResult();
         }
-        if (!kIsWeb) {
+        if (!kIsWeb && _lastState?.isAdmin != state.isAdmin) {
           if (state.isAdmin) {
             _initBackgroundFetch();
           } else {
@@ -69,6 +69,7 @@ class _HomeScreenState extends State<HomeScreen> {
         _lastState = state;
       },
       builder: (context, state) {
+        final cubit = context.read<HomeCubit>();
         return Scaffold(
           appBar: AppBar(
             title: !state.isLoggedIn
@@ -93,7 +94,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   onPressed: () => showDialog(
                     context: context,
                     builder: (context) => AddEditEventDialog(
-                      onConfirmClick: (dateTime, title) {},
+                      onConfirmClick: cubit.addEvent,
                     ),
                   ),
                   icon: Icon(Icons.add),

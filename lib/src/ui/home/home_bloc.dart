@@ -102,8 +102,28 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
-  void sendNotification(String title, String body) {
-    fcmRepository.sendNotification(title, body);
+  void sendNotification(String title, String body) async {
+    final result = await fcmRepository.sendNotification(title, body);
+    emit(state.copyWith(sendNotificationResult: result));
+  }
+
+  String? getNotificationResultReadableText() {
+    switch (state.sendNotificationResult) {
+      case SendNotificationResult.SUCCESS:
+        return 'Уведомление отправлено';
+      case SendNotificationResult.FAILURE:
+        return 'Не удалось отправить уведомление';
+      case SendNotificationResult.FAILURE_TOPIC:
+        return 'Ошибка отправки уведомления на мобильные клиенты';
+      case SendNotificationResult.FAILURE_WEB:
+        return 'Ошибка отправки уведомления на веб клиенты';
+      default:
+        return null;
+    }
+  }
+
+  void consumeSendNotificationResult() {
+    emit(state.copyWith(sendNotificationResult: null));
   }
 
   void logout() {
@@ -141,6 +161,7 @@ class HomeState with _$HomeState {
   const factory HomeState({
     @Default(null) User? currentFirebaseUser,
     @Default(false) bool isResetPasswordCompleted,
+    @Default(null) SendNotificationResult? sendNotificationResult,
     @Default(null) TableData? tableData,
     @Default(false) bool isAdmin,
     @Default([]) List<TableEvent> allEvents,

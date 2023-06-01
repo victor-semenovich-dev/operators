@@ -51,6 +51,14 @@ class _HomeScreenState extends State<HomeScreen> {
           ));
           context.read<HomeCubit>().consumeResetPasswordState();
         }
+        final sendNotificationResult =
+            context.read<HomeCubit>().getNotificationResultReadableText();
+        if (sendNotificationResult != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(sendNotificationResult),
+          ));
+          context.read<HomeCubit>().consumeSendNotificationResult();
+        }
         if (!kIsWeb) {
           if (state.isAdmin) {
             _initBackgroundFetch();

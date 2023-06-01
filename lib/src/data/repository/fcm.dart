@@ -52,31 +52,49 @@ class FcmRepository {
     }
   }
 
-  Future<bool> sendNotification(String title, String body) async {
-    final service = _chopper.getService<FcmService>();
-    final responseForTopic = await service.send(
-      FcmSendToTopicDTO(
-        '/topics/release',
-        FcmNotificationDTO(title, body, 'default'),
-      ).toJson(),
-    );
+  Future<SendNotificationResult> sendNotification(
+    String title,
+    String body,
+  ) async {
+    try {
+      final service = _chopper.getService<FcmService>();
+      final responseForTopic = await service.send(
+        FcmSendToTopicDTO(
+          kDebugMode ? '/topics/debug' : '/topics/release',
+          FcmNotificationDTO(title, body, 'default'),
+        ).toJson(),
+      );
 
-    final fcmTokens = await _getAndClearTokens();
-    final webTokens = fcmTokens
-        .where((token) => token.platform == DevicePlatform.WEB)
-        // .where((token) => token.uid == 'Ng0JWZrxfahk6qDFdflGL0HDVQz1')
-        .map((token) => token.token)
-        .toList();
-    debugPrint('${webTokens.length} tokens: $webTokens');
+      final fcmTokens = await _getAndClearTokens();
+      final webTokens = fcmTokens
+          .where((token) => token.platform == DevicePlatform.WEB)
+          .where((token) =>
+              kDebugMode ? token.uid == 'Ng0JWZrxfahk6qDFdflGL0HDVQz1' : true)
+          .map((token) => token.token)
+          .toList();
 
-    final responseForTokens = await service.send(
-      FcmSendToTokensDTO(
-        webTokens,
-        FcmNotificationDTO(title, body, 'default'),
-      ).toJson(),
-    );
+      final responseForTokens = await service.send(
+        FcmSendToTokensDTO(
+          webTokens,
+          FcmNotificationDTO(title, body, 'default'),
+        ).toJson(),
+      );
 
-    return responseForTopic.isSuccessful && responseForTokens.isSuccessful;
+      if (responseForTopic.isSuccessful && responseForTokens.isSuccessful) {
+        return SendNotificationResult.SUCCESS;
+      } else if (responseForTopic.isSuccessful &&
+          !responseForTokens.isSuccessful) {
+        return SendNotificationResult.FAILURE_WEB;
+      } else if (!responseForTopic.isSuccessful &&
+          responseForTokens.isSuccessful) {
+        return SendNotificationResult.FAILURE_TOPIC;
+      } else {
+        return SendNotificationResult.FAILURE;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return SendNotificationResult.FAILURE;
+    }
   }
 
   /// get FCM tokens and remove old tokens
@@ -102,3 +120,5 @@ class FcmRepository {
     return resultList;
   }
 }
+
+enum SendNotificationResult { SUCCESS, FAILURE, FAILURE_TOPIC, FAILURE_WEB }

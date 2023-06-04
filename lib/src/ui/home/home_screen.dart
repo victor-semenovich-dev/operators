@@ -7,7 +7,6 @@ import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
 import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
-import 'package:operators/src/ui/home/widget/notification.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -147,10 +146,21 @@ class _HomeScreenState extends State<HomeScreen> {
               final text = cubit.getNotificationText(event);
               showDialog(
                 context: context,
-                builder: (context) => NotificationDialog(
+                builder: (context) => ConfirmationDialog(
                   title: event.title,
-                  body: text,
-                  onSendClick: () => cubit.sendNotification(event.title, text),
+                  message: text,
+                  onConfirmationClick: () =>
+                      cubit.sendNotification(event.title, text),
+                ),
+              );
+            },
+            onRemindClick: (event) {
+              final users = cubit.getMissedMarksUsers(event);
+              showDialog(
+                context: context,
+                builder: (context) => ConfirmationDialog(
+                  message: users.map((e) => e.name).join('\n'),
+                  onConfirmationClick: () => cubit.sendRemind(event, users),
                 ),
               );
             },

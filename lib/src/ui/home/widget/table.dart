@@ -20,6 +20,7 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
   final Function(TableEvent event) onNotificationClick;
+  final Function(TableEvent event) onRemindClick;
   final Function(TableEvent event) onEditClick;
   final Function(TableEvent event) onHideClick;
   final Function(TableEvent event) onDeleteClick;
@@ -30,6 +31,7 @@ class TableWidget extends StatelessWidget {
     required this.onRoleSelected,
     required this.onCanHelpSelected,
     required this.onNotificationClick,
+    required this.onRemindClick,
     required this.onEditClick,
     required this.onHideClick,
     required this.onDeleteClick,
@@ -120,8 +122,12 @@ class TableWidget extends StatelessWidget {
                       onPressed: () {},
                       menuItems: [
                         FocusedMenuItem(
-                          title: Text('Уведомление'),
+                          title: Text('Уведомление: участие'),
                           onPressed: () => onNotificationClick(event),
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Напоминание: отметки'),
+                          onPressed: () => onRemindClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Редактировать'),

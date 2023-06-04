@@ -97,10 +97,39 @@ class FcmRepository {
     }
   }
 
+  Future<SendNotificationResult> sendNotificationToUsers(
+    String title,
+    String body,
+    List<String> uids,
+  ) async {
+    try {
+      final service = _chopper.getService<FcmService>();
+      final tokens = (await _getAndClearTokens())
+          .where((token) => uids.contains(token.uid))
+          .map((e) => e.token)
+          .toList();
+      final response = await service.send(
+        FcmSendToTokensDTO(
+          tokens,
+          FcmNotificationDTO(title, body, 'default'),
+        ).toJson(),
+      );
+      if (response.isSuccessful) {
+        return SendNotificationResult.SUCCESS;
+      } else {
+        return SendNotificationResult.FAILURE;
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+      return SendNotificationResult.FAILURE;
+    }
+  }
+
   /// get FCM tokens and remove old tokens
   Future<List<FcmToken>> _getAndClearTokens() async {
     List<FcmToken> resultList = [];
-    final snapshot = await FirebaseDatabase.instance.ref('fcm').get();
+    final snapshot =
+        (await FirebaseDatabase.instance.ref('fcm').once()).snapshot;
     if (snapshot.value is Map) {
       final fcmMap = snapshot.value as Map;
       fcmMap.forEach((token, data) {

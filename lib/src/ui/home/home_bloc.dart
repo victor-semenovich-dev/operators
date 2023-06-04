@@ -102,6 +102,26 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
+  List<TableUser> getMissedMarksUsers(TableEvent event) {
+    return state.tableData?.users
+            .where((user) => event.state[user.id]?.canHelp == null)
+            .toList() ??
+        [];
+  }
+
+  void sendRemind(TableEvent event, List<TableUser> users) async {
+    final result = await fcmRepository.sendNotificationToUsers(
+      'Напоминание',
+      'Отметься на служение "${event.title}"',
+      users
+          .map((e) => e.uid)
+          .where((uid) => uid != null)
+          .map((e) => e!)
+          .toList(),
+    );
+    emit(state.copyWith(sendNotificationResult: result));
+  }
+
   void sendNotification(String title, String body) async {
     final result = await fcmRepository.sendNotification(title, body);
     emit(state.copyWith(sendNotificationResult: result));

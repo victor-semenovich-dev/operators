@@ -21,13 +21,16 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _initBackgroundFetch() async {
     await BackgroundFetch.configure(
       BackgroundFetchConfig(
-        minimumFetchInterval: 24 * 60,
+        minimumFetchInterval: 12 * 60,
         startOnBoot: true,
         requiredNetworkType: NetworkType.ANY,
       ),
       (String taskId) async {
-        final useCase = SyncEventsUseCase(context.read(), context.read());
-        await useCase.perform();
+        final now = DateTime.now();
+        if (now.hour >= 21 || now.hour < 9) {
+          final useCase = SyncEventsUseCase(context.read(), context.read());
+          await useCase.perform();
+        }
         BackgroundFetch.finish(taskId);
       },
       (String taskId) async {

@@ -17,6 +17,8 @@ class SyncEventsUseCase {
     for (final event in allTableEvents) {
       if (now.difference(event.date) > Duration(days: 60)) {
         await tableRepository.deleteEvent(event.id);
+      } else if (event.isActive && event.date.isBefore(now)) {
+        await tableRepository.updateEvent(event.id, isActive: false);
       }
     }
 

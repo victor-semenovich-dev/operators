@@ -72,9 +72,10 @@ class HomeCubit extends Cubit<HomeState> {
           DateTime.now().difference(e.date) < Duration(days: 30) &&
           e.state[user.id]?.role != null) {
         value++;
-        if (lastDate == null || e.date.isAfter(lastDate!)) {
-          lastDate = e.date;
-        }
+      }
+      if (e.state[user.id]?.role != null &&
+          (lastDate == null || e.date.isAfter(lastDate!))) {
+        lastDate = e.date;
       }
     });
     return Rating(value, lastDate);

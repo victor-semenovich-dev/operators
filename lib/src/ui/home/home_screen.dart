@@ -92,17 +92,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   icon: Icon(Icons.login),
                   tooltip: 'Авторизация',
                 ),
-              if (state.isAdmin)
-                IconButton(
-                  onPressed: () => showDialog(
-                    context: context,
-                    builder: (context) => AddEditEventDialog(
-                      onConfirmClick: cubit.addEvent,
-                    ),
-                  ),
-                  icon: Icon(Icons.add),
-                  tooltip: 'Добавить',
-                ),
               if (state.isAdmin && !kIsWeb)
                 IconButton(
                   onPressed: () => context.read<HomeCubit>().updateEvents(),
@@ -114,6 +103,14 @@ class _HomeScreenState extends State<HomeScreen> {
                   tooltip: 'Меню',
                   onSelected: (value) async {
                     switch (value) {
+                      case 'add_event':
+                        showDialog(
+                          context: context,
+                          builder: (context) => AddEditEventDialog(
+                            onConfirmClick: cubit.addEvent,
+                          ),
+                        );
+                        break;
                       case 'password':
                         context.read<HomeCubit>().resetPassword();
                         break;
@@ -124,6 +121,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   itemBuilder: (context) {
                     return [
+                      if (state.isAdmin)
+                        PopupMenuItem<String>(
+                          value: 'add_event',
+                          child: Text('Добавить событие'),
+                        ),
                       PopupMenuItem<String>(
                         value: 'password',
                         child: Text('Сменить пароль'),

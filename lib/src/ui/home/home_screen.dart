@@ -44,20 +44,32 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
       listener: (context, state) {
+        final cubit = context.read<HomeCubit>();
+
         if (state.isResetPasswordCompleted) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text('Письмо со сбросом пароля отправлено на почту'),
           ));
-          context.read<HomeCubit>().consumeResetPasswordState();
+          cubit.consumeResetPasswordState();
         }
+
         final sendNotificationResult =
-            context.read<HomeCubit>().getNotificationResultReadableText();
+            cubit.getNotificationResultReadableText();
         if (sendNotificationResult != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(sendNotificationResult),
           ));
-          context.read<HomeCubit>().consumeSendNotificationResult();
+          cubit.consumeSendNotificationResult();
         }
+
+        final syncResult = cubit.getSyncResultText();
+        if (syncResult != null) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(syncResult),
+          ));
+          cubit.consumeSyncEventsResult();
+        }
+
         if (!kIsWeb && _lastState?.isAdmin != state.isAdmin) {
           if (state.isAdmin) {
             _initBackgroundFetch();
@@ -65,9 +77,10 @@ class _HomeScreenState extends State<HomeScreen> {
             BackgroundFetch.stop();
           }
         }
+
         if (_lastState == null ||
             _lastState?.currentUser?.id != state.currentUser?.id) {
-          context.read<HomeCubit>().updateUserFcmData();
+          cubit.updateUserFcmData();
         }
         _lastState = state;
       },
@@ -93,11 +106,26 @@ class _HomeScreenState extends State<HomeScreen> {
                   tooltip: 'Авторизация',
                 ),
               if (state.isAdmin && !kIsWeb)
-                IconButton(
-                  onPressed: () => context.read<HomeCubit>().updateEvents(),
-                  icon: Icon(Icons.sync),
-                  tooltip: 'Обновить',
-                ),
+                if (state.syncInProgress)
+                  Container(
+                    width: 48,
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(
+                          color: Colors.white,
+                          strokeWidth: 2,
+                        ),
+                      ),
+                    ),
+                  )
+                else
+                  IconButton(
+                    onPressed: () => context.read<HomeCubit>().updateEvents(),
+                    icon: Icon(Icons.sync),
+                    tooltip: 'Обновить',
+                  ),
               if (state.isLoggedIn)
                 PopupMenuButton<String>(
                   tooltip: 'Меню',

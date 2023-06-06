@@ -20,6 +20,8 @@ mixin _$HomeState {
   bool get isResetPasswordCompleted => throw _privateConstructorUsedError;
   SendNotificationResult? get sendNotificationResult =>
       throw _privateConstructorUsedError;
+  SyncResult? get syncResult => throw _privateConstructorUsedError;
+  bool get syncInProgress => throw _privateConstructorUsedError;
   TableData? get tableData => throw _privateConstructorUsedError;
   bool get isAdmin => throw _privateConstructorUsedError;
   List<TableEvent> get allEvents => throw _privateConstructorUsedError;
@@ -39,6 +41,8 @@ abstract class $HomeStateCopyWith<$Res> {
       {User? currentFirebaseUser,
       bool isResetPasswordCompleted,
       SendNotificationResult? sendNotificationResult,
+      SyncResult? syncResult,
+      bool syncInProgress,
       TableData? tableData,
       bool isAdmin,
       List<TableEvent> allEvents,
@@ -61,6 +65,8 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
     Object? sendNotificationResult = freezed,
+    Object? syncResult = freezed,
+    Object? syncInProgress = null,
     Object? tableData = freezed,
     Object? isAdmin = null,
     Object? allEvents = null,
@@ -79,6 +85,14 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.sendNotificationResult
           : sendNotificationResult // ignore: cast_nullable_to_non_nullable
               as SendNotificationResult?,
+      syncResult: freezed == syncResult
+          ? _value.syncResult
+          : syncResult // ignore: cast_nullable_to_non_nullable
+              as SyncResult?,
+      syncInProgress: null == syncInProgress
+          ? _value.syncInProgress
+          : syncInProgress // ignore: cast_nullable_to_non_nullable
+              as bool,
       tableData: freezed == tableData
           ? _value.tableData
           : tableData // ignore: cast_nullable_to_non_nullable
@@ -110,6 +124,8 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       {User? currentFirebaseUser,
       bool isResetPasswordCompleted,
       SendNotificationResult? sendNotificationResult,
+      SyncResult? syncResult,
+      bool syncInProgress,
       TableData? tableData,
       bool isAdmin,
       List<TableEvent> allEvents,
@@ -130,6 +146,8 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? currentFirebaseUser = freezed,
     Object? isResetPasswordCompleted = null,
     Object? sendNotificationResult = freezed,
+    Object? syncResult = freezed,
+    Object? syncInProgress = null,
     Object? tableData = freezed,
     Object? isAdmin = null,
     Object? allEvents = null,
@@ -148,6 +166,14 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value.sendNotificationResult
           : sendNotificationResult // ignore: cast_nullable_to_non_nullable
               as SendNotificationResult?,
+      syncResult: freezed == syncResult
+          ? _value.syncResult
+          : syncResult // ignore: cast_nullable_to_non_nullable
+              as SyncResult?,
+      syncInProgress: null == syncInProgress
+          ? _value.syncInProgress
+          : syncInProgress // ignore: cast_nullable_to_non_nullable
+              as bool,
       tableData: freezed == tableData
           ? _value.tableData
           : tableData // ignore: cast_nullable_to_non_nullable
@@ -175,6 +201,8 @@ class _$_HomeState extends _HomeState {
       {this.currentFirebaseUser = null,
       this.isResetPasswordCompleted = false,
       this.sendNotificationResult = null,
+      this.syncResult = null,
+      this.syncInProgress = false,
       this.tableData = null,
       this.isAdmin = false,
       final List<TableEvent> allEvents = const [],
@@ -192,6 +220,12 @@ class _$_HomeState extends _HomeState {
   @override
   @JsonKey()
   final SendNotificationResult? sendNotificationResult;
+  @override
+  @JsonKey()
+  final SyncResult? syncResult;
+  @override
+  @JsonKey()
+  final bool syncInProgress;
   @override
   @JsonKey()
   final TableData? tableData;
@@ -218,7 +252,7 @@ class _$_HomeState extends _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers)';
   }
 
   @override
@@ -233,6 +267,10 @@ class _$_HomeState extends _HomeState {
                 other.isResetPasswordCompleted == isResetPasswordCompleted) &&
             (identical(other.sendNotificationResult, sendNotificationResult) ||
                 other.sendNotificationResult == sendNotificationResult) &&
+            (identical(other.syncResult, syncResult) ||
+                other.syncResult == syncResult) &&
+            (identical(other.syncInProgress, syncInProgress) ||
+                other.syncInProgress == syncInProgress) &&
             (identical(other.tableData, tableData) ||
                 other.tableData == tableData) &&
             (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin) &&
@@ -247,6 +285,8 @@ class _$_HomeState extends _HomeState {
       currentFirebaseUser,
       isResetPasswordCompleted,
       sendNotificationResult,
+      syncResult,
+      syncInProgress,
       tableData,
       isAdmin,
       const DeepCollectionEquality().hash(_allEvents),
@@ -264,6 +304,8 @@ abstract class _HomeState extends HomeState {
       {final User? currentFirebaseUser,
       final bool isResetPasswordCompleted,
       final SendNotificationResult? sendNotificationResult,
+      final SyncResult? syncResult,
+      final bool syncInProgress,
       final TableData? tableData,
       final bool isAdmin,
       final List<TableEvent> allEvents,
@@ -276,6 +318,10 @@ abstract class _HomeState extends HomeState {
   bool get isResetPasswordCompleted;
   @override
   SendNotificationResult? get sendNotificationResult;
+  @override
+  SyncResult? get syncResult;
+  @override
+  bool get syncInProgress;
   @override
   TableData? get tableData;
   @override

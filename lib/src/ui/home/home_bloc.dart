@@ -143,6 +143,22 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  String? getSyncResultText() {
+    final syncResult = state.syncResult;
+    if (syncResult == null) {
+      return null;
+    } else {
+      final eventsResult =
+          'добавлено: ${syncResult.added}, обновлено: ${syncResult.updated}, '
+          'скрыто: ${syncResult.hidden}, удалено: ${syncResult.deleted}';
+      if (syncResult.error == null) {
+        return 'Синхронизация успешно завершена ($eventsResult)';
+      } else {
+        return 'Произошла ошибка: "${syncResult.error}" ($eventsResult)';
+      }
+    }
+  }
+
   void consumeSendNotificationResult() {
     emit(state.copyWith(sendNotificationResult: null));
   }
@@ -160,8 +176,15 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isResetPasswordCompleted: false));
   }
 
-  void updateEvents() {
-    SyncEventsUseCase(eventsRepository, tableRepository).perform();
+  void updateEvents() async {
+    emit(state.copyWith(syncInProgress: true));
+    final result =
+        await SyncEventsUseCase(eventsRepository, tableRepository).perform();
+    emit(state.copyWith(syncInProgress: false, syncResult: result));
+  }
+
+  void consumeSyncEventsResult() {
+    emit(state.copyWith(syncResult: null));
   }
 
   void addEvent(DateTime dateTime, String title) {
@@ -199,6 +222,8 @@ class HomeState with _$HomeState {
     @Default(null) User? currentFirebaseUser,
     @Default(false) bool isResetPasswordCompleted,
     @Default(null) SendNotificationResult? sendNotificationResult,
+    @Default(null) SyncResult? syncResult,
+    @Default(false) bool syncInProgress,
     @Default(null) TableData? tableData,
     @Default(false) bool isAdmin,
     @Default([]) List<TableEvent> allEvents,

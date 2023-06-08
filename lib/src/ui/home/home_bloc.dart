@@ -36,12 +36,14 @@ class HomeCubit extends Cubit<HomeState> {
     });
     _tableDataSubscription = tableRepository.tableStream.listen((tableData) {
       emit(state.copyWith(tableData: tableData));
+      _sortUsers();
     });
     _isAdminSubscription = authRepository.isAdminStream.listen((isAdmin) {
       emit(state.copyWith(isAdmin: isAdmin));
     });
     _eventsSubscription = tableRepository.eventsStream.listen((events) {
       emit(state.copyWith(allEvents: events));
+      _sortUsers();
     });
     _usersSubscription = tableRepository.usersStream.listen((users) {
       emit(state.copyWith(allUsers: users));
@@ -64,11 +66,11 @@ class HomeCubit extends Cubit<HomeState> {
     tableRepository.setCanHelp(user, event, canHelp);
   }
 
-  Rating getRating(TableUser user, TableEvent event) {
+  Rating _getRating(TableUser user, DateTime dateTime) {
     int value = 0;
     DateTime? lastDate;
     state.allEvents.forEach((e) {
-      if (e.date.isBefore(event.date) &&
+      if (e.date.isBefore(dateTime) &&
           DateTime.now().difference(e.date) < Duration(days: 30) &&
           e.state[user.id]?.role != null) {
         value++;
@@ -79,6 +81,59 @@ class HomeCubit extends Cubit<HomeState> {
       }
     });
     return Rating(value, lastDate);
+  }
+
+  Rating getRating(TableUser user) {
+    return _getRating(user, DateTime.now());
+  }
+
+  Rating getRatingForEvent(TableUser user, TableEvent event) {
+    return _getRating(user, event.date);
+  }
+
+  void setSortType(SortType sortType) {
+    emit(state.copyWith(sortType: sortType));
+    _sortUsers();
+  }
+
+  void _sortUsers() {
+    final tableData = state.tableData;
+    if (tableData != null) {
+      final users = tableData.users;
+      switch (state.sortType) {
+        case SortType.BY_NAME:
+          emit(state.copyWith(sortedTableUsers: users.sortedBy((e) => e.name)));
+          break;
+        case SortType.BY_RATING:
+          emit(
+            state.copyWith(
+              sortedTableUsers: users.sortedByCompare(
+                (user) => user,
+                (user1, user2) {
+                  final rating1 = getRating(user1);
+                  final rating2 = getRating(user2);
+                  final lastDate1 = rating1.lastDate;
+                  final lastDate2 = rating2.lastDate;
+                  if (rating1.value == rating2.value) {
+                    if (lastDate1 == lastDate2) {
+                      return user1.name.compareTo(user2.name);
+                    } else if (lastDate1 == null) {
+                      return -1;
+                    } else if (lastDate2 == null) {
+                      return 1;
+                    } else {
+                      return lastDate1.compareTo(lastDate2);
+                    }
+                  } else {
+                    return rating1.value - rating2.value;
+                  }
+                },
+              ),
+            ),
+          );
+          break;
+      }
+    }
   }
 
   String getNotificationText(TableEvent event) {
@@ -228,6 +283,8 @@ class HomeState with _$HomeState {
     @Default(false) bool isAdmin,
     @Default([]) List<TableEvent> allEvents,
     @Default([]) List<TableUser> allUsers,
+    @Default([]) List<TableUser> sortedTableUsers,
+    @Default(SortType.BY_NAME) SortType sortType,
   }) = _HomeState;
 
   bool get isLoggedIn => currentFirebaseUser != null;
@@ -241,4 +298,9 @@ class Rating {
   final DateTime? lastDate;
 
   Rating(this.value, this.lastDate);
+
+  @override
+  String toString() {
+    return 'Rating{value: $value, lastDate: $lastDate}';
+  }
 }

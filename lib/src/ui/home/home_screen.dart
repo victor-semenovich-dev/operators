@@ -2,7 +2,6 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
@@ -109,8 +108,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               if (state.isAdmin)
                 SortDropdown(
-                  selectedItem: SortType.BY_NAME,
-                  onItemSelected: (item) {},
+                  selectedItem: state.sortType,
+                  onItemSelected: cubit.setSortType,
                 ),
               if (state.isAdmin && !kIsWeb)
                 if (state.syncInProgress)

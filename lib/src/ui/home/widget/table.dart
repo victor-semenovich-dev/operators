@@ -47,7 +47,7 @@ class TableWidget extends StatelessWidget {
     var rows = <Widget>[];
     final dividerWidget =
         Container(width: double.infinity, height: 1, color: Colors.black);
-    tableData.users.forEach((user) {
+    state.sortedTableUsers.forEach((user) {
       rows
         ..add(_userRow(context, tableData, user.id))
         ..add(dividerWidget);
@@ -272,7 +272,7 @@ class TableWidget extends StatelessWidget {
       BuildContext context, TableUser user, TableEvent event, bool showRating) {
     Widget defaultWidget = Container();
     if (showRating) {
-      final rating = context.read<HomeCubit>().getRating(user, event);
+      final rating = context.read<HomeCubit>().getRatingForEvent(user, event);
       defaultWidget = Container(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,

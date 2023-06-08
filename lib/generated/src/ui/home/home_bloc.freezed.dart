@@ -26,6 +26,8 @@ mixin _$HomeState {
   bool get isAdmin => throw _privateConstructorUsedError;
   List<TableEvent> get allEvents => throw _privateConstructorUsedError;
   List<TableUser> get allUsers => throw _privateConstructorUsedError;
+  List<TableUser> get sortedTableUsers => throw _privateConstructorUsedError;
+  SortType get sortType => throw _privateConstructorUsedError;
 
   @JsonKey(ignore: true)
   $HomeStateCopyWith<HomeState> get copyWith =>
@@ -46,7 +48,9 @@ abstract class $HomeStateCopyWith<$Res> {
       TableData? tableData,
       bool isAdmin,
       List<TableEvent> allEvents,
-      List<TableUser> allUsers});
+      List<TableUser> allUsers,
+      List<TableUser> sortedTableUsers,
+      SortType sortType});
 }
 
 /// @nodoc
@@ -71,6 +75,8 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? isAdmin = null,
     Object? allEvents = null,
     Object? allUsers = null,
+    Object? sortedTableUsers = null,
+    Object? sortType = null,
   }) {
     return _then(_value.copyWith(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -109,6 +115,14 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.allUsers
           : allUsers // ignore: cast_nullable_to_non_nullable
               as List<TableUser>,
+      sortedTableUsers: null == sortedTableUsers
+          ? _value.sortedTableUsers
+          : sortedTableUsers // ignore: cast_nullable_to_non_nullable
+              as List<TableUser>,
+      sortType: null == sortType
+          ? _value.sortType
+          : sortType // ignore: cast_nullable_to_non_nullable
+              as SortType,
     ) as $Val);
   }
 }
@@ -129,7 +143,9 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       TableData? tableData,
       bool isAdmin,
       List<TableEvent> allEvents,
-      List<TableUser> allUsers});
+      List<TableUser> allUsers,
+      List<TableUser> sortedTableUsers,
+      SortType sortType});
 }
 
 /// @nodoc
@@ -152,6 +168,8 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? isAdmin = null,
     Object? allEvents = null,
     Object? allUsers = null,
+    Object? sortedTableUsers = null,
+    Object? sortType = null,
   }) {
     return _then(_$_HomeState(
       currentFirebaseUser: freezed == currentFirebaseUser
@@ -190,6 +208,14 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value._allUsers
           : allUsers // ignore: cast_nullable_to_non_nullable
               as List<TableUser>,
+      sortedTableUsers: null == sortedTableUsers
+          ? _value._sortedTableUsers
+          : sortedTableUsers // ignore: cast_nullable_to_non_nullable
+              as List<TableUser>,
+      sortType: null == sortType
+          ? _value.sortType
+          : sortType // ignore: cast_nullable_to_non_nullable
+              as SortType,
     ));
   }
 }
@@ -206,9 +232,12 @@ class _$_HomeState extends _HomeState {
       this.tableData = null,
       this.isAdmin = false,
       final List<TableEvent> allEvents = const [],
-      final List<TableUser> allUsers = const []})
+      final List<TableUser> allUsers = const [],
+      final List<TableUser> sortedTableUsers = const [],
+      this.sortType = SortType.BY_NAME})
       : _allEvents = allEvents,
         _allUsers = allUsers,
+        _sortedTableUsers = sortedTableUsers,
         super._();
 
   @override
@@ -250,9 +279,23 @@ class _$_HomeState extends _HomeState {
     return EqualUnmodifiableListView(_allUsers);
   }
 
+  final List<TableUser> _sortedTableUsers;
+  @override
+  @JsonKey()
+  List<TableUser> get sortedTableUsers {
+    if (_sortedTableUsers is EqualUnmodifiableListView)
+      return _sortedTableUsers;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_sortedTableUsers);
+  }
+
+  @override
+  @JsonKey()
+  final SortType sortType;
+
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers, sortedTableUsers: $sortedTableUsers, sortType: $sortType)';
   }
 
   @override
@@ -276,7 +319,11 @@ class _$_HomeState extends _HomeState {
             (identical(other.isAdmin, isAdmin) || other.isAdmin == isAdmin) &&
             const DeepCollectionEquality()
                 .equals(other._allEvents, _allEvents) &&
-            const DeepCollectionEquality().equals(other._allUsers, _allUsers));
+            const DeepCollectionEquality().equals(other._allUsers, _allUsers) &&
+            const DeepCollectionEquality()
+                .equals(other._sortedTableUsers, _sortedTableUsers) &&
+            (identical(other.sortType, sortType) ||
+                other.sortType == sortType));
   }
 
   @override
@@ -290,7 +337,9 @@ class _$_HomeState extends _HomeState {
       tableData,
       isAdmin,
       const DeepCollectionEquality().hash(_allEvents),
-      const DeepCollectionEquality().hash(_allUsers));
+      const DeepCollectionEquality().hash(_allUsers),
+      const DeepCollectionEquality().hash(_sortedTableUsers),
+      sortType);
 
   @JsonKey(ignore: true)
   @override
@@ -309,7 +358,9 @@ abstract class _HomeState extends HomeState {
       final TableData? tableData,
       final bool isAdmin,
       final List<TableEvent> allEvents,
-      final List<TableUser> allUsers}) = _$_HomeState;
+      final List<TableUser> allUsers,
+      final List<TableUser> sortedTableUsers,
+      final SortType sortType}) = _$_HomeState;
   const _HomeState._() : super._();
 
   @override
@@ -330,6 +381,10 @@ abstract class _HomeState extends HomeState {
   List<TableEvent> get allEvents;
   @override
   List<TableUser> get allUsers;
+  @override
+  List<TableUser> get sortedTableUsers;
+  @override
+  SortType get sortType;
   @override
   @JsonKey(ignore: true)
   _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>

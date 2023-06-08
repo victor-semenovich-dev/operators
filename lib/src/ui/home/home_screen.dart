@@ -2,11 +2,13 @@ import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
 import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
+import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -104,6 +106,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                   icon: Icon(Icons.login),
                   tooltip: 'Авторизация',
+                ),
+              if (state.isAdmin)
+                SortDropdown(
+                  selectedItem: SortType.BY_NAME,
+                  onItemSelected: (item) {},
                 ),
               if (state.isAdmin && !kIsWeb)
                 if (state.syncInProgress)

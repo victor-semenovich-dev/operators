@@ -16,3 +16,5 @@ class TableData {
     return null;
   }
 }
+
+enum SortType { BY_NAME, BY_RATING }

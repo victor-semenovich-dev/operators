@@ -1,4 +1,5 @@
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:operators/src/data/model/table.dart';
 
@@ -46,17 +47,22 @@ class SortDropdown extends StatelessWidget {
           }
         },
         buttonStyleData: ButtonStyleData(
-          height: 48,
-          width: 48,
-          padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(24),
           ),
-          // elevation: 2,
+          overlayColor: kIsWeb
+              ? MaterialStateProperty.resolveWith((states) {
+                  if (states.contains(MaterialState.hovered) ||
+                      states.contains(MaterialState.pressed)) {
+                    return Colors.black.withOpacity(0.03);
+                  }
+                  return Colors.transparent;
+                })
+              : null,
         ),
-        iconStyleData: const IconStyleData(
-          icon: Icon(Icons.sort, color: Colors.white),
-          iconSize: 24,
+        customButton: SizedBox(
+          width: 48,
+          child: Icon(Icons.sort, color: Colors.white),
         ),
         dropdownStyleData: const DropdownStyleData(
           maxHeight: 200,

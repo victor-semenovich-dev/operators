@@ -111,7 +111,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   selectedItem: state.sortType,
                   onItemSelected: cubit.setSortType,
                 ),
-              if (state.isAdmin && !kIsWeb)
+              if (state.isAdmin)
                 if (state.syncInProgress)
                   Container(
                     width: 48,

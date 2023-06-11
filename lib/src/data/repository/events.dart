@@ -1,5 +1,5 @@
 import 'package:chopper/chopper.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart' as logging;
@@ -27,26 +27,67 @@ class EventsRepository {
   );
 
   Future<List<Event>> loadFutureEvents() async {
-    final eventsService = _chopper.getService<EventsService>();
-    final eventsResponse = await eventsService.getEvents();
-    if (eventsResponse.isSuccessful) {
-      final eventsList = eventsResponse.body;
-      if (eventsList != null) {
-        return eventsList
-            .where((e) => e.category == CategoryDTO.WORSHIP)
-            .map((e) {
-          final title;
-          final weekday = DateFormat('EE', 'ru').format(e.date).toUpperCase();
-          if (e.date.weekday == DateTime.sunday) {
-            final partOfDay = e.date.hour <= 12 ? 'утро' : 'вечер';
-            title = DateFormat('dd.MM ($weekday, $partOfDay)').format(e.date);
-          } else {
-            title = DateFormat('dd.MM ($weekday)').format(e.date);
-          }
-          return Event(e.id, title, e.date);
-        }).toList();
+    if (kIsWeb) {
+      final now = DateTime.now();
+      DateTime thursday = now.copyWith(
+        day: now.day + (DateTime.thursday - now.weekday),
+        hour: 19,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+        microsecond: 0,
+      );
+      DateTime sundayMorning = now.copyWith(
+        day: now.day + (DateTime.sunday - now.weekday),
+        hour: 10,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+        microsecond: 0,
+      );
+      DateTime sundayEvening = now.copyWith(
+        day: now.day + (DateTime.sunday - now.weekday),
+        hour: 18,
+        minute: 0,
+        second: 0,
+        millisecond: 0,
+        microsecond: 0,
+      );
+      if (thursday.isBefore(now)) {
+        thursday = thursday.copyWith(day: thursday.day + 7);
       }
+      if (sundayMorning.isBefore(now)) {
+        sundayMorning = sundayMorning.copyWith(day: sundayMorning.day + 7);
+      }
+      if (sundayEvening.isBefore(now)) {
+        sundayEvening = sundayEvening.copyWith(day: sundayEvening.day + 7);
+      }
+      final eventsList = [
+        Event(0, _formatDate(thursday), thursday),
+        Event(0, _formatDate(sundayMorning), sundayMorning),
+        Event(0, _formatDate(sundayEvening), sundayEvening),
+      ];
+      eventsList.sort((a, b) => a.date.compareTo(b.date));
+      return eventsList;
+    } else {
+      final eventsService = _chopper.getService<EventsService>();
+      final eventsResponse = await eventsService.getEvents();
+      final eventsList = eventsResponse.body;
+      return eventsList!
+          .where((e) => e.category == CategoryDTO.WORSHIP)
+          .map((e) {
+        return Event(e.id, _formatDate(e.date), e.date);
+      }).toList();
     }
-    return List.empty();
+  }
+
+  String _formatDate(DateTime date) {
+    final weekday = DateFormat('EE', 'ru').format(date).toUpperCase();
+    if (date.weekday == DateTime.sunday) {
+      final partOfDay = date.hour <= 12 ? 'утро' : 'вечер';
+      return DateFormat('dd.MM ($weekday, $partOfDay)').format(date);
+    } else {
+      return DateFormat('dd.MM ($weekday)').format(date);
+    }
   }
 }

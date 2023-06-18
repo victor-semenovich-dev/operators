@@ -11,6 +11,7 @@ import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
+import 'package:operators/src/data/repository/telegram.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 
 part '../../../generated/src/ui/home/home_bloc.freezed.dart';
@@ -20,6 +21,7 @@ class HomeCubit extends Cubit<HomeState> {
   final AuthRepository authRepository;
   final TableRepository tableRepository;
   final EventsRepository eventsRepository;
+  final TelegramRepository telegramRepository;
 
   late StreamSubscription _firebaseUserSubscription;
   late StreamSubscription _tableDataSubscription;
@@ -28,7 +30,7 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _usersSubscription;
 
   HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
-      this.eventsRepository)
+      this.eventsRepository, this.telegramRepository)
       : super(HomeState()) {
     _firebaseUserSubscription =
         authRepository.userStream.listen((firebaseUser) {
@@ -178,6 +180,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void sendNotification(String title, String body) async {
+    telegramRepository.sendMessageToTelegramChannels(title, body);
     final result = await fcmRepository.sendNotification(title, body);
     emit(state.copyWith(sendNotificationResult: result));
   }

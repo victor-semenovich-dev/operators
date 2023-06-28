@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:operators/src/data/model/event.dart';
@@ -167,6 +169,33 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void sendRemind(TableEvent event, List<TableUser> users) async {
+    final msgPC = (await FirebaseDatabase.instance
+            .ref('/messages/remind_operators_pc')
+            .get())
+        .value
+        .toString()
+        .replaceAll('\\n', '\n');
+    final msgVideo = (await FirebaseDatabase.instance
+            .ref('/messages/remind_operators_video')
+            .get())
+        .value
+        .toString()
+        .replaceAll('\\n', '\n');
+
+    final dateNow = DateTime.now();
+    final lastTime = telegramRepository.lastTimeRemind;
+    if (lastTime != null) {
+      debugPrint('last remind - ${dateNow.difference(lastTime)} ago');
+    }
+    if (lastTime == null || dateNow.difference(lastTime) > Duration(days: 1)) {
+      telegramRepository
+          .sendMessageToTelegramChannels(msgPC, [MAIN_CHANNEL_ID]);
+      telegramRepository
+          .sendMessageToTelegramChannels(msgVideo, [VIDEO_CHANNEL_ID]);
+
+      telegramRepository.lastTimeRemind = dateNow;
+    }
+
     final result = await fcmRepository.sendNotificationToUsers(
       'Напоминание',
       'Отметься на служение "${event.title}"',
@@ -180,7 +209,8 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void sendNotification(String title, String body) async {
-    telegramRepository.sendMessageToTelegramChannels(title, body);
+    telegramRepository.sendMessageToTelegramChannels(
+        "$title\n\n$body", [MAIN_CHANNEL_ID, VIDEO_CHANNEL_ID]);
     final result = await fcmRepository.sendNotification(title, body);
     emit(state.copyWith(sendNotificationResult: result));
   }

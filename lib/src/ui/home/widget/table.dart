@@ -198,22 +198,27 @@ class TableWidget extends StatelessWidget {
         }
         final itemWidget = GestureDetector(
           onTap: () {
-            if (!event.state.containsKey(user.id) ||
-                event.state[user.id]?.role == null) {
-              if (!state.isLoggedIn) {
-                showDialog(
-                  context: context,
-                  builder: (context) => AuthorizationDialogProvider(),
-                );
-              } else if (state.currentFirebaseUser?.uid == user.uid) {
-                onToggleCanHelp(user, event);
-              } else {
+            if (!state.isLoggedIn) {
+              showDialog(
+                context: context,
+                builder: (context) => AuthorizationDialogProvider(),
+              );
+            } else if (state.currentFirebaseUser?.uid == user.uid) {
+              if (event.state[user.id]?.role != null) {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                   content: Text(
-                    'Можно отмечаться только в своих ячейках',
+                    'Нельзя изменить отметку после назначения',
                   ),
                 ));
+              } else {
+                onToggleCanHelp(user, event);
               }
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text(
+                  'Можно отмечаться только в своих ячейках',
+                ),
+              ));
             }
           },
           child: Container(

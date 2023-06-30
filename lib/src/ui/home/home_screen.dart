@@ -145,6 +145,9 @@ class _HomeScreenState extends State<HomeScreen> {
                           ),
                         );
                         break;
+                      case 'toggle_inactive_users':
+                        cubit.showAllUsers(!state.showAllUsers);
+                        break;
                       case 'password':
                         context.read<HomeCubit>().resetPassword();
                         break;
@@ -159,6 +162,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         PopupMenuItem<String>(
                           value: 'add_event',
                           child: Text('Добавить событие'),
+                        ),
+                      if (state.isAdmin)
+                        PopupMenuItem<String>(
+                          value: 'toggle_inactive_users',
+                          child: Text(state.showAllUsers
+                              ? 'Скрыть неактивных пользователей'
+                              : 'Показывать всех пользователей'),
                         ),
                       PopupMenuItem<String>(
                         value: 'password',

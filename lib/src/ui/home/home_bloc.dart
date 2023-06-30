@@ -51,6 +51,7 @@ class HomeCubit extends Cubit<HomeState> {
     });
     _usersSubscription = tableRepository.usersStream.listen((users) {
       emit(state.copyWith(allUsers: users));
+      _sortUsers();
     });
   }
 
@@ -105,37 +106,46 @@ class HomeCubit extends Cubit<HomeState> {
       final users = tableData.users;
       switch (state.sortType) {
         case SortType.BY_NAME:
-          emit(state.copyWith(sortedTableUsers: users.sortedBy((e) => e.name)));
+          emit(state.copyWith(
+            sortedTableUsers: users.sortedBy((e) => e.name),
+            sortedAllUsers: state.allUsers.sortedBy((e) => e.name),
+          ));
           break;
         case SortType.BY_RATING:
           emit(
             state.copyWith(
               sortedTableUsers: users.sortedByCompare(
                 (user) => user,
-                (user1, user2) {
-                  final rating1 = getRating(user1);
-                  final rating2 = getRating(user2);
-                  final lastDate1 = rating1.lastDate;
-                  final lastDate2 = rating2.lastDate;
-                  if (rating1.value == rating2.value) {
-                    if (lastDate1 == lastDate2) {
-                      return user1.name.compareTo(user2.name);
-                    } else if (lastDate1 == null) {
-                      return -1;
-                    } else if (lastDate2 == null) {
-                      return 1;
-                    } else {
-                      return lastDate1.compareTo(lastDate2);
-                    }
-                  } else {
-                    return rating1.value - rating2.value;
-                  }
-                },
+                (user1, user2) => _compareByRating(user1, user2),
+              ),
+              sortedAllUsers: state.allUsers.sortedByCompare(
+                (user) => user,
+                (user1, user2) => _compareByRating(user1, user2),
               ),
             ),
           );
           break;
       }
+    }
+  }
+
+  int _compareByRating(TableUser user1, TableUser user2) {
+    final rating1 = getRating(user1);
+    final rating2 = getRating(user2);
+    final lastDate1 = rating1.lastDate;
+    final lastDate2 = rating2.lastDate;
+    if (rating1.value == rating2.value) {
+      if (lastDate1 == lastDate2) {
+        return user1.name.compareTo(user2.name);
+      } else if (lastDate1 == null) {
+        return -1;
+      } else if (lastDate2 == null) {
+        return 1;
+      } else {
+        return lastDate1.compareTo(lastDate2);
+      }
+    } else {
+      return rating1.value - rating2.value;
     }
   }
 
@@ -290,6 +300,10 @@ class HomeCubit extends Cubit<HomeState> {
     tableRepository.deleteEvent(event.id);
   }
 
+  void showAllUsers(bool showAllUsers) {
+    emit(state.copyWith(showAllUsers: showAllUsers));
+  }
+
   @override
   Future<void> close() async {
     await _firebaseUserSubscription.cancel();
@@ -315,8 +329,10 @@ class HomeState with _$HomeState {
     @Default(false) bool isAdmin,
     @Default([]) List<TableEvent> allEvents,
     @Default([]) List<TableUser> allUsers,
+    @Default([]) List<TableUser> sortedAllUsers,
     @Default([]) List<TableUser> sortedTableUsers,
     @Default(SortType.BY_NAME) SortType sortType,
+    @Default(false) bool showAllUsers,
   }) = _HomeState;
 
   bool get isLoggedIn => currentFirebaseUser != null;

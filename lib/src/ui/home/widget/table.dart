@@ -47,9 +47,11 @@ class TableWidget extends StatelessWidget {
     var rows = <Widget>[];
     final dividerWidget =
         Container(width: double.infinity, height: 1, color: Colors.black);
-    state.sortedTableUsers.forEach((user) {
+    final users =
+        state.showAllUsers ? state.sortedAllUsers : state.sortedTableUsers;
+    users.forEach((user) {
       rows
-        ..add(_userRow(context, tableData, user.id))
+        ..add(_userRow(context, tableData, user))
         ..add(dividerWidget);
     });
     return Column(
@@ -151,9 +153,8 @@ class TableWidget extends StatelessWidget {
     return Row(children: children);
   }
 
-  Widget _userRow(BuildContext context, TableData tableData, int userId) {
+  Widget _userRow(BuildContext context, TableData tableData, TableUser user) {
     List<Widget> children = <Widget>[];
-    TableUser user = tableData.getUserById(userId)!;
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
         children.add(Expanded(
@@ -164,9 +165,14 @@ class TableWidget extends StatelessWidget {
             height: ROW_HEIGHT,
             padding: EdgeInsets.all(4),
             child: Center(
-              child: Text(user.name,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontWeight: FontWeight.bold)),
+              child: Text(
+                user.name,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: user.isActive ? Colors.black : Colors.black38,
+                ),
+              ),
             ),
           ),
         ));
@@ -176,14 +182,14 @@ class TableWidget extends StatelessWidget {
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
         var showRating = false;
-        if (event.state.containsKey(userId)) {
-          if (event.state[userId]?.role == null) {
-            if (event.state[userId]?.canHelp == true) {
+        if (event.state.containsKey(user.id)) {
+          if (event.state[user.id]?.role == null) {
+            if (event.state[user.id]?.canHelp == true) {
               color = Colors.green;
               if (state.isAdmin) {
                 showRating = true;
               }
-            } else if (event.state[userId]?.canHelp == false) {
+            } else if (event.state[user.id]?.canHelp == false) {
               color = Colors.red[400]!;
             }
           } else {
@@ -224,34 +230,34 @@ class TableWidget extends StatelessWidget {
                 ? FocusedMenuHolder(
                     menuWidth: MediaQuery.of(context).size.width * 0.50,
                     menuItems: [
-                      if (event.state[userId]?.canHelp == true)
+                      if (event.state[user.id]?.canHelp == true)
                         FocusedMenuItem(
                           title: Text('Роль: компьютер'),
                           onPressed: () => onRoleSelected(user, event, Role.PC),
                         ),
-                      if (event.state[userId]?.canHelp == true)
+                      if (event.state[user.id]?.canHelp == true)
                         FocusedMenuItem(
                           title: Text('Роль: камера'),
                           onPressed: () =>
                               onRoleSelected(user, event, Role.CAMERA),
                         ),
-                      if (event.state[userId]?.canHelp == true)
+                      if (event.state[user.id]?.canHelp == true)
                         FocusedMenuItem(
                           title: Text('Роль: ничего'),
                           onPressed: () => onRoleSelected(user, event, null),
                         ),
-                      if (event.state[userId]?.role == null)
+                      if (event.state[user.id]?.role == null)
                         FocusedMenuItem(
                           title: Text('Отметка: зелёный'),
                           onPressed: () => onCanHelpSelected(user, event, true),
                         ),
-                      if (event.state[userId]?.role == null)
+                      if (event.state[user.id]?.role == null)
                         FocusedMenuItem(
                           title: Text('Отметка: красный'),
                           onPressed: () =>
                               onCanHelpSelected(user, event, false),
                         ),
-                      if (event.state[userId]?.role == null)
+                      if (event.state[user.id]?.role == null)
                         FocusedMenuItem(
                           title: Text('Отметка: ничего'),
                           onPressed: () => onCanHelpSelected(user, event, null),

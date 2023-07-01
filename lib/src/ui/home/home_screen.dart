@@ -7,6 +7,7 @@ import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
 import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
+import 'package:operators/src/ui/home/widget/notification_confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
 
@@ -192,11 +193,20 @@ class _HomeScreenState extends State<HomeScreen> {
               final text = cubit.getNotificationText(event);
               showDialog(
                 context: context,
-                builder: (context) => ConfirmationDialog(
+                builder: (context) => NotificationConfirmationDialog(
                   title: event.title,
                   message: text,
-                  onConfirmationClick: () =>
-                      cubit.sendNotification(event.title, text),
+                  onConfirmationClick: (
+                    telegramSendToMainChannel,
+                    telegramSendToVideoChannel,
+                  ) {
+                    cubit.sendNotification(
+                      event.title,
+                      text,
+                      telegramSendToMainChannel,
+                      telegramSendToVideoChannel,
+                    );
+                  },
                 ),
               );
             },
@@ -204,9 +214,20 @@ class _HomeScreenState extends State<HomeScreen> {
               final users = cubit.getMissedMarksUsers(event);
               showDialog(
                 context: context,
-                builder: (context) => ConfirmationDialog(
+                builder: (context) => NotificationConfirmationDialog(
                   message: users.map((e) => e.name).join('\n'),
-                  onConfirmationClick: () => cubit.sendRemind(event, users),
+                  telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
+                  onConfirmationClick: (
+                    telegramSendToMainChannel,
+                    telegramSendToVideoChannel,
+                  ) {
+                    cubit.sendRemind(
+                      event,
+                      users,
+                      telegramSendToMainChannel,
+                      telegramSendToVideoChannel,
+                    );
+                  },
                 ),
               );
             },

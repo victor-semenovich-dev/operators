@@ -15,10 +15,8 @@ class TelegramRepository {
 
   DateTime? lastTimeRemind;
 
-  Future<void> sendMessageToTelegramChannels(
-      String message, List<String> channelIds) async {
-    for (final channelId in channelIds) {
-      _chopper.getService<TelegramService>().sendMessage(channelId, message);
-    }
+  Future<void> sendMessageToTelegramChannel(
+      String message, String channelId) async {
+    _chopper.getService<TelegramService>().sendMessage(channelId, message);
   }
 }

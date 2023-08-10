@@ -97,7 +97,7 @@ class _AuthorizationDialogState extends State<AuthorizationDialog> {
                 showDialog(
                   context: context,
                   builder: (context) => ResetPasswordDialogProvider(
-                      initialEmail: _emailController.text),
+                      initialEmail: _emailController.text.trim()),
                 );
               },
             ),
@@ -115,7 +115,7 @@ class _AuthorizationDialogState extends State<AuthorizationDialog> {
     final cubit = context.read<AuthorizationCubit>();
     final state = _formKey.currentState;
     if (state != null && state.validate()) {
-      cubit.login(_emailController.text, _passwordController.text);
+      cubit.login(_emailController.text.trim(), _passwordController.text);
     }
   }
 }

@@ -90,7 +90,7 @@ class _ResetPasswordDialogState extends State<ResetPasswordDialog> {
   _resetPassword() async {
     final state = _formKey.currentState;
     if (state != null && state.validate()) {
-      final email = _emailController.text;
+      final email = _emailController.text.trim();
       context.read<ResetPasswordCubit>().resetPassword(email);
     }
   }

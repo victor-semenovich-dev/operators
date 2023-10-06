@@ -53,7 +53,7 @@ class _AddEditEventDialogState extends State<AddEditEventDialog> {
                   final result = await showDatePicker(
                     context: context,
                     initialDate: _dateTime,
-                    firstDate: DateTime.now(),
+                    firstDate: DateTime.now().subtract(Duration(days: 90)),
                     lastDate: DateTime.now().add(Duration(days: 90)),
                     locale: Locale('ru'),
                   );

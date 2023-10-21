@@ -34,4 +34,25 @@ class _$TelegramService extends TelegramService {
     );
     return client.send<dynamic, dynamic>($request);
   }
+
+  @override
+  Future<Response<dynamic>> sendMessageToThread(
+    String chatId,
+    String threadId,
+    String text,
+  ) {
+    final Uri $url = Uri.parse('/sendMessage');
+    final Map<String, dynamic> $params = <String, dynamic>{
+      'chat_id': chatId,
+      'message_thread_id': threadId,
+      'text': text,
+    };
+    final Request $request = Request(
+      'GET',
+      $url,
+      client.baseUrl,
+      parameters: $params,
+    );
+    return client.send<dynamic, dynamic>($request);
+  }
 }

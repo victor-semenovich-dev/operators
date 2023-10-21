@@ -204,7 +204,8 @@ class HomeCubit extends Cubit<HomeState> {
 
     final dateNow = DateTime.now();
     if (telegramSendToMainChannel) {
-      telegramRepository.sendMessageToTelegramChannel(msgPC, MAIN_CHANNEL_ID);
+      telegramRepository.sendMessageToTelegramThread(
+          msgPC, MAIN_CHANNEL_ID, MAIN_CHANNEL_THREAD_ID);
       telegramRepository.lastTimeRemind = dateNow;
     }
 
@@ -233,8 +234,8 @@ class HomeCubit extends Cubit<HomeState> {
     bool telegramSendToVideoChannel,
   ) async {
     if (telegramSendToMainChannel) {
-      telegramRepository.sendMessageToTelegramChannel(
-          "$title\n\n$body", MAIN_CHANNEL_ID);
+      telegramRepository.sendMessageToTelegramThread(
+          "$title\n\n$body", MAIN_CHANNEL_ID, MAIN_CHANNEL_THREAD_ID);
     }
     if (telegramSendToVideoChannel) {
       telegramRepository.sendMessageToTelegramChannel(

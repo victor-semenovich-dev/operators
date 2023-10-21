@@ -12,4 +12,11 @@ abstract class TelegramService extends ChopperService {
     @Query('chat_id') String chatId,
     @Query('text') String text,
   );
+
+  @Get(path: '/sendMessage')
+  Future<Response<dynamic>> sendMessageToThread(
+    @Query('chat_id') String chatId,
+    @Query('message_thread_id') String threadId,
+    @Query('text') String text,
+  );
 }

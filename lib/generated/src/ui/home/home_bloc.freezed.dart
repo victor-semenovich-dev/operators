@@ -28,6 +28,8 @@ mixin _$HomeState {
   List<TableUser> get allUsers => throw _privateConstructorUsedError;
   List<TableUser> get sortedAllUsers => throw _privateConstructorUsedError;
   List<TableUser> get sortedTableUsers => throw _privateConstructorUsedError;
+  List<TelegramConfig> get telegramConfigs =>
+      throw _privateConstructorUsedError;
   SortType get sortType => throw _privateConstructorUsedError;
   bool get showAllUsers => throw _privateConstructorUsedError;
 
@@ -53,6 +55,7 @@ abstract class $HomeStateCopyWith<$Res> {
       List<TableUser> allUsers,
       List<TableUser> sortedAllUsers,
       List<TableUser> sortedTableUsers,
+      List<TelegramConfig> telegramConfigs,
       SortType sortType,
       bool showAllUsers});
 }
@@ -81,6 +84,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? allUsers = null,
     Object? sortedAllUsers = null,
     Object? sortedTableUsers = null,
+    Object? telegramConfigs = null,
     Object? sortType = null,
     Object? showAllUsers = null,
   }) {
@@ -129,6 +133,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.sortedTableUsers
           : sortedTableUsers // ignore: cast_nullable_to_non_nullable
               as List<TableUser>,
+      telegramConfigs: null == telegramConfigs
+          ? _value.telegramConfigs
+          : telegramConfigs // ignore: cast_nullable_to_non_nullable
+              as List<TelegramConfig>,
       sortType: null == sortType
           ? _value.sortType
           : sortType // ignore: cast_nullable_to_non_nullable
@@ -160,6 +168,7 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       List<TableUser> allUsers,
       List<TableUser> sortedAllUsers,
       List<TableUser> sortedTableUsers,
+      List<TelegramConfig> telegramConfigs,
       SortType sortType,
       bool showAllUsers});
 }
@@ -186,6 +195,7 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? allUsers = null,
     Object? sortedAllUsers = null,
     Object? sortedTableUsers = null,
+    Object? telegramConfigs = null,
     Object? sortType = null,
     Object? showAllUsers = null,
   }) {
@@ -234,6 +244,10 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value._sortedTableUsers
           : sortedTableUsers // ignore: cast_nullable_to_non_nullable
               as List<TableUser>,
+      telegramConfigs: null == telegramConfigs
+          ? _value._telegramConfigs
+          : telegramConfigs // ignore: cast_nullable_to_non_nullable
+              as List<TelegramConfig>,
       sortType: null == sortType
           ? _value.sortType
           : sortType // ignore: cast_nullable_to_non_nullable
@@ -261,12 +275,14 @@ class _$_HomeState extends _HomeState {
       final List<TableUser> allUsers = const [],
       final List<TableUser> sortedAllUsers = const [],
       final List<TableUser> sortedTableUsers = const [],
+      final List<TelegramConfig> telegramConfigs = const [],
       this.sortType = SortType.BY_NAME,
       this.showAllUsers = false})
       : _allEvents = allEvents,
         _allUsers = allUsers,
         _sortedAllUsers = sortedAllUsers,
         _sortedTableUsers = sortedTableUsers,
+        _telegramConfigs = telegramConfigs,
         super._();
 
   @override
@@ -327,6 +343,15 @@ class _$_HomeState extends _HomeState {
     return EqualUnmodifiableListView(_sortedTableUsers);
   }
 
+  final List<TelegramConfig> _telegramConfigs;
+  @override
+  @JsonKey()
+  List<TelegramConfig> get telegramConfigs {
+    if (_telegramConfigs is EqualUnmodifiableListView) return _telegramConfigs;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_telegramConfigs);
+  }
+
   @override
   @JsonKey()
   final SortType sortType;
@@ -336,7 +361,7 @@ class _$_HomeState extends _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers, sortedAllUsers: $sortedAllUsers, sortedTableUsers: $sortedTableUsers, sortType: $sortType, showAllUsers: $showAllUsers)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers, sortedAllUsers: $sortedAllUsers, sortedTableUsers: $sortedTableUsers, telegramConfigs: $telegramConfigs, sortType: $sortType, showAllUsers: $showAllUsers)';
   }
 
   @override
@@ -365,6 +390,8 @@ class _$_HomeState extends _HomeState {
                 .equals(other._sortedAllUsers, _sortedAllUsers) &&
             const DeepCollectionEquality()
                 .equals(other._sortedTableUsers, _sortedTableUsers) &&
+            const DeepCollectionEquality()
+                .equals(other._telegramConfigs, _telegramConfigs) &&
             (identical(other.sortType, sortType) ||
                 other.sortType == sortType) &&
             (identical(other.showAllUsers, showAllUsers) ||
@@ -385,6 +412,7 @@ class _$_HomeState extends _HomeState {
       const DeepCollectionEquality().hash(_allUsers),
       const DeepCollectionEquality().hash(_sortedAllUsers),
       const DeepCollectionEquality().hash(_sortedTableUsers),
+      const DeepCollectionEquality().hash(_telegramConfigs),
       sortType,
       showAllUsers);
 
@@ -408,6 +436,7 @@ abstract class _HomeState extends HomeState {
       final List<TableUser> allUsers,
       final List<TableUser> sortedAllUsers,
       final List<TableUser> sortedTableUsers,
+      final List<TelegramConfig> telegramConfigs,
       final SortType sortType,
       final bool showAllUsers}) = _$_HomeState;
   const _HomeState._() : super._();
@@ -434,6 +463,8 @@ abstract class _HomeState extends HomeState {
   List<TableUser> get sortedAllUsers;
   @override
   List<TableUser> get sortedTableUsers;
+  @override
+  List<TelegramConfig> get telegramConfigs;
   @override
   SortType get sortType;
   @override

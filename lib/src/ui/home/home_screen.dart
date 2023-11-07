@@ -196,15 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 builder: (context) => NotificationConfirmationDialog(
                   title: event.title,
                   message: text,
-                  onConfirmationClick: (
-                    telegramSendToMainChannel,
-                    telegramSendToVideoChannel,
-                  ) {
+                  telegramConfigs: state.telegramConfigs,
+                  onConfirmationClick: (telegramConfigs) {
                     cubit.sendNotification(
                       event.title,
                       text,
-                      telegramSendToMainChannel,
-                      telegramSendToVideoChannel,
+                      telegramConfigs,
                     );
                   },
                 ),
@@ -216,16 +213,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 context: context,
                 builder: (context) => NotificationConfirmationDialog(
                   message: users.map((e) => e.name).join('\n'),
+                  telegramConfigs: state.telegramConfigs,
                   telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
-                  onConfirmationClick: (
-                    telegramSendToMainChannel,
-                    telegramSendToVideoChannel,
-                  ) {
+                  onConfirmationClick: (telegramConfigs) {
                     cubit.sendRemind(
                       event,
                       users,
-                      telegramSendToMainChannel,
-                      telegramSendToVideoChannel,
+                      telegramConfigs,
                     );
                   },
                 ),

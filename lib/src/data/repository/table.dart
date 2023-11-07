@@ -1,5 +1,4 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
@@ -86,9 +85,6 @@ class TableRepository {
     final tableEvents = await eventsStream.first;
     int maxId = 0;
     for (final event in tableEvents) {
-      if (event.id == 449) {
-        debugPrint('449');
-      }
       if (event.date == date) {
         await updateEvent(event.id, title: title, isActive: true);
         return;

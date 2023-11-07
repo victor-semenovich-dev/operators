@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
+import 'package:operators/src/data/model/telegram.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/events.dart';
@@ -29,6 +29,7 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _isAdminSubscription;
   late StreamSubscription _eventsSubscription;
   late StreamSubscription _usersSubscription;
+  late StreamSubscription _telegramConfigsSubscription;
 
   HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
       this.eventsRepository, this.telegramRepository)
@@ -51,6 +52,10 @@ class HomeCubit extends Cubit<HomeState> {
     _usersSubscription = tableRepository.usersStream.listen((users) {
       emit(state.copyWith(allUsers: users));
       _sortUsers();
+    });
+    _telegramConfigsSubscription =
+        telegramRepository.telegramConfigsStream.listen((telegramConfigs) {
+      emit(state.copyWith(telegramConfigs: telegramConfigs));
     });
   }
 
@@ -186,32 +191,21 @@ class HomeCubit extends Cubit<HomeState> {
   void sendRemind(
     TableEvent event,
     List<TableUser> users,
-    bool telegramSendToPCChannel,
-    bool telegramSendToVideoChannel,
+    List<TelegramConfig> telegramConfigs,
   ) async {
-    final msgPC = (await FirebaseDatabase.instance
-            .ref('/messages/remind_operators_pc')
-            .get())
-        .value
-        .toString()
-        .replaceAll('\\n', '\n');
-    final msgVideo = (await FirebaseDatabase.instance
-            .ref('/messages/remind_operators_video')
-            .get())
-        .value
-        .toString()
-        .replaceAll('\\n', '\n');
-
-    final dateNow = DateTime.now();
-    if (telegramSendToPCChannel) {
-      telegramRepository.sendMessageToTelegramChat(msgPC, PC_CHANNEL_ID);
-      telegramRepository.lastTimeRemind = dateNow;
+    for (final config in telegramConfigs) {
+      final message =
+          config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
+      if (message != null) {
+        if (config.messageThreadId == null) {
+          telegramRepository.sendMessageToTelegramChat(message, config.chatId);
+        } else {
+          telegramRepository.sendMessageToTelegramChatThread(
+              message, config.chatId, config.messageThreadId!);
+        }
+      }
     }
-
-    if (telegramSendToVideoChannel) {
-      telegramRepository.sendMessageToTelegramChat(msgVideo, VIDEO_CHANNEL_ID);
-      telegramRepository.lastTimeRemind = dateNow;
-    }
+    telegramRepository.lastTimeRemind = DateTime.now();
 
     final result = await fcmRepository.sendNotificationToUsers(
       'Напоминание',
@@ -228,17 +222,18 @@ class HomeCubit extends Cubit<HomeState> {
   void sendNotification(
     String title,
     String body,
-    bool telegramSendToPCChannel,
-    bool telegramSendToVideoChannel,
+    List<TelegramConfig> telegramConfigs,
   ) async {
-    if (telegramSendToPCChannel) {
-      telegramRepository.sendMessageToTelegramChat(
-          "$title\n\n$body", PC_CHANNEL_ID);
+    for (final config in telegramConfigs) {
+      if (config.messageThreadId == null) {
+        telegramRepository.sendMessageToTelegramChat(
+            "$title\n\n$body", config.chatId);
+      } else {
+        telegramRepository.sendMessageToTelegramChatThread(
+            "$title\n\n$body", config.chatId, config.messageThreadId!);
+      }
     }
-    if (telegramSendToVideoChannel) {
-      telegramRepository.sendMessageToTelegramChat(
-          "$title\n\n$body", VIDEO_CHANNEL_ID);
-    }
+
     final result = await fcmRepository.sendNotification(title, body);
     emit(state.copyWith(sendNotificationResult: result));
   }
@@ -329,6 +324,7 @@ class HomeCubit extends Cubit<HomeState> {
     await _isAdminSubscription.cancel();
     await _eventsSubscription.cancel();
     await _usersSubscription.cancel();
+    await _telegramConfigsSubscription.cancel();
     return super.close();
   }
 }
@@ -349,6 +345,7 @@ class HomeState with _$HomeState {
     @Default([]) List<TableUser> allUsers,
     @Default([]) List<TableUser> sortedAllUsers,
     @Default([]) List<TableUser> sortedTableUsers,
+    @Default([]) List<TelegramConfig> telegramConfigs,
     @Default(SortType.BY_NAME) SortType sortType,
     @Default(false) bool showAllUsers,
   }) = _HomeState;

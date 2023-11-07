@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:operators/src/data/model/telegram.dart';
 
 class NotificationConfirmationDialog extends StatefulWidget {
   final String? title;
   final String message;
+  final List<TelegramConfig> telegramConfigs;
   final bool telegramInitialValue;
 
-  final Function(
-    bool telegramSendToMainChannel,
-    bool telegramSendToVideoChannel,
-  ) onConfirmationClick;
+  final Function(List<TelegramConfig> telegramConfigs) onConfirmationClick;
 
   const NotificationConfirmationDialog({
     super.key,
     this.title,
     required this.message,
     required this.onConfirmationClick,
+    required this.telegramConfigs,
     this.telegramInitialValue = true,
   });
 
@@ -25,18 +25,27 @@ class NotificationConfirmationDialog extends StatefulWidget {
 
 class _NotificationConfirmationDialogState
     extends State<NotificationConfirmationDialog> {
-  late bool _telegramMainChannelCheckboxValue;
-  late bool _telegramVideoChannelCheckboxValue;
+  List<TelegramConfigValue> _telegramConfigsState = [];
 
   @override
   void initState() {
     super.initState();
-    _telegramMainChannelCheckboxValue = widget.telegramInitialValue;
-    _telegramVideoChannelCheckboxValue = widget.telegramInitialValue;
+    for (final telegramConfig in widget.telegramConfigs) {
+      _telegramConfigsState.add(
+        TelegramConfigValue(telegramConfig, widget.telegramInitialValue),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    final telegramWidgets = _telegramConfigsState.map((s) => CheckboxListTile(
+          value: s.isChecked,
+          onChanged: (value) {
+            setState(() => s.isChecked = value ?? false);
+          },
+          title: Text(s.config.title),
+        ));
     return AlertDialog(
       title: widget.title == null ? null : Text(widget.title ?? ''),
       contentPadding: EdgeInsets.zero,
@@ -46,24 +55,7 @@ class _NotificationConfirmationDialogState
             padding: const EdgeInsets.all(16.0),
             child: Text(widget.message),
           ),
-          CheckboxListTile(
-            value: _telegramMainChannelCheckboxValue,
-            onChanged: (value) {
-              setState(
-                () => _telegramMainChannelCheckboxValue = value ?? false,
-              );
-            },
-            title: Text('Telegram: Geth PC #General'),
-          ),
-          CheckboxListTile(
-            value: _telegramVideoChannelCheckboxValue,
-            onChanged: (value) {
-              setState(
-                () => _telegramVideoChannelCheckboxValue = value ?? false,
-              );
-            },
-            title: Text('Telegram: GethMedia #Video'),
-          ),
+          ...telegramWidgets,
         ],
       ),
       actions: <Widget>[
@@ -76,14 +68,21 @@ class _NotificationConfirmationDialogState
         TextButton(
           child: const Text('OK'),
           onPressed: () {
-            widget.onConfirmationClick(
-              _telegramMainChannelCheckboxValue,
-              _telegramVideoChannelCheckboxValue,
-            );
+            widget.onConfirmationClick(_telegramConfigsState
+                .where((s) => s.isChecked)
+                .map((s) => s.config)
+                .toList());
             Navigator.of(context).pop();
           },
         ),
       ],
     );
   }
+}
+
+class TelegramConfigValue {
+  final TelegramConfig config;
+  bool isChecked;
+
+  TelegramConfigValue(this.config, this.isChecked);
 }

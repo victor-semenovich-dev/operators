@@ -1,9 +1,10 @@
 import 'package:chopper/chopper.dart';
 import 'package:operators/src/data/remote/service/telegram.dart';
 
-const MAIN_CHANNEL_ID = '-1002054563759';
-const MAIN_CHANNEL_THREAD_ID = '5';
+const PC_CHANNEL_ID = '-1002136201134';
+const PC_CHANNEL_THREAD_ID = '1';
 const VIDEO_CHANNEL_ID = '-1001924550770';
+const VIDEO_CHANNEL_THREAD_ID = '1';
 const TEST_CHANNEL_ID = '-970906901';
 
 class TelegramRepository {
@@ -16,12 +17,12 @@ class TelegramRepository {
 
   DateTime? lastTimeRemind;
 
-  Future<void> sendMessageToTelegramChannel(
+  Future<void> sendMessageToTelegramChat(
       String message, String channelId) async {
     _chopper.getService<TelegramService>().sendMessage(channelId, message);
   }
 
-  Future<void> sendMessageToTelegramThread(
+  Future<void> sendMessageToTelegramChatThread(
       String message, String channelId, String threadId) async {
     _chopper
         .getService<TelegramService>()

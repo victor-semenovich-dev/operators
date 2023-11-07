@@ -53,7 +53,7 @@ class _NotificationConfirmationDialogState
                 () => _telegramMainChannelCheckboxValue = value ?? false,
               );
             },
-            title: Text('Telegram: Операторы Операторовичи'),
+            title: Text('Telegram: Geth PC #General'),
           ),
           CheckboxListTile(
             value: _telegramVideoChannelCheckboxValue,

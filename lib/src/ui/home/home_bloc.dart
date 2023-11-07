@@ -186,7 +186,7 @@ class HomeCubit extends Cubit<HomeState> {
   void sendRemind(
     TableEvent event,
     List<TableUser> users,
-    bool telegramSendToMainChannel,
+    bool telegramSendToPCChannel,
     bool telegramSendToVideoChannel,
   ) async {
     final msgPC = (await FirebaseDatabase.instance
@@ -203,15 +203,13 @@ class HomeCubit extends Cubit<HomeState> {
         .replaceAll('\\n', '\n');
 
     final dateNow = DateTime.now();
-    if (telegramSendToMainChannel) {
-      telegramRepository.sendMessageToTelegramThread(
-          msgPC, MAIN_CHANNEL_ID, MAIN_CHANNEL_THREAD_ID);
+    if (telegramSendToPCChannel) {
+      telegramRepository.sendMessageToTelegramChat(msgPC, PC_CHANNEL_ID);
       telegramRepository.lastTimeRemind = dateNow;
     }
 
     if (telegramSendToVideoChannel) {
-      telegramRepository.sendMessageToTelegramChannel(
-          msgVideo, VIDEO_CHANNEL_ID);
+      telegramRepository.sendMessageToTelegramChat(msgVideo, VIDEO_CHANNEL_ID);
       telegramRepository.lastTimeRemind = dateNow;
     }
 
@@ -230,15 +228,15 @@ class HomeCubit extends Cubit<HomeState> {
   void sendNotification(
     String title,
     String body,
-    bool telegramSendToMainChannel,
+    bool telegramSendToPCChannel,
     bool telegramSendToVideoChannel,
   ) async {
-    if (telegramSendToMainChannel) {
-      telegramRepository.sendMessageToTelegramThread(
-          "$title\n\n$body", MAIN_CHANNEL_ID, MAIN_CHANNEL_THREAD_ID);
+    if (telegramSendToPCChannel) {
+      telegramRepository.sendMessageToTelegramChat(
+          "$title\n\n$body", PC_CHANNEL_ID);
     }
     if (telegramSendToVideoChannel) {
-      telegramRepository.sendMessageToTelegramChannel(
+      telegramRepository.sendMessageToTelegramChat(
           "$title\n\n$body", VIDEO_CHANNEL_ID);
     }
     final result = await fcmRepository.sendNotification(title, body);

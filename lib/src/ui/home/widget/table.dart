@@ -163,16 +163,39 @@ class TableWidget extends StatelessWidget {
             color: COLOR_GREY,
             width: double.infinity,
             height: ROW_HEIGHT,
-            padding: EdgeInsets.all(4),
-            child: Center(
-              child: Text(
-                user.name,
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: user.isActive ? Colors.black : Colors.black38,
+            child: Stack(
+              children: [
+                Center(
+                  child: Text(
+                    user.name,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: user.isActive ? Colors.black : Colors.black38,
+                    ),
+                  ),
                 ),
-              ),
+                if (state.isAdmin)
+                  Align(
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      children: user.roles.map((role) {
+                        switch (role) {
+                          case Role.PC:
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 4.0),
+                              child: Icon(Icons.computer, size: 16),
+                            );
+                          case Role.CAMERA:
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 4.0),
+                              child: Icon(Icons.videocam_outlined, size: 16),
+                            );
+                        }
+                      }).toList(),
+                    ),
+                  ),
+              ],
             ),
           ),
         ));

@@ -126,8 +126,20 @@ class TableRepository {
   static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
     String? uid = userData['uid'];
+
+    List<Role> roles = [];
+    List<dynamic>? rolesData = userData['roles'];
+    if (rolesData != null) {
+      roles = rolesData
+          .map((e) => stringToRole(e))
+          .where((element) => element != null)
+          .toList()
+          .cast();
+    }
+
     bool isActive = userData['isActive'] != false;
-    return TableUser(id: id, name: name, uid: uid, isActive: isActive);
+    return TableUser(
+        id: id, name: name, uid: uid, roles: roles, isActive: isActive);
   }
 
   static TableEvent _parseEvent(int id, Map eventData) {

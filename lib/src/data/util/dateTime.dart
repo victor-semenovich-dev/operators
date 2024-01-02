@@ -9,3 +9,11 @@ String dateTimeToString(DateTime dateTime) {
 DateTime stringToDateTime(String str) {
   return _dateFormat.parse(str);
 }
+
+DateTime? stringToDateTimeNullable(String? str) {
+  if (str == null) {
+    return null;
+  } else {
+    return stringToDateTime(str);
+  }
+}

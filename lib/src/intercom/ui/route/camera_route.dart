@@ -54,7 +54,13 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
 
   void _processCameraMessages(Camera camera) {
     setState(() {
-      _messages = camera.incomingMessages.map((e) => e.text).toList();
+      _messages = camera.incomingMessages.map((e) {
+        if (e.author == null) {
+          return e.text;
+        } else {
+          return "${e.author}: ${e.text}";
+        }
+      }).toList();
       debugPrint('messages - $_messages');
     });
   }

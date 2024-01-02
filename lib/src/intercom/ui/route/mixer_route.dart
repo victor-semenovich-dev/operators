@@ -51,7 +51,11 @@ class _MixerRouteState extends State<MixerRoute> {
       _messages.clear();
       for (var camera in cameraList) {
         for (var message in camera.outcomingMessages) {
-          _messages.add('${camera.id}: ${message.text}');
+          if (message.author == null) {
+            _messages.add('${camera.id}: ${message.text}');
+          } else {
+            _messages.add('${camera.id} (${message.author}): ${message.text}');
+          }
         }
       }
 

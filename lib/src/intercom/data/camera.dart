@@ -1,3 +1,5 @@
+import 'package:operators/src/data/util/dateTime.dart';
+
 class Camera {
   int id;
   bool isLive;
@@ -27,12 +29,24 @@ class Camera {
       if (data is List) {
         data.forEach((element) {
           if (element != null) {
-            resultList.add(Message(text: element['text']));
+            resultList.add(
+              Message(
+                text: element['text'],
+                author: element['author'],
+                dateTime: stringToDateTimeNullable(element['date']),
+              ),
+            );
           }
         });
       } else if (data is Map) {
         data.forEach((key, value) {
-          resultList.add(Message(text: value['text']));
+          resultList.add(
+            Message(
+              text: value['text'],
+              author: value['author'],
+              dateTime: stringToDateTimeNullable(value['date']),
+            ),
+          );
         });
       }
       return resultList;
@@ -93,8 +107,10 @@ class Camera {
 
 class Message {
   final String text;
+  final String? author;
+  final DateTime? dateTime;
 
-  Message({required this.text});
+  Message({required this.text, required this.author, required this.dateTime});
 }
 
 class PredefinedMessage {

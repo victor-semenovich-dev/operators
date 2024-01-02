@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:package_info_plus/package_info_plus.dart';
 
 import '../widget/list_item.dart';
 import 'camera_route.dart';
@@ -69,20 +68,6 @@ class IntercomRoute extends StatelessWidget {
           const Divider(
             color: Colors.black,
             height: 1,
-          ),
-          FutureBuilder<PackageInfo>(
-            future: PackageInfo.fromPlatform(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                final info = snapshot.data!;
-                return Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Text('${info.version} (${info.buildNumber})'),
-                );
-              } else {
-                return Container();
-              }
-            },
           ),
         ],
       ),

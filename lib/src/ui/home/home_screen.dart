@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
+import 'package:operators/src/intercom/ui/route/home_route.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
@@ -133,6 +134,19 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.sync),
                     tooltip: 'Обновить',
                   ),
+              if (state.showIntercomOption)
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const IntercomRoute(),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.videocam_outlined),
+                  tooltip: 'Интерком',
+                ),
               if (state.isLoggedIn)
                 PopupMenuButton<String>(
                   tooltip: 'Меню',

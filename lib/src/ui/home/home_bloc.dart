@@ -354,6 +354,9 @@ class HomeState with _$HomeState {
 
   TableUser? get currentUser => tableData?.users
       .firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
+
+  bool get showIntercomOption =>
+      currentUser?.roles.contains(Role.CAMERA) == true;
 }
 
 class Rating {

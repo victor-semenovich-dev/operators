@@ -5,8 +5,8 @@ import '../widget/list_item.dart';
 import 'camera_route.dart';
 import 'mixer_route.dart';
 
-class HomeRoute extends StatelessWidget {
-  const HomeRoute({Key? key}) : super(key: key);
+class IntercomRoute extends StatelessWidget {
+  const IntercomRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
+import '../../../data/model/user.dart';
 import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../widget/background_state_widget.dart';
@@ -12,15 +13,16 @@ import '../widget/messages_widget.dart';
 import '../widget/state_button.dart';
 
 class CameraRoute extends StatefulWidget {
+  final TableUser? user;
   final int _id;
 
-  const CameraRoute(this._id, {Key? key}) : super(key: key);
+  const CameraRoute(this._id, {Key? key, required this.user}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CameraRouteState(_id);
 }
 
-class _CameraRouteState extends State with WidgetsBindingObserver {
+class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
   static const String cameraRequest = 'Попросить пустить камеру в трансляцию';
   static const String cameraAlreadyRequested =
       'Отменить запрос камеры в трансляцию';
@@ -77,10 +79,13 @@ class _CameraRouteState extends State with WidgetsBindingObserver {
                             ? Stack(
                                 children: [
                                   CameraWidget(
-                                      snapshot.data!, CameraContext.CAMERA,
-                                      textSize: 100,
-                                      circleSize: 80,
-                                      circleMargin: 32),
+                                    widget.user,
+                                    snapshot.data!,
+                                    CameraContext.CAMERA,
+                                    textSize: 100,
+                                    circleSize: 80,
+                                    circleMargin: 32,
+                                  ),
                                   Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Container(

@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:operators/src/data/model/user.dart';
 
 import '../widget/list_item.dart';
 import 'camera_route.dart';
 import 'mixer_route.dart';
 
 class IntercomRoute extends StatelessWidget {
-  const IntercomRoute({Key? key}) : super(key: key);
+  final TableUser? user;
+
+  const IntercomRoute({Key? key, required this.user}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,7 +22,11 @@ class IntercomRoute extends StatelessWidget {
               'Видеопульт',
               () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => MixerRoute()),
+                    MaterialPageRoute(
+                      builder: (context) => MixerRoute(
+                        user: user,
+                      ),
+                    ),
                   )),
           const Divider(
             color: Colors.black,
@@ -30,7 +37,11 @@ class IntercomRoute extends StatelessWidget {
               () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CameraRoute(1)),
+                      builder: (context) => CameraRoute(
+                        1,
+                        user: user,
+                      ),
+                    ),
                   )),
           const Divider(
             color: Colors.black,
@@ -41,7 +52,11 @@ class IntercomRoute extends StatelessWidget {
               () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CameraRoute(2)),
+                      builder: (context) => CameraRoute(
+                        2,
+                        user: user,
+                      ),
+                    ),
                   )),
           const Divider(
             color: Colors.black,
@@ -52,7 +67,11 @@ class IntercomRoute extends StatelessWidget {
               () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CameraRoute(3)),
+                      builder: (context) => CameraRoute(
+                        3,
+                        user: user,
+                      ),
+                    ),
                   )),
           const Divider(
             color: Colors.black,
@@ -63,7 +82,11 @@ class IntercomRoute extends StatelessWidget {
               () => Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => const CameraRoute(4)),
+                      builder: (context) => CameraRoute(
+                        4,
+                        user: user,
+                      ),
+                    ),
                   )),
           const Divider(
             color: Colors.black,

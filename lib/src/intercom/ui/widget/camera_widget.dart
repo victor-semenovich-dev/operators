@@ -1,6 +1,7 @@
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/material.dart';
+import 'package:operators/src/data/model/user.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../../../../main.dart';
@@ -12,6 +13,7 @@ import '../route/mixer_settings_route.dart';
 enum CameraContext { MIXER, CAMERA }
 
 class CameraWidget extends StatefulWidget {
+  final TableUser? user;
   final Camera camera;
   final double textSize;
   final double circleSize;
@@ -19,6 +21,7 @@ class CameraWidget extends StatefulWidget {
   final CameraContext cameraContext;
 
   CameraWidget(
+    this.user,
     this.camera,
     this.cameraContext, {
     this.textSize = 48,
@@ -34,7 +37,8 @@ class CameraWidget extends StatefulWidget {
   }
 }
 
-class CameraWidgetState extends State with SingleTickerProviderStateMixin {
+class CameraWidgetState extends State<CameraWidget>
+    with SingleTickerProviderStateMixin {
   final double textSize;
   final double circleSize;
   final double circleMargin;
@@ -84,8 +88,8 @@ class CameraWidgetState extends State with SingleTickerProviderStateMixin {
   }
 
   @override
-  void didUpdateWidget(covariant StatefulWidget oldWidget) {
-    final newCamera = (widget as CameraWidget).camera;
+  void didUpdateWidget(covariant CameraWidget oldWidget) {
+    final newCamera = widget.camera;
     bool isRequestedChanged = camera.isRequested != newCamera.isRequested;
     camera = newCamera;
     if (cameraContext == CameraContext.MIXER && isRequestedChanged) {
@@ -233,7 +237,8 @@ class CameraWidgetState extends State with SingleTickerProviderStateMixin {
           );
         });
     if (message != null && message.trim().isNotEmpty) {
-      await CameraRepository().sendMessage(camera.id, message, cameraContext);
+      await CameraRepository()
+          .sendMessage(widget.user, camera.id, message, cameraContext);
 
       if (cameraContext == CameraContext.CAMERA) {
         ScaffoldMessenger.of(context).showSnackBar(

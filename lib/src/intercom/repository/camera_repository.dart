@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:operators/src/data/model/user.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../data/camera.dart';
@@ -39,10 +40,14 @@ class CameraRepository {
       .setRequested(isRequested);
 
   Future<void> sendMessage(
-          int id, String message, CameraContext cameraContext) =>
+    TableUser? user,
+    int id,
+    String message,
+    CameraContext cameraContext,
+  ) =>
       _cameraStateList
           .firstWhere((state) => state.id == id)
-          .sendMessage(message, cameraContext);
+          .sendMessage(user, message, cameraContext);
 
   void messageRead(int id, CameraContext cameraContext) => _cameraStateList
       .firstWhere((state) => state.id == id)

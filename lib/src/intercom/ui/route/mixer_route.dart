@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:operators/src/data/model/user.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../data/camera.dart';
@@ -12,13 +13,15 @@ import '../widget/messages_widget.dart';
 import 'mixer_settings_route.dart';
 
 class MixerRoute extends StatefulWidget {
-  const MixerRoute({Key? key}) : super(key: key);
+  final TableUser? user;
+
+  const MixerRoute({Key? key, required this.user}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MixerRouteState();
 }
 
-class _MixerRouteState extends State {
+class _MixerRouteState extends State<MixerRoute> {
   final cameraRepository = CameraRepository();
   late StreamSubscription _streamSubscription;
   int _messagesShown = 0;
@@ -97,15 +100,19 @@ class _MixerRouteState extends State {
                                           children: [
                                             Expanded(
                                               child: CameraWidget(
-                                                  snapshot.data![0],
-                                                  CameraContext.MIXER),
+                                                widget.user,
+                                                snapshot.data![0],
+                                                CameraContext.MIXER,
+                                              ),
                                             ),
                                             const Divider(
                                                 color: Colors.black, height: 1),
                                             Expanded(
                                               child: CameraWidget(
-                                                  snapshot.data![2],
-                                                  CameraContext.MIXER),
+                                                widget.user,
+                                                snapshot.data![2],
+                                                CameraContext.MIXER,
+                                              ),
                                             )
                                           ],
                                         ),
@@ -117,15 +124,19 @@ class _MixerRouteState extends State {
                                           children: [
                                             Expanded(
                                               child: CameraWidget(
-                                                  snapshot.data![1],
-                                                  CameraContext.MIXER),
+                                                widget.user,
+                                                snapshot.data![1],
+                                                CameraContext.MIXER,
+                                              ),
                                             ),
                                             const Divider(
                                                 color: Colors.black, height: 1),
                                             Expanded(
                                               child: CameraWidget(
-                                                  snapshot.data![3],
-                                                  CameraContext.MIXER),
+                                                widget.user,
+                                                snapshot.data![3],
+                                                CameraContext.MIXER,
+                                              ),
                                             )
                                           ],
                                         ),

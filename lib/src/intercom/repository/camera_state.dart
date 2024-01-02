@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:firebase_database/firebase_database.dart';
+import 'package:operators/src/data/model/user.dart';
+import 'package:operators/src/data/util/dateTime.dart';
 
 import '../data/camera.dart';
 import '../ui/widget/camera_widget.dart';
@@ -33,7 +35,11 @@ class CameraState {
         .set(isRequested);
   }
 
-  Future<void> sendMessage(String message, CameraContext cameraContext) async {
+  Future<void> sendMessage(
+    TableUser? user,
+    String message,
+    CameraContext cameraContext,
+  ) async {
     final dbRef = FirebaseDatabase.instance.ref('intercom/camera/$id');
     final child = cameraContext == CameraContext.CAMERA
         ? 'outcomingMessages'
@@ -55,7 +61,12 @@ class CameraState {
         });
       }
     }
-    await dbRef.child(child).child(index.toString()).set({'text': message});
+
+    await dbRef.child(child).child(index.toString()).set({
+      'text': message,
+      'author': user?.shortName ?? user?.name,
+      'date': dateTimeToString(DateTime.now()),
+    });
   }
 
   void messageRead(CameraContext cameraContext) {

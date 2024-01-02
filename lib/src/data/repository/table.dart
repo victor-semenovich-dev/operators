@@ -1,8 +1,8 @@
 import 'package:firebase_database/firebase_database.dart';
-import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
+import 'package:operators/src/data/util/dateTime.dart';
 import 'package:rxdart/rxdart.dart';
 
 class TableRepository {
@@ -17,8 +17,6 @@ class TableRepository {
 
   final _usersSubject = BehaviorSubject<List<TableUser>>();
   late Stream<List<TableUser>> usersStream = _usersSubject.stream;
-
-  static DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
   TableRepository() {
     _dbRef = FirebaseDatabase.instance.ref(baseUrl);
@@ -96,7 +94,7 @@ class TableRepository {
     final id = maxId + 1;
 
     await _dbRef.child('events/$id').set({
-      'date': _dateFormat.format(date),
+      'date': dateTimeToString(date),
       'title': title,
       'isActive': true,
     });
@@ -115,7 +113,7 @@ class TableRepository {
       await _dbRef.child('events/$id/isActive').set(isActive);
     }
     if (date != null) {
-      await _dbRef.child('events/$id/date').set(_dateFormat.format(date));
+      await _dbRef.child('events/$id/date').set(dateTimeToString(date));
     }
   }
 
@@ -125,6 +123,7 @@ class TableRepository {
 
   static TableUser _parseUser(int id, Map userData) {
     String name = userData['name'];
+    String? shortName = userData['shortName'];
     String? uid = userData['uid'];
 
     List<Role> roles = [];
@@ -139,12 +138,18 @@ class TableRepository {
 
     bool isActive = userData['isActive'] != false;
     return TableUser(
-        id: id, name: name, uid: uid, roles: roles, isActive: isActive);
+      id: id,
+      name: name,
+      shortName: shortName,
+      uid: uid,
+      roles: roles,
+      isActive: isActive,
+    );
   }
 
   static TableEvent _parseEvent(int id, Map eventData) {
     String title = eventData['title'];
-    DateTime date = _dateFormat.parse(eventData['date']);
+    DateTime date = stringToDateTime(eventData['date']);
     bool isActive = eventData['isActive'] != false;
     Map<int, EventUserState> state = {};
 

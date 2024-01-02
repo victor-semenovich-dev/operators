@@ -11,25 +11,30 @@ class CameraState {
   CameraState(this.id);
 
   Stream<Camera> open() {
-    return FirebaseDatabase.instance.ref('camera/$id').onValue.map((event) {
+    return FirebaseDatabase.instance
+        .ref('intercom/camera/$id')
+        .onValue
+        .map((event) {
       return Camera.fromJson(id, event.snapshot.value as Map);
     });
   }
 
   void setLive(bool isLive) {
-    FirebaseDatabase.instance.ref('camera/$id/isLive').set(isLive);
+    FirebaseDatabase.instance.ref('intercom/camera/$id/isLive').set(isLive);
   }
 
   void setReady(bool isReady) {
-    FirebaseDatabase.instance.ref('camera/$id/isReady').set(isReady);
+    FirebaseDatabase.instance.ref('intercom/camera/$id/isReady').set(isReady);
   }
 
   void setRequested(bool isRequested) {
-    FirebaseDatabase.instance.ref('camera/$id/isRequested').set(isRequested);
+    FirebaseDatabase.instance
+        .ref('intercom/camera/$id/isRequested')
+        .set(isRequested);
   }
 
   Future<void> sendMessage(String message, CameraContext cameraContext) async {
-    final dbRef = FirebaseDatabase.instance.ref('camera/$id');
+    final dbRef = FirebaseDatabase.instance.ref('intercom/camera/$id');
     final child = cameraContext == CameraContext.CAMERA
         ? 'outcomingMessages'
         : 'incomingMessages';
@@ -55,13 +60,17 @@ class CameraState {
 
   void messageRead(CameraContext cameraContext) {
     if (cameraContext == CameraContext.CAMERA) {
-      FirebaseDatabase.instance.ref('camera/$id/incomingMessages').remove();
+      FirebaseDatabase.instance
+          .ref('intercom/camera/$id/incomingMessages')
+          .remove();
     } else {
-      FirebaseDatabase.instance.ref('camera/$id/outcomingMessages').remove();
+      FirebaseDatabase.instance
+          .ref('intercom/camera/$id/outcomingMessages')
+          .remove();
     }
   }
 
   void setCameraOk(bool isOk) {
-    FirebaseDatabase.instance.ref('camera/$id/isOk').set(isOk);
+    FirebaseDatabase.instance.ref('intercom/camera/$id/isOk').set(isOk);
   }
 }

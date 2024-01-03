@@ -1,19 +1,12 @@
 import 'package:intl/intl.dart';
 
-DateFormat _dateFormat = DateFormat('yyyy-MM-dd HH:mm');
+DateFormat formatDateTimeMinutes = DateFormat('yyyy-MM-dd HH:mm');
+DateFormat formatDateTimeSeconds = DateFormat('yyyy-MM-dd HH:mm:ss');
 
-String dateTimeToString(DateTime dateTime) {
-  return _dateFormat.format(dateTime);
-}
-
-DateTime stringToDateTime(String str) {
-  return _dateFormat.parse(str);
-}
-
-DateTime? stringToDateTimeNullable(String? str) {
+DateTime? stringToDateTimeNullable(String? str, DateFormat dateFormat) {
   if (str == null) {
     return null;
   } else {
-    return stringToDateTime(str);
+    return dateFormat.parse(str);
   }
 }

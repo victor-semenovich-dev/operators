@@ -24,9 +24,7 @@ class MixerRoute extends StatefulWidget {
 class _MixerRouteState extends State<MixerRoute> {
   final cameraRepository = CameraRepository();
   late StreamSubscription _streamSubscription;
-  int _messagesShown = 0;
-  bool _isInBackground = false;
-  final List<String> _messages = [];
+  final List<Message> _messages = [];
 
   @override
   void initState() {
@@ -50,19 +48,24 @@ class _MixerRouteState extends State<MixerRoute> {
     setState(() {
       _messages.clear();
       for (var camera in cameraList) {
-        for (var message in camera.outcomingMessages) {
-          if (message.author == null) {
-            _messages.add('${camera.id}: ${message.text}');
-          } else {
-            _messages.add('${camera.id} (${message.author}): ${message.text}');
-          }
-        }
+        _messages.addAll(
+          camera.outcomingMessages.map(
+            (m) => Message(
+              text: m.text,
+              author: m.author,
+              dateTime: m.dateTime,
+              cameraId: camera.id,
+            ),
+          ),
+        );
       }
-
-      debugPrint(
-          'messages - ${_messages.length} ($_messagesShown), $_isInBackground');
-
-      _messagesShown = _messages.length;
+      _messages.sort((m1, m2) {
+        if (m1.dateTime == null || m2.dateTime == null) {
+          return 0;
+        } else {
+          return m1.dateTime!.compareTo(m2.dateTime!);
+        }
+      });
     });
   }
 
@@ -70,9 +73,7 @@ class _MixerRouteState extends State<MixerRoute> {
   Widget build(BuildContext context) {
     return ForegroundServiceWidget(
       child: BackgroundStateWidget(
-        onBackgroundStateChanged: (isInBackground) {
-          _isInBackground = isInBackground;
-        },
+        onBackgroundStateChanged: (isInBackground) {},
         child: Scaffold(
           appBar: AppBar(
             title: const Text('Видеопульт'),
@@ -152,6 +153,7 @@ class _MixerRouteState extends State<MixerRoute> {
                                     duration: const Duration(milliseconds: 300),
                                     child: MessagesWidget(
                                       messages: _messages,
+                                      cameraContext: CameraContext.MIXER,
                                       onClick: () {
                                         cameraRepository.allMessagesRead(
                                             CameraContext.MIXER);

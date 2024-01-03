@@ -33,7 +33,10 @@ class Camera {
               Message(
                 text: element['text'],
                 author: element['author'],
-                dateTime: stringToDateTimeNullable(element['date']),
+                dateTime: stringToDateTimeNullable(
+                  element['date'],
+                  formatDateTimeSeconds,
+                ),
               ),
             );
           }
@@ -44,7 +47,10 @@ class Camera {
             Message(
               text: value['text'],
               author: value['author'],
-              dateTime: stringToDateTimeNullable(value['date']),
+              dateTime: stringToDateTimeNullable(
+                value['date'],
+                formatDateTimeSeconds,
+              ),
             ),
           );
         });
@@ -109,8 +115,14 @@ class Message {
   final String text;
   final String? author;
   final DateTime? dateTime;
+  final int? cameraId;
 
-  Message({required this.text, required this.author, required this.dateTime});
+  Message({
+    required this.text,
+    required this.author,
+    required this.dateTime,
+    this.cameraId,
+  });
 }
 
 class PredefinedMessage {

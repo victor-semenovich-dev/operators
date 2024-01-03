@@ -30,7 +30,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
   final int _id;
   final cameraRepository = CameraRepository();
   late StreamSubscription _streamSubscription;
-  List<String> _messages = [];
+  List<Message> _messages = [];
 
   _CameraRouteState(this._id);
 
@@ -54,13 +54,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
 
   void _processCameraMessages(Camera camera) {
     setState(() {
-      _messages = camera.incomingMessages.map((e) {
-        if (e.author == null) {
-          return e.text;
-        } else {
-          return "${e.author}: ${e.text}";
-        }
-      }).toList();
+      _messages = camera.incomingMessages;
       debugPrint('messages - $_messages');
     });
   }
@@ -121,6 +115,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
                                     duration: const Duration(milliseconds: 300),
                                     child: MessagesWidget(
                                       messages: _messages,
+                                      cameraContext: CameraContext.CAMERA,
                                       onClick: () {
                                         cameraRepository.messageRead(
                                             _id, CameraContext.CAMERA);

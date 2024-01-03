@@ -65,7 +65,7 @@ class CameraState {
     await dbRef.child(child).child(index.toString()).set({
       'text': message,
       'author': user?.shortName ?? user?.name,
-      'date': dateTimeToString(DateTime.now()),
+      'date': formatDateTimeSeconds.format(DateTime.now()),
     });
   }
 

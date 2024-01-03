@@ -94,7 +94,7 @@ class TableRepository {
     final id = maxId + 1;
 
     await _dbRef.child('events/$id').set({
-      'date': dateTimeToString(date),
+      'date': formatDateTimeMinutes.format(date),
       'title': title,
       'isActive': true,
     });
@@ -113,7 +113,9 @@ class TableRepository {
       await _dbRef.child('events/$id/isActive').set(isActive);
     }
     if (date != null) {
-      await _dbRef.child('events/$id/date').set(dateTimeToString(date));
+      await _dbRef
+          .child('events/$id/date')
+          .set(formatDateTimeMinutes.format(date));
     }
   }
 
@@ -149,7 +151,7 @@ class TableRepository {
 
   static TableEvent _parseEvent(int id, Map eventData) {
     String title = eventData['title'];
-    DateTime date = stringToDateTime(eventData['date']);
+    DateTime date = formatDateTimeMinutes.parse(eventData['date']);
     bool isActive = eventData['isActive'] != false;
     Map<int, EventUserState> state = {};
 

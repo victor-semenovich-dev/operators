@@ -25,6 +25,7 @@ class OperatorsApp extends StatelessWidget {
           scrollbarTheme: ScrollbarThemeData(
             thumbVisibility: MaterialStateProperty.all<bool>(true),
           ),
+          useMaterial3: false,
         ),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,

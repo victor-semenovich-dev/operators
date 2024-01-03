@@ -1,3 +1,4 @@
+import 'package:intl/intl.dart';
 import 'package:operators/src/data/util/dateTime.dart';
 
 class Camera {
@@ -123,6 +124,21 @@ class Message {
     required this.dateTime,
     this.cameraId,
   });
+
+  String? dateTimeReadable() {
+    if (dateTime == null) {
+      return null;
+    } else {
+      DateTime dateNow = DateTime.now();
+      if (dateNow.year == dateTime!.year &&
+          dateNow.month == dateTime!.month &&
+          dateNow.day == dateTime!.day) {
+        return DateFormat('HH:mm').format(dateTime!);
+      } else {
+        return DateFormat('dd.MM HH:mm').format(dateTime!);
+      }
+    }
+  }
 }
 
 class PredefinedMessage {

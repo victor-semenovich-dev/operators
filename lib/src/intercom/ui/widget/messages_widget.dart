@@ -35,11 +35,56 @@ class MessagesWidget extends StatelessWidget {
       final messageText = "${prefix.isEmpty ? '' : '$prefix: $text'}";
 
       messageWidgets.add(
-        Text(
-          messageText,
-          style: const TextStyle(color: Colors.white, fontSize: 20),
-        ),
+        message.dateTimeReadable() == null
+            ? Padding(
+                padding: const EdgeInsets.only(right: 16.0),
+                child: Text(
+                  messageText,
+                  style: const TextStyle(color: Colors.white, fontSize: 20),
+                ),
+              )
+            : Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: RichText(
+                  text: TextSpan(
+                    text: messageText,
+                    style: const TextStyle(color: Colors.white, fontSize: 20),
+                    children: <TextSpan>[
+                      TextSpan(
+                        text: '  ${message.dateTimeReadable()}',
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 10),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
       );
+
+      // messageWidgets.add(
+      //   Row(
+      //     crossAxisAlignment: CrossAxisAlignment.end,
+      //     children: [
+      //       Flexible(
+      //         flex: 1,
+      //         child: Text(
+      //           messageText,
+      //           style: const TextStyle(color: Colors.white, fontSize: 20),
+      //         ),
+      //       ),
+      //       if (message.dateTime != null)
+      //         Padding(
+      //           padding: const EdgeInsets.only(left: 8, right: 4),
+      //           child: Text(
+      //             formatTimeReadable.format(message.dateTime!),
+      //             style: const TextStyle(color: Colors.white, fontSize: 10),
+      //           ),
+      //         )
+      //       else
+      //         SizedBox(width: 24),
+      //     ],
+      //   ),
+      // );
     }
 
     if (messageWidgets.isEmpty) {
@@ -48,12 +93,13 @@ class MessagesWidget extends StatelessWidget {
 
     return Container(
       alignment: Alignment.center,
+      padding: EdgeInsets.symmetric(horizontal: 8),
       child: Wrap(
         children: [
           GestureDetector(
             onTap: onClick,
             child: Container(
-              padding: const EdgeInsets.all(24.0),
+              padding: const EdgeInsets.only(top: 20, bottom: 20, left: 16),
               decoration: BoxDecoration(
                 color: Colors.black87,
                 borderRadius: BorderRadius.circular(8.0),

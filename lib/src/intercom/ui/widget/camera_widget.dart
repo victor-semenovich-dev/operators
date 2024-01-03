@@ -194,16 +194,21 @@ class CameraWidgetState extends State<CameraWidget>
         builder: (context, controller) {
           return FlashBar(
             controller: controller,
-            title: Text(
-              cameraContext == CameraContext.CAMERA
-                  ? 'Сообщение для оператора видеопульта:'
-                  : 'Сообщение для оператора камеры ${camera.id}:',
-              style: const TextStyle(fontSize: 16),
+            padding: EdgeInsets.symmetric(vertical: 16),
+            title: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
+                cameraContext == CameraContext.CAMERA
+                    ? 'Сообщение для оператора видеопульта:'
+                    : 'Сообщение для оператора камеры ${camera.id}:',
+                style: const TextStyle(fontSize: 16),
+              ),
             ),
             content: Column(
               children: [
                 Container(
-                  constraints: const BoxConstraints(maxHeight: 150),
+                  constraints: const BoxConstraints(maxHeight: 180),
+                  color: Colors.grey.withAlpha(32),
                   child: Scrollbar(
                     child: SingleChildScrollView(
                       child: Column(
@@ -213,24 +218,27 @@ class CameraWidgetState extends State<CameraWidget>
                     ),
                   ),
                 ),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Expanded(
-                        child: TextField(
-                      controller: editingController,
-                      autofocus: true,
-                      maxLines: null,
-                      textInputAction: TextInputAction.send,
-                      onSubmitted: (text) => controller.dismiss(text),
-                    )),
-                    InkWell(
-                      onTap: () => controller.dismiss(editingController.text),
-                      child: const Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Icon(Icons.send, color: Colors.blue)),
-                    )
-                  ],
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Expanded(
+                          child: TextField(
+                        controller: editingController,
+                        autofocus: true,
+                        maxLines: null,
+                        textInputAction: TextInputAction.send,
+                        onSubmitted: (text) => controller.dismiss(text),
+                      )),
+                      InkWell(
+                        onTap: () => controller.dismiss(editingController.text),
+                        child: const Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Icon(Icons.send, color: Colors.blue)),
+                      )
+                    ],
+                  ),
                 ),
               ],
             ),

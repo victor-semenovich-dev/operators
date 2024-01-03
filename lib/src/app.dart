@@ -21,6 +21,11 @@ class OperatorsApp extends StatelessWidget {
       ],
       child: MaterialApp(
         title: 'Участие операторов',
+        theme: ThemeData(
+          scrollbarTheme: ScrollbarThemeData(
+            thumbVisibility: MaterialStateProperty.all<bool>(true),
+          ),
+        ),
         localizationsDelegates: [
           GlobalMaterialLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,

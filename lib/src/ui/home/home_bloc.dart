@@ -81,9 +81,7 @@ class HomeCubit extends Cubit<HomeState> {
     DateTime? lastDate;
     state.allEvents.forEach((e) {
       if (e.date.isBefore(dateTime) && e.state[user.id]?.role != null) {
-        if (DateTime.now().difference(e.date) < Duration(days: 30)) {
-          value++;
-        }
+        value++;
         if (lastDate == null || e.date.isAfter(lastDate!)) {
           lastDate = e.date;
         }

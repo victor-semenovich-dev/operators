@@ -365,7 +365,7 @@ class Rating {
     if (lastDate == null) {
       return value.toString();
     } else {
-      return "$value (${DateFormat("dd.MM HH:mm").format(lastDate!)})";
+      return "$value (${DateFormat("dd.MM").format(lastDate!)})";
     }
   }
 }

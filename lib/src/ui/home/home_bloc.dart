@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/telegram.dart';
@@ -93,10 +94,6 @@ class HomeCubit extends Cubit<HomeState> {
 
   Rating getRating(TableUser user) {
     return _getRating(user, DateTime.now());
-  }
-
-  Rating getRatingForEvent(TableUser user, TableEvent event) {
-    return _getRating(user, event.date);
   }
 
   void setSortType(SortType sortType) {
@@ -367,6 +364,10 @@ class Rating {
 
   @override
   String toString() {
-    return 'Rating{value: $value, lastDate: $lastDate}';
+    if (lastDate == null) {
+      return value.toString();
+    } else {
+      return "$value (${DateFormat("dd.MM HH:mm").format(lastDate!)})";
+    }
   }
 }

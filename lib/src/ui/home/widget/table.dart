@@ -166,12 +166,15 @@ class TableWidget extends StatelessWidget {
             child: Stack(
               children: [
                 Center(
-                  child: Text(
-                    user.name,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: user.isActive ? Colors.black : Colors.black38,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                    child: Text(
+                      user.name,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: user.isActive ? Colors.black : Colors.black38,
+                      ),
                     ),
                   ),
                 ),
@@ -195,6 +198,19 @@ class TableWidget extends StatelessWidget {
                       }).toList(),
                     ),
                   ),
+                if (state.isAdmin)
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
+                      child: Text(
+                        context.read<HomeCubit>().getRating(user).toString(),
+                        style: TextStyle(
+                            fontSize: 10, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),
@@ -204,14 +220,10 @@ class TableWidget extends StatelessWidget {
         children
             .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
         var color = Colors.white;
-        var showRating = false;
         if (event.state.containsKey(user.id)) {
           if (event.state[user.id]?.role == null) {
             if (event.state[user.id]?.canHelp == true) {
               color = Colors.green;
-              if (state.isAdmin) {
-                showRating = true;
-              }
             } else if (event.state[user.id]?.canHelp == false) {
               color = Colors.red[400]!;
             }
@@ -248,7 +260,7 @@ class TableWidget extends StatelessWidget {
             color: color,
             width: double.infinity,
             height: ROW_HEIGHT,
-            child: _getChildWidget(context, user, event, showRating),
+            child: _getChildWidget(context, user, event, state.isAdmin),
           ),
         );
         children.add(
@@ -303,40 +315,33 @@ class TableWidget extends StatelessWidget {
   }
 
   Widget _getChildWidget(
-      BuildContext context, TableUser user, TableEvent event, bool showRating) {
-    Widget defaultWidget = Container();
-    if (showRating) {
-      final rating = context.read<HomeCubit>().getRatingForEvent(user, event);
-      defaultWidget = Container(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              rating.value.toString(),
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            if (rating.lastDate != null)
-              Text(
-                DateFormat('dd.MM HH:mm').format(rating.lastDate!),
-                textAlign: TextAlign.center,
-              )
-          ],
-        ),
-      );
+      BuildContext context, TableUser user, TableEvent event, bool isAdmin) {
+    if (event.state[user.id]?.role == null) {
+      final canHelpDateTime = event.state[user.id]?.canHelpDateTime;
+      return canHelpDateTime == null || !isAdmin
+          ? Container()
+          : Center(
+              child: Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Text(
+                  DateFormat('dd.MM HH:mm').format(canHelpDateTime),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
     }
 
-    if (event.state.containsKey(user.id) &&
-        event.state[user.id]?.role != null) {
+    if (event.state[user.id]?.role != null) {
       switch (event.state[user.id]?.role) {
         case Role.PC:
           return Icon(Icons.computer, size: 48);
         case Role.CAMERA:
           return Icon(Icons.videocam_outlined, size: 48);
         default:
-          return defaultWidget;
+          return Container();
       }
     } else {
-      return defaultWidget;
+      return Container();
     }
   }
 }

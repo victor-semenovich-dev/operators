@@ -60,31 +60,6 @@ class MessagesWidget extends StatelessWidget {
                 ),
               ),
       );
-
-      // messageWidgets.add(
-      //   Row(
-      //     crossAxisAlignment: CrossAxisAlignment.end,
-      //     children: [
-      //       Flexible(
-      //         flex: 1,
-      //         child: Text(
-      //           messageText,
-      //           style: const TextStyle(color: Colors.white, fontSize: 20),
-      //         ),
-      //       ),
-      //       if (message.dateTime != null)
-      //         Padding(
-      //           padding: const EdgeInsets.only(left: 8, right: 4),
-      //           child: Text(
-      //             formatTimeReadable.format(message.dateTime!),
-      //             style: const TextStyle(color: Colors.white, fontSize: 10),
-      //           ),
-      //         )
-      //       else
-      //         SizedBox(width: 24),
-      //     ],
-      //   ),
-      // );
     }
 
     if (messageWidgets.isEmpty) {

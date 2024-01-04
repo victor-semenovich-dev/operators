@@ -1,5 +1,6 @@
 import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
@@ -226,7 +227,7 @@ class CameraWidgetState extends State<CameraWidget>
                       Expanded(
                           child: TextField(
                         controller: editingController,
-                        autofocus: true,
+                        autofocus: !kIsWeb,
                         maxLines: null,
                         textInputAction: TextInputAction.send,
                         onSubmitted: (text) => controller.dismiss(text),

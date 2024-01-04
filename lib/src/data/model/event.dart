@@ -34,8 +34,15 @@ class TableEvent {
 class EventUserState {
   final bool canHelp;
   final Role? role;
+  final DateTime? canHelpDateTime;
+  final DateTime? roleDateTime;
 
-  const EventUserState({required this.canHelp, required this.role});
+  const EventUserState({
+    required this.canHelp,
+    required this.role,
+    required this.canHelpDateTime,
+    required this.roleDateTime,
+  });
 }
 
 enum Role { PC, CAMERA }

@@ -67,12 +67,16 @@ class TableRepository {
       newValue = true;
     }
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(newValue);
+    _dbRef.child('events/${event.id}/state/${user.id}/canHelpDateTime').set(
+        newValue == null ? null : formatDateTimeMinutes.format(DateTime.now()));
   }
 
   void setRole(TableUser user, TableEvent event, Role? role) {
     _dbRef
         .child('events/${event.id}/state/${user.id}/role')
         .set(roleToString(role));
+    _dbRef.child('events/${event.id}/state/${user.id}/roleDateTime').set(
+        role == null ? null : formatDateTimeMinutes.format(DateTime.now()));
   }
 
   void setCanHelp(TableUser user, TableEvent event, bool? canHelp) {
@@ -167,9 +171,21 @@ class TableRepository {
   }
 
   static EventUserState _parseEventUserState(Map data) {
+    final canHelpDateTimeStr = data['canHelpDateTime'];
+    final roleDateTimeStr = data['roleDateTime'];
+
+    final canHelpDateTime = canHelpDateTimeStr == null
+        ? null
+        : formatDateTimeMinutes.parse(canHelpDateTimeStr);
+    final roleDateTime = roleDateTimeStr == null
+        ? null
+        : formatDateTimeMinutes.parse(roleDateTimeStr);
+
     return EventUserState(
       canHelp: data['canHelp'],
+      canHelpDateTime: canHelpDateTime,
       role: stringToRole(data['role']),
+      roleDateTime: roleDateTime,
     );
   }
 

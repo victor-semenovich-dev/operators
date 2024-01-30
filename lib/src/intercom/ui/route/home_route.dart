@@ -3,6 +3,7 @@ import 'package:operators/src/data/model/user.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../../../../main.dart';
+import '../../repository/camera_state.dart';
 import '../widget/list_item.dart';
 import 'camera_route.dart';
 import 'mixer_route.dart';
@@ -26,6 +27,12 @@ class IntercomRoute extends StatelessWidget {
           preference: preferences.getString(KEY_INTERCOM_SERVER_LOCATION,
               defaultValue: VALUE_LOCATION_USA),
           builder: (context, serverLocation) {
+            if (serverLocation == VALUE_LOCATION_USA) {
+              intercomFirebaseDatabase = usaFirebaseDatabase;
+            } else if (serverLocation == VALUE_LOCATION_EU) {
+              intercomFirebaseDatabase = euFirebaseDatabase;
+            }
+
             return ListView(
               children: [
                 ListItem(

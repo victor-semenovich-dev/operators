@@ -180,35 +180,37 @@ class TableWidget extends StatelessWidget {
                 ),
                 if (state.isAdmin)
                   Align(
-                    alignment: Alignment.bottomLeft,
+                    alignment: Alignment.topLeft,
                     child: Row(
-                      children: user.roles.map((role) {
-                        switch (role) {
-                          case Role.PC:
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: Icon(Icons.computer, size: 16),
-                            );
-                          case Role.CAMERA:
-                            return Padding(
-                              padding: const EdgeInsets.only(left: 4.0),
-                              child: Icon(Icons.videocam_outlined, size: 16),
-                            );
-                        }
-                      }).toList(),
+                      children: user.roles
+                          .map((role) => roleToWidget(role, 4, 0))
+                          .toList(),
                     ),
                   ),
                 if (state.isAdmin)
                   Align(
-                    alignment: Alignment.bottomRight,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 4, vertical: 2),
-                      child: Text(
-                        context.read<HomeCubit>().getRating(user).toString(),
-                        style: TextStyle(
-                            fontSize: 10, fontWeight: FontWeight.bold),
-                      ),
+                    alignment: Alignment.bottomLeft,
+                    child: Row(
+                      children:
+                          context.read<HomeCubit>().getRating(user).map((r) {
+                        return Row(
+                          children: [
+                            if (context
+                                    .read<HomeCubit>()
+                                    .getRating(user)
+                                    .length >
+                                1)
+                              roleToWidget(r.role, 4, 0)
+                            else
+                              SizedBox(width: 4),
+                            Text(
+                              r.toString(),
+                              style: TextStyle(
+                                  fontSize: 10, fontWeight: FontWeight.bold),
+                            ),
+                          ],
+                        );
+                      }).toList(),
                     ),
                   ),
               ],

@@ -76,21 +76,35 @@ class HomeCubit extends Cubit<HomeState> {
     tableRepository.setCanHelp(user, event, canHelp);
   }
 
-  Rating _getRating(TableUser user, DateTime dateTime) {
-    int value = 0;
-    DateTime? lastDate;
+  List<Rating> _getRating(TableUser user, DateTime dateTime) {
+    int pcValue = 0;
+    int cameraValue = 0;
+    DateTime? pcLastDate;
+    DateTime? cameraLastDate;
     state.allEvents.forEach((e) {
-      if (e.date.isBefore(dateTime) && e.state[user.id]?.role != null) {
-        value++;
-        if (lastDate == null || e.date.isAfter(lastDate!)) {
-          lastDate = e.date;
+      final role = e.state[user.id]?.role;
+      if (e.date.isBefore(dateTime) && role != null) {
+        if (role == Role.PC) {
+          pcValue++;
+          if (pcLastDate == null || e.date.isAfter(pcLastDate!)) {
+            pcLastDate = e.date;
+          }
+        } else if (role == Role.CAMERA) {
+          cameraValue++;
+          if (cameraLastDate == null || e.date.isAfter(cameraLastDate!)) {
+            cameraLastDate = e.date;
+          }
         }
       }
     });
-    return Rating(value, lastDate);
+    final result = <Rating>[];
+    if (pcValue > 0) result.add(Rating(Role.PC, pcValue, pcLastDate));
+    if (cameraValue > 0)
+      result.add(Rating(Role.CAMERA, cameraValue, cameraLastDate));
+    return result;
   }
 
-  Rating getRating(TableUser user) {
+  List<Rating> getRating(TableUser user) {
     return _getRating(user, DateTime.now());
   }
 
@@ -128,12 +142,34 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  int _getValue(List<Rating> ratingList) {
+    int result = 0;
+    ratingList.forEach((rating) {
+      result += rating.value;
+    });
+    return result;
+  }
+
+  DateTime? _getLastDate(List<Rating> ratingList) {
+    DateTime? result;
+    ratingList.forEach((rating) {
+      final ratingLastDate = rating.lastDate;
+      if (result == null ||
+          (ratingLastDate != null && ratingLastDate.isAfter(result!))) {
+        result = ratingLastDate;
+      }
+    });
+    return result;
+  }
+
   int _compareByRating(TableUser user1, TableUser user2) {
     final rating1 = getRating(user1);
     final rating2 = getRating(user2);
-    final lastDate1 = rating1.lastDate;
-    final lastDate2 = rating2.lastDate;
-    if (rating1.value == rating2.value) {
+    final rating1Value = _getValue(rating1);
+    final rating2Value = _getValue(rating2);
+    final lastDate1 = _getLastDate(rating1);
+    final lastDate2 = _getLastDate(rating2);
+    if (rating1Value == rating2Value) {
       if (lastDate1 == lastDate2) {
         return user1.name.compareTo(user2.name);
       } else if (lastDate1 == null) {
@@ -144,7 +180,7 @@ class HomeCubit extends Cubit<HomeState> {
         return lastDate1.compareTo(lastDate2);
       }
     } else {
-      return rating1.value - rating2.value;
+      return rating1Value - rating2Value;
     }
   }
 
@@ -365,10 +401,11 @@ class HomeState with _$HomeState {
 }
 
 class Rating {
+  final Role role;
   final int value;
   final DateTime? lastDate;
 
-  Rating(this.value, this.lastDate);
+  Rating(this.role, this.value, this.lastDate);
 
   @override
   String toString() {

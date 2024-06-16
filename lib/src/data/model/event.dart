@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Event {
   final int id;
   final String title;
@@ -66,6 +68,21 @@ String? roleToString(Role? role) {
       return 'camera';
     default:
       return null;
+  }
+}
+
+Widget roleToWidget(Role role, double leftPadding, double rightPadding) {
+  switch (role) {
+    case Role.PC:
+      return Padding(
+        padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
+        child: Icon(Icons.computer, size: 16),
+      );
+    case Role.CAMERA:
+      return Padding(
+        padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
+        child: Icon(Icons.videocam_outlined, size: 16),
+      );
   }
 }
 

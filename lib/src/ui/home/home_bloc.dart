@@ -152,8 +152,18 @@ class HomeCubit extends Cubit<HomeState> {
     final buffer = StringBuffer();
     final allUsers = state.allUsers;
     var isFirst = true;
-    final sortedEntries = event.state.entries.sorted(
-        (a, b) => (a.value.role?.index ?? -1) - (b.value.role?.index ?? -1));
+    final sortedEntries = event.state.entries.sorted((a, b) {
+      final roleDif = (a.value.role?.index ?? -1) - (b.value.role?.index ?? -1);
+      if (roleDif == 0) {
+        final user1Name =
+            allUsers.firstWhereOrNull((e) => e.id == a.key)?.name ?? '';
+        final user2Name =
+            allUsers.firstWhereOrNull((e) => e.id == b.key)?.name ?? '';
+        return user1Name.compareTo(user2Name);
+      } else {
+        return roleDif;
+      }
+    });
     for (final entry in sortedEntries) {
       if (entry.value.role != null) {
         if (!isFirst) {

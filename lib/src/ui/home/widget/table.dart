@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:focused_menu/focused_menu.dart';
@@ -155,6 +156,10 @@ class TableWidget extends StatelessWidget {
 
   Widget _userRow(BuildContext context, TableData tableData, TableUser user) {
     List<Widget> children = <Widget>[];
+    List<Rating> rating = context.read<HomeCubit>().getRating(user);
+    Rating? pcRating = rating.firstWhereOrNull((r) => r.role == Role.PC);
+    Rating? cameraRating =
+        rating.firstWhereOrNull((r) => r.role == Role.CAMERA);
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
         children.add(Expanded(
@@ -178,40 +183,25 @@ class TableWidget extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (state.isAdmin)
+                if (user.roles.contains(Role.PC))
                   Align(
                     alignment: Alignment.topLeft,
-                    child: Row(
-                      children: user.roles
-                          .map((role) => roleToWidget(role, 4, 0))
-                          .toList(),
-                    ),
+                    child: roleToWidget(Role.PC, 4, 0),
                   ),
-                if (state.isAdmin)
+                if (pcRating != null)
+                  Align(
+                    alignment: Alignment.topRight,
+                    child: _ratingWidget(pcRating),
+                  ),
+                if (user.roles.contains(Role.CAMERA))
                   Align(
                     alignment: Alignment.bottomLeft,
-                    child: Row(
-                      children:
-                          context.read<HomeCubit>().getRating(user).map((r) {
-                        return Row(
-                          children: [
-                            if (context
-                                    .read<HomeCubit>()
-                                    .getRating(user)
-                                    .length >
-                                1)
-                              roleToWidget(r.role, 4, 0)
-                            else
-                              SizedBox(width: 4),
-                            Text(
-                              r.toString(),
-                              style: TextStyle(
-                                  fontSize: 10, fontWeight: FontWeight.bold),
-                            ),
-                          ],
-                        );
-                      }).toList(),
-                    ),
+                    child: roleToWidget(Role.CAMERA, 4, 0),
+                  ),
+                if (cameraRating != null)
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: _ratingWidget(cameraRating),
                   ),
               ],
             ),
@@ -345,6 +335,16 @@ class TableWidget extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+
+  Widget _ratingWidget(Rating rating) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 4),
+      child: Text(
+        rating.toString(),
+        style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+      ),
+    );
   }
 }
 

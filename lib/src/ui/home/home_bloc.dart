@@ -85,21 +85,21 @@ class HomeCubit extends Cubit<HomeState> {
       final role = e.state[user.id]?.role;
       if (e.date.isBefore(dateTime) && role != null) {
         if (role == Role.PC) {
-          pcValue++;
-          if (pcLastDate == null || e.date.isAfter(pcLastDate!)) {
+          if (e.date.isAfter(DateTime.now().subtract(Duration(days: 31))))
+            pcValue++;
+          if (pcLastDate == null || e.date.isAfter(pcLastDate!))
             pcLastDate = e.date;
-          }
         } else if (role == Role.CAMERA) {
-          cameraValue++;
-          if (cameraLastDate == null || e.date.isAfter(cameraLastDate!)) {
+          if (e.date.isAfter(DateTime.now().subtract(Duration(days: 31))))
+            cameraValue++;
+          if (cameraLastDate == null || e.date.isAfter(cameraLastDate!))
             cameraLastDate = e.date;
-          }
         }
       }
     });
     final result = <Rating>[];
-    if (pcValue > 0) result.add(Rating(Role.PC, pcValue, pcLastDate));
-    if (cameraValue > 0)
+    if (pcLastDate != null) result.add(Rating(Role.PC, pcValue, pcLastDate));
+    if (cameraLastDate != null)
       result.add(Rating(Role.CAMERA, cameraValue, cameraLastDate));
     return result;
   }
@@ -123,43 +123,12 @@ class HomeCubit extends Cubit<HomeState> {
       switch (state.sortType) {
         case SortType.BY_NAME:
           comparator = (u1, u2) => u1.name.compareTo(u2.name);
-
-          // emit(state.copyWith(
-          //   sortedTableUsers: users.sortedBy((e) => e.name),
-          //   sortedAllUsers: state.allUsers.sortedBy((e) => e.name),
-          // ));
           break;
         case SortType.BY_RATING_PC:
           comparator = (u1, u2) => _compareByRating(u1, u2, Role.PC);
-
-          // emit(
-          //   state.copyWith(
-          //     sortedTableUsers: users.sortedByCompare(
-          //       (user) => user,
-          //       (user1, user2) => _compareByRating(user1, user2, Role.PC),
-          //     ),
-          //     sortedAllUsers: state.allUsers.sortedByCompare(
-          //       (user) => user,
-          //       (user1, user2) => _compareByRating(user1, user2, Role.PC),
-          //     ),
-          //   ),
-          // );
           break;
         case SortType.BY_RATING_CAMERA:
           comparator = (u1, u2) => _compareByRating(u1, u2, Role.CAMERA);
-
-          // emit(
-          //   state.copyWith(
-          //     sortedTableUsers: users.sortedByCompare(
-          //       (user) => user,
-          //       (user1, user2) => _compareByRating(user1, user2, Role.CAMERA),
-          //     ),
-          //     sortedAllUsers: state.allUsers.sortedByCompare(
-          //       (user) => user,
-          //       (user1, user2) => _compareByRating(user1, user2, Role.CAMERA),
-          //     ),
-          //   ),
-          // );
           break;
         case SortType.BY_LAST_DATE_PC:
           comparator = (u1, u2) => _compareByLastDate(u1, u2, Role.PC);

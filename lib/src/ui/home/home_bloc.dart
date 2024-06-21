@@ -117,70 +117,123 @@ class HomeCubit extends Cubit<HomeState> {
     final tableData = state.tableData;
     if (tableData != null) {
       final users = tableData.users;
+
+      int Function(TableUser, TableUser) comparator;
+
       switch (state.sortType) {
         case SortType.BY_NAME:
-          emit(state.copyWith(
-            sortedTableUsers: users.sortedBy((e) => e.name),
-            sortedAllUsers: state.allUsers.sortedBy((e) => e.name),
-          ));
+          comparator = (u1, u2) => u1.name.compareTo(u2.name);
+
+          // emit(state.copyWith(
+          //   sortedTableUsers: users.sortedBy((e) => e.name),
+          //   sortedAllUsers: state.allUsers.sortedBy((e) => e.name),
+          // ));
           break;
-        case SortType.BY_RATING:
-          emit(
-            state.copyWith(
-              sortedTableUsers: users.sortedByCompare(
-                (user) => user,
-                (user1, user2) => _compareByRating(user1, user2),
-              ),
-              sortedAllUsers: state.allUsers.sortedByCompare(
-                (user) => user,
-                (user1, user2) => _compareByRating(user1, user2),
-              ),
-            ),
-          );
+        case SortType.BY_RATING_PC:
+          comparator = (u1, u2) => _compareByRating(u1, u2, Role.PC);
+
+          // emit(
+          //   state.copyWith(
+          //     sortedTableUsers: users.sortedByCompare(
+          //       (user) => user,
+          //       (user1, user2) => _compareByRating(user1, user2, Role.PC),
+          //     ),
+          //     sortedAllUsers: state.allUsers.sortedByCompare(
+          //       (user) => user,
+          //       (user1, user2) => _compareByRating(user1, user2, Role.PC),
+          //     ),
+          //   ),
+          // );
           break;
+        case SortType.BY_RATING_CAMERA:
+          comparator = (u1, u2) => _compareByRating(u1, u2, Role.CAMERA);
+
+          // emit(
+          //   state.copyWith(
+          //     sortedTableUsers: users.sortedByCompare(
+          //       (user) => user,
+          //       (user1, user2) => _compareByRating(user1, user2, Role.CAMERA),
+          //     ),
+          //     sortedAllUsers: state.allUsers.sortedByCompare(
+          //       (user) => user,
+          //       (user1, user2) => _compareByRating(user1, user2, Role.CAMERA),
+          //     ),
+          //   ),
+          // );
+          break;
+        case SortType.BY_LAST_DATE_PC:
+          comparator = (u1, u2) => _compareByLastDate(u1, u2, Role.PC);
+          break;
+        case SortType.BY_LAST_DATE_CAMERA:
+          comparator = (u1, u2) => _compareByLastDate(u1, u2, Role.CAMERA);
+          break;
+      }
+
+      emit(
+        state.copyWith(
+          sortedTableUsers: users.sortedByCompare((user) => user, comparator),
+          sortedAllUsers:
+              state.allUsers.sortedByCompare((user) => user, comparator),
+        ),
+      );
+    }
+  }
+
+  int _getValue(List<Rating> ratingList, Role role) {
+    Rating? rating = ratingList.firstWhereOrNull((r) => r.role == role);
+    return rating?.value ?? 0;
+  }
+
+  DateTime _getLastDate(List<Rating> ratingList, Role role) {
+    Rating? rating = ratingList.firstWhereOrNull((r) => r.role == role);
+    return rating?.lastDate ?? DateTime.fromMillisecondsSinceEpoch(0);
+  }
+
+  int _compareByRating(TableUser user1, TableUser user2, Role role) {
+    final rating1 = getRating(user1);
+    final rating2 = getRating(user2);
+    final rating1Value = _getValue(rating1, role);
+    final rating2Value = _getValue(rating2, role);
+    final lastDate1 = _getLastDate(rating1, role);
+    final lastDate2 = _getLastDate(rating2, role);
+    if (user1.roles.contains(role) && !user2.roles.contains(role)) {
+      return -1;
+    } else if (!user1.roles.contains(role) && user2.roles.contains(role)) {
+      return 1;
+    } else {
+      if (rating1Value == rating2Value) {
+        if (lastDate1 == lastDate2) {
+          return user1.name.compareTo(user2.name);
+        } else {
+          return lastDate1.compareTo(lastDate2);
+        }
+      } else {
+        return rating1Value - rating2Value;
       }
     }
   }
 
-  int _getValue(List<Rating> ratingList) {
-    int result = 0;
-    ratingList.forEach((rating) {
-      result += rating.value;
-    });
-    return result;
-  }
-
-  DateTime? _getLastDate(List<Rating> ratingList) {
-    DateTime? result;
-    ratingList.forEach((rating) {
-      final ratingLastDate = rating.lastDate;
-      if (result == null ||
-          (ratingLastDate != null && ratingLastDate.isAfter(result!))) {
-        result = ratingLastDate;
-      }
-    });
-    return result;
-  }
-
-  int _compareByRating(TableUser user1, TableUser user2) {
+  int _compareByLastDate(TableUser user1, TableUser user2, Role role) {
     final rating1 = getRating(user1);
     final rating2 = getRating(user2);
-    final rating1Value = _getValue(rating1);
-    final rating2Value = _getValue(rating2);
-    final lastDate1 = _getLastDate(rating1);
-    final lastDate2 = _getLastDate(rating2);
-    if (rating1Value == rating2Value) {
+    final rating1Value = _getValue(rating1, role);
+    final rating2Value = _getValue(rating2, role);
+    final lastDate1 = _getLastDate(rating1, role);
+    final lastDate2 = _getLastDate(rating2, role);
+    if (user1.roles.contains(role) && !user2.roles.contains(role)) {
+      return -1;
+    } else if (!user1.roles.contains(role) && user2.roles.contains(role)) {
+      return 1;
+    } else {
       if (lastDate1 == lastDate2) {
-        return user1.name.compareTo(user2.name);
-      } else if (lastDate1 == null) {
-        return -1;
-      } else if (lastDate2 == null) {
-        return 1;
+        if (rating1Value == rating2Value) {
+          return user1.name.compareTo(user2.name);
+        } else {
+          return rating1Value - rating2Value;
+        }
       } else {
         return lastDate1.compareTo(lastDate2);
       }
-    } else {
-      return rating1Value - rating2Value;
     }
   }
 

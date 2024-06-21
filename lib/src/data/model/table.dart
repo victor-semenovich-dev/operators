@@ -17,4 +17,10 @@ class TableData {
   }
 }
 
-enum SortType { BY_NAME, BY_RATING }
+enum SortType {
+  BY_NAME,
+  BY_RATING_PC,
+  BY_RATING_CAMERA,
+  BY_LAST_DATE_PC,
+  BY_LAST_DATE_CAMERA
+}

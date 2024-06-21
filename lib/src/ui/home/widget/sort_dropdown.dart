@@ -32,7 +32,10 @@ class SortDropdown extends StatelessWidget {
                     Text(
                       switch (item) {
                         SortType.BY_NAME => 'по имени',
-                        SortType.BY_RATING => 'по рейтингу',
+                        SortType.BY_RATING_PC => 'по рейтингу (PC)',
+                        SortType.BY_RATING_CAMERA => 'по рейтингу (CAM)',
+                        SortType.BY_LAST_DATE_PC => 'по дате (PC)',
+                        SortType.BY_LAST_DATE_CAMERA => 'по дате (CAM)',
                       },
                     ),
                   ],

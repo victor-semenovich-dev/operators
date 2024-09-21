@@ -420,6 +420,10 @@ class HomeState with _$HomeState {
 
   bool get showIntercomOption =>
       currentUser?.roles.contains(Role.CAMERA) == true;
+
+  List<TableEvent> get inactiveEvents => allEvents
+      .where((e) => !e.isActive)
+      .sorted((a, b) => b.date.compareTo(a.date));
 }
 
 class Rating {

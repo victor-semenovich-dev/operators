@@ -11,6 +11,7 @@ import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/notification_confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
 import 'package:operators/src/ui/home/widget/table.dart';
+import 'package:operators/src/ui/home/widget/table_events_dialog.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -165,6 +166,15 @@ class _HomeScreenState extends State<HomeScreen> {
                       case 'toggle_inactive_users':
                         cubit.showAllUsers(!state.showAllUsers);
                         break;
+                      case 'toggle_inactive_events':
+                        showDialog(
+                          context: context,
+                          builder: (context) => TableEventsDialog(
+                            title: 'Неактивные события',
+                            events: state.inactiveEvents,
+                          ),
+                        );
+                        break;
                       case 'password':
                         context.read<HomeCubit>().resetPassword();
                         break;
@@ -185,7 +195,12 @@ class _HomeScreenState extends State<HomeScreen> {
                           value: 'toggle_inactive_users',
                           child: Text(state.showAllUsers
                               ? 'Скрыть неактивных пользователей'
-                              : 'Показывать всех пользователей'),
+                              : 'Показать всех пользователей'),
+                        ),
+                      if (state.isAdmin)
+                        PopupMenuItem<String>(
+                          value: 'toggle_inactive_events',
+                          child: Text('Показать неактивные события'),
                         ),
                       PopupMenuItem<String>(
                         value: 'password',

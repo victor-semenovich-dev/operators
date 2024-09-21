@@ -22,37 +22,41 @@ class TableRepository {
     _dbRef = FirebaseDatabase.instance.ref(baseUrl);
 
     _dbRef.onValue.listen((event) {
-      final snapshot = event.snapshot;
-      final eventsData = snapshot.child('events').value;
-      final usersData = snapshot.child('users').value;
-
-      final allUsers = <TableUser>[];
-      final allEvents = <TableEvent>[];
-
-      _parseSnapshotData(
-        data: usersData,
-        preParseCondition: (id, map) => true,
-        parseItem: (id, map) => _parseUser(id, map),
-        processItem: (id, user) => allUsers.add(user),
-      );
-
-      _parseSnapshotData(
-        data: eventsData,
-        preParseCondition: (id, map) => true,
-        parseItem: (id, map) => _parseEvent(id, map),
-        processItem: (id, item) => allEvents.add(item),
-      );
-
-      final events = allEvents.where((event) => event.isActive).toList();
-      events.sort((e1, e2) => e1.date.compareTo(e2.date));
-
-      final users = allUsers.where((user) => user.isActive).toList();
-      users.sort((u1, u2) => u1.name.compareTo(u2.name));
-
-      _tableSubject.add(TableData(events: events, users: users));
-      _eventsSubject.add(allEvents);
-      _usersSubject.add(allUsers);
+      _parseDatabaseEvent(event);
     });
+  }
+
+  void _parseDatabaseEvent(DatabaseEvent event) {
+    final snapshot = event.snapshot;
+    final eventsData = snapshot.child('events').value;
+    final usersData = snapshot.child('users').value;
+
+    final allUsers = <TableUser>[];
+    final allEvents = <TableEvent>[];
+
+    _parseSnapshotData(
+      data: usersData,
+      preParseCondition: (id, map) => true,
+      parseItem: (id, map) => _parseUser(id, map),
+      processItem: (id, user) => allUsers.add(user),
+    );
+
+    _parseSnapshotData(
+      data: eventsData,
+      preParseCondition: (id, map) => true,
+      parseItem: (id, map) => _parseEvent(id, map),
+      processItem: (id, item) => allEvents.add(item),
+    );
+
+    final events = allEvents.where((event) => event.isActive).toList();
+    events.sort((e1, e2) => e1.date.compareTo(e2.date));
+
+    final users = allUsers.where((user) => user.isActive).toList();
+    users.sort((u1, u2) => u1.name.compareTo(u2.name));
+
+    _tableSubject.add(TableData(events: events, users: users));
+    _eventsSubject.add(allEvents);
+    _usersSubject.add(allUsers);
   }
 
   void toggleCanHelp(TableUser user, TableEvent event) {

@@ -18,12 +18,19 @@ class TableRepository {
   final _usersSubject = BehaviorSubject<List<TableUser>>();
   late Stream<List<TableUser>> usersStream = _usersSubject.stream;
 
+  List<int> _forcedVisibleEventIds = [];
+
   TableRepository() {
     _dbRef = FirebaseDatabase.instance.ref(baseUrl);
 
     _dbRef.onValue.listen((event) {
       _parseDatabaseEvent(event);
     });
+  }
+
+  void _updateTable() async {
+    final event = await _dbRef.onValue.first;
+    _parseDatabaseEvent(event);
   }
 
   void _parseDatabaseEvent(DatabaseEvent event) {
@@ -48,7 +55,10 @@ class TableRepository {
       processItem: (id, item) => allEvents.add(item),
     );
 
-    final events = allEvents.where((event) => event.isActive).toList();
+    final events = allEvents
+        .where((event) =>
+            event.isActive || _forcedVisibleEventIds.contains(event.id))
+        .toList();
     events.sort((e1, e2) => e1.date.compareTo(e2.date));
 
     final users = allUsers.where((user) => user.isActive).toList();
@@ -57,6 +67,11 @@ class TableRepository {
     _tableSubject.add(TableData(events: events, users: users));
     _eventsSubject.add(allEvents);
     _usersSubject.add(allUsers);
+  }
+
+  void setForcedVisibleEvents(List<TableEvent> events) {
+    _forcedVisibleEventIds = events.map((e) => e.id).toList();
+    _updateTable();
   }
 
   void toggleCanHelp(TableUser user, TableEvent event) {

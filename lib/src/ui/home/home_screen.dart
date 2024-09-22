@@ -10,8 +10,8 @@ import 'package:operators/src/ui/home/widget/add_edit_event.dart';
 import 'package:operators/src/ui/home/widget/confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/notification_confirmation_dialog.dart';
 import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
-import 'package:operators/src/ui/home/widget/table.dart';
-import 'package:operators/src/ui/home/widget/table_events_dialog.dart';
+import 'package:operators/src/ui/home/widget/table_inactive_events_dialog.dart';
+import 'package:operators/src/ui/home/widget/table_widget.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -169,9 +169,11 @@ class _HomeScreenState extends State<HomeScreen> {
                       case 'toggle_inactive_events':
                         showDialog(
                           context: context,
-                          builder: (context) => TableEventsDialog(
-                            title: 'Неактивные события',
-                            events: state.inactiveEvents,
+                          builder: (context) => TableInactiveEventsDialog(
+                            allEvents: state.inactiveEvents,
+                            visibleEvents: state.inactiveVisibleEvents,
+                            applyForcedVisibleEvents:
+                                cubit.applyForcedVisibleEvents,
                           ),
                         );
                         break;

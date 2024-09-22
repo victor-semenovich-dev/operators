@@ -380,6 +380,10 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(showAllUsers: showAllUsers));
   }
 
+  void applyForcedVisibleEvents(List<TableEvent> events) {
+    tableRepository.setForcedVisibleEvents(events);
+  }
+
   @override
   Future<void> close() async {
     await _firebaseUserSubscription.cancel();
@@ -424,6 +428,9 @@ class HomeState with _$HomeState {
   List<TableEvent> get inactiveEvents => allEvents
       .where((e) => !e.isActive)
       .sorted((a, b) => b.date.compareTo(a.date));
+
+  List<TableEvent> get inactiveVisibleEvents =>
+      tableData?.events.where((e) => !e.isActive).toList() ?? [];
 }
 
 class Rating {

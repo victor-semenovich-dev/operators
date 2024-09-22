@@ -111,9 +111,14 @@ class TableWidget extends StatelessWidget {
           height: ROW_HEIGHT,
           padding: EdgeInsets.all(4),
           child: Center(
-            child: Text(event.title,
-                textAlign: TextAlign.center,
-                style: TextStyle(fontWeight: FontWeight.bold)),
+            child: Text(
+              event.title,
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: event.isActive ? Colors.black : Colors.black38,
+              ),
+            ),
           ),
         );
         children.add(

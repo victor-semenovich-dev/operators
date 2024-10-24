@@ -171,7 +171,6 @@ class CameraWidgetState extends State<CameraWidget>
                   child: Container(
                     alignment: Alignment.topLeft,
                     padding: EdgeInsets.all(circleMargin),
-                    // padding: EdgeInsets.all(circleSize),
                     child: Icon(
                       Icons.message,
                       size: circleSize,

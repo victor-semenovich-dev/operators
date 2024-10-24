@@ -139,9 +139,7 @@ class CameraWidgetState extends State<CameraWidget>
               painter: CameraPainter(camera),
               child: Stack(children: [
                 Container(
-                  color: (camera?.isLive ?? false)
-                      ? Colors.red[300]
-                      : Colors.transparent,
+                  color: (camera.isLive) ? Colors.red[300] : Colors.transparent,
                   child: Center(
                     child: Text('${camera.id}',
                         style: TextStyle(fontSize: textSize)),
@@ -156,7 +154,7 @@ class CameraWidgetState extends State<CameraWidget>
                         height: animation.value,
                         child: Container(
                           decoration: BoxDecoration(
-                              color: (camera.isReady ?? true)
+                              color: (camera.isReady)
                                   ? Colors.green
                                   : Colors.red[600],
                               borderRadius: new BorderRadius.all(

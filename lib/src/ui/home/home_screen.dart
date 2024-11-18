@@ -12,7 +12,6 @@ import 'package:operators/src/ui/home/widget/notification_confirmation_dialog.da
 import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
 import 'package:operators/src/ui/home/widget/table_inactive_events_dialog.dart';
 import 'package:operators/src/ui/home/widget/table_widget.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -21,7 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   HomeState? _lastState;
-  late WebSocketChannel webSocketChannel;
 
   Future<void> _initBackgroundFetch() async {
     await BackgroundFetch.configure(
@@ -44,34 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
     await BackgroundFetch.start();
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _connectToWebSocket();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    webSocketChannel.sink.close();
-  }
-
-  void _connectToWebSocket() async {
-    final wsUrl = Uri.parse('ws://192.168.0.27:8080');
-    webSocketChannel = WebSocketChannel.connect(wsUrl);
-
-    await webSocketChannel.ready;
-
-    webSocketChannel.stream.listen((message) {
-      debugPrint('socket: received message: $message');
-      try {
-        webSocketChannel.sink.add('Hello, the server!');
-      } catch (e) {}
-    }).onDone(() {
-      debugPrint('socket: stream closed');
-    });
   }
 
   @override

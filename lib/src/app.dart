@@ -6,7 +6,8 @@ import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
 import 'package:operators/src/data/repository/telegram.dart';
-import 'package:operators/src/ui/home/home_provider.dart';
+
+import 'intercom/ui/route/home_route.dart';
 
 class OperatorsApp extends StatelessWidget {
   @override
@@ -35,7 +36,8 @@ class OperatorsApp extends StatelessWidget {
         supportedLocales: [
           const Locale('ru'),
         ],
-        home: HomeScreenProvider(),
+        home: IntercomRoute(user: null),
+        // home: HomeScreenProvider(),
       ),
     );
   }

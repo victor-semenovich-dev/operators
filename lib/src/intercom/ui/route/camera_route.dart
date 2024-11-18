@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
 
 import '../../../data/model/user.dart';
 import '../../data/camera.dart';
@@ -32,6 +33,8 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
   late StreamSubscription _streamSubscription;
   List<Message> _messages = [];
 
+  late WebSocketChannel _webSocketChannel;
+
   _CameraRouteState(this._id);
 
   @override
@@ -43,6 +46,26 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
         cameraRepository.getCameraStream(_id).listen((camera) {
       _processCameraMessages(camera);
     });
+
+    _connectToWebSocket();
+  }
+
+  void _connectToWebSocket() async {
+    final wsUrl = Uri.parse('ws://192.168.61.223:8080');
+    debugPrint('connect...');
+    _webSocketChannel = WebSocketChannel.connect(wsUrl);
+
+    await _webSocketChannel.ready;
+    debugPrint('connected!');
+
+    _webSocketChannel.stream.listen((message) {
+      debugPrint('socket: received message: $message');
+      try {
+        _webSocketChannel.sink.add('Hello, the server!');
+      } catch (e) {}
+    }).onDone(() {
+      debugPrint('socket: stream closed');
+    });
   }
 
   @override
@@ -50,6 +73,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
     super.dispose();
     _streamSubscription.cancel();
     WakelockPlus.disable();
+    _webSocketChannel.sink.close();
   }
 
   void _processCameraMessages(Camera camera) {

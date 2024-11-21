@@ -7,6 +7,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../widget/background_state_widget.dart';
+import '../widget/camera_context.dart';
 import '../widget/camera_widget.dart';
 import '../widget/foreground_service_widget.dart';
 import '../widget/messages_widget.dart';

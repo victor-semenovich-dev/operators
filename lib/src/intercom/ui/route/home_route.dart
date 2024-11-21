@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:operators/src/data/model/user.dart';
 
 import '../widget/list_item.dart';
-import 'camera_route.dart';
+import 'camera/camera_route.dart';
 import 'mixer_route.dart';
 
 const KEY_INTERCOM_SERVER_LOCATION = "intercom_server_location";
@@ -42,7 +42,7 @@ class IntercomRoute extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CameraRoute(
-                        1,
+                        id: 0,
                         user: user,
                       ),
                     ),
@@ -57,7 +57,7 @@ class IntercomRoute extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CameraRoute(
-                        2,
+                        id: 1,
                         user: user,
                       ),
                     ),
@@ -72,7 +72,7 @@ class IntercomRoute extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CameraRoute(
-                        3,
+                        id: 2,
                         user: user,
                       ),
                     ),
@@ -87,7 +87,7 @@ class IntercomRoute extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => CameraRoute(
-                        4,
+                        id: 3,
                         user: user,
                       ),
                     ),

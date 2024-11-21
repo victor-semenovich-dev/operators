@@ -2,28 +2,38 @@ import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:operators/src/data/model/user.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../../../../main.dart';
-import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../painter/CameraPainter.dart';
 import '../route/mixer_settings_route.dart';
 import 'camera_context.dart';
 
-class CameraWidget extends StatefulWidget {
-  final TableUser? user;
-  final Camera camera;
+class CameraWidget2 extends StatefulWidget {
+  final Function() onTap;
+  final Function()? onLongPress;
+  final Future<void> Function(String message) sendMessage;
+  final int cameraId;
+  final bool stateLive;
+  final bool stateReady;
+  final bool stateAttention;
+  final bool stateChange;
   final double textSize;
   final double circleSize;
   final double circleMargin;
   final CameraContext cameraContext;
 
-  CameraWidget(
-    this.user,
-    this.camera,
-    this.cameraContext, {
+  CameraWidget2({
+    required this.cameraContext,
+    required this.cameraId,
+    required this.stateLive,
+    required this.stateReady,
+    required this.stateAttention,
+    required this.stateChange,
+    required this.onTap,
+    this.onLongPress,
+    required this.sendMessage,
     this.textSize = 48,
     this.circleSize = 48,
     this.circleMargin = 8,
@@ -32,51 +42,46 @@ class CameraWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
     // ignore: no_logic_in_create_state
-    return CameraWidgetState(camera, cameraContext,
-        textSize: textSize, circleSize: circleSize, circleMargin: circleMargin);
+    return _CameraWidgetState(cameraContext);
   }
 }
 
-class CameraWidgetState extends State<CameraWidget>
+class _CameraWidgetState extends State<CameraWidget2>
     with SingleTickerProviderStateMixin {
-  final double textSize;
-  final double circleSize;
-  final double circleMargin;
   final CameraContext cameraContext;
 
-  Camera camera;
   final cameraRepository = CameraRepository();
 
   late Animation<double> animation;
   late AnimationController animationController;
 
-  CameraWidgetState(this.camera, this.cameraContext,
-      {this.textSize = 48, this.circleSize = 48, this.circleMargin = 8});
+  _CameraWidgetState(this.cameraContext);
 
   @override
   void initState() {
     super.initState();
     animationController =
         AnimationController(duration: const Duration(seconds: 1), vsync: this);
-    animation = Tween<double>(begin: circleSize, end: 2 * circleSize)
-        .animate(animationController)
-      ..addListener(() {
-        setState(() {});
-      })
-      ..addStatusListener((status) {
-        switch (status) {
-          case AnimationStatus.completed:
-            if (camera.isRequested) animationController.reverse();
-            break;
-          case AnimationStatus.dismissed:
-            if (camera.isRequested) animationController.forward();
-            break;
-          default:
-            break;
-        }
-      });
+    animation =
+        Tween<double>(begin: widget.circleSize, end: 2 * widget.circleSize)
+            .animate(animationController)
+          ..addListener(() {
+            setState(() {});
+          })
+          ..addStatusListener((status) {
+            switch (status) {
+              case AnimationStatus.completed:
+                if (widget.stateAttention) animationController.reverse();
+                break;
+              case AnimationStatus.dismissed:
+                if (widget.stateAttention) animationController.forward();
+                break;
+              default:
+                break;
+            }
+          });
 
-    if (camera.isRequested && cameraContext == CameraContext.MIXER) {
+    if (widget.stateAttention && cameraContext == CameraContext.MIXER) {
       animationController.forward();
     }
   }
@@ -88,12 +93,10 @@ class CameraWidgetState extends State<CameraWidget>
   }
 
   @override
-  void didUpdateWidget(covariant CameraWidget oldWidget) {
-    final newCamera = widget.camera;
-    bool isRequestedChanged = camera.isRequested != newCamera.isRequested;
-    camera = newCamera;
-    if (cameraContext == CameraContext.MIXER && isRequestedChanged) {
-      if (camera.isRequested) {
+  void didUpdateWidget(covariant CameraWidget2 oldWidget) {
+    bool isAttentionChanged = widget.stateAttention != oldWidget.stateAttention;
+    if (cameraContext == CameraContext.MIXER && isAttentionChanged) {
+      if (widget.stateAttention) {
         animationController.forward();
       } else {
         animationController.reset();
@@ -109,51 +112,28 @@ class CameraWidgetState extends State<CameraWidget>
             defaultValue: false),
         builder: (context, isManualSelectionEnabled) {
           return GestureDetector(
-            onTap: () {
-              switch (cameraContext) {
-                case CameraContext.MIXER:
-                  if (isManualSelectionEnabled) {
-                    cameraRepository.setLive(camera.id);
-                    cameraRepository.setRequested(camera.id, false);
-                    cameraRepository.setOk(camera.id, true);
-                  } else {
-                    _sendMessage(context);
-                  }
-                  break;
-                case CameraContext.CAMERA:
-                  cameraRepository.setReady(camera.id, !camera.isReady);
-                  if (camera.isReady) {
-                    cameraRepository.setRequested(camera.id, false);
-                  }
-                  cameraRepository.setOk(camera.id, true);
-                  break;
-              }
-            },
-            onLongPress: () {
-              if (cameraContext == CameraContext.MIXER) {
-                cameraRepository.setOk(camera.id, !camera.isOk);
-              }
-            },
+            onTap: widget.onTap,
+            onLongPress: widget.onLongPress,
             child: CustomPaint(
-              painter: CameraPainter(showCross: !camera.isOk),
+              painter: CameraPainter(showCross: widget.stateChange),
               child: Stack(children: [
                 Container(
-                  color: (camera.isLive) ? Colors.red[300] : Colors.transparent,
+                  color: (widget.stateLive) ? Colors.red[300] : Colors.transparent,
                   child: Center(
-                    child: Text('${camera.id}',
-                        style: TextStyle(fontSize: textSize)),
+                    child: Text('${widget.cameraId + 1}',
+                        style: TextStyle(fontSize: widget.textSize)),
                   ),
                 ),
                 Container(
                   alignment: Alignment.topRight,
-                  margin: EdgeInsets.all(circleMargin),
+                  margin: EdgeInsets.all(widget.circleMargin),
                   child: ClipOval(
                     child: SizedBox(
                         width: animation.value,
                         height: animation.value,
                         child: Container(
                           decoration: BoxDecoration(
-                              color: (camera.isReady)
+                              color: (widget.stateReady)
                                   ? Colors.green
                                   : Colors.red[600],
                               borderRadius: new BorderRadius.all(
@@ -169,10 +149,10 @@ class CameraWidgetState extends State<CameraWidget>
                   },
                   child: Container(
                     alignment: Alignment.topLeft,
-                    padding: EdgeInsets.all(circleMargin),
+                    padding: EdgeInsets.all(widget.circleMargin),
                     child: Icon(
                       Icons.message,
-                      size: circleSize,
+                      size: widget.circleSize,
                     ),
                   ),
                 ),
@@ -197,7 +177,7 @@ class CameraWidgetState extends State<CameraWidget>
               child: Text(
                 cameraContext == CameraContext.CAMERA
                     ? 'Сообщение для оператора видеопульта:'
-                    : 'Сообщение для оператора камеры ${camera.id}:',
+                    : 'Сообщение для оператора камеры ${widget.cameraId + 1}:',
                 style: const TextStyle(fontSize: 16),
               ),
             ),
@@ -242,23 +222,21 @@ class CameraWidgetState extends State<CameraWidget>
           );
         });
     if (message != null && message.trim().isNotEmpty) {
-      await CameraRepository()
-          .sendMessage(widget.user, camera.id, message, cameraContext);
+      await widget.sendMessage(message);
 
       if (cameraContext == CameraContext.CAMERA) {
         ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('Сообщение отправлено: "$message"')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Сообщение отправлено (${camera.id}): "$message"')));
+            content: Text('Сообщение отправлено (${widget.cameraId}): "$message"')));
       }
     }
   }
 
   List<Widget> predefinedMessagesWidgets(FlashController<String> controller) {
-    final predefinedMessages = (cameraContext == CameraContext.MIXER)
-        ? camera.incomingPredefinedMessages
-        : camera.outcomingPredefinedMessages;
+    // TODO predefinedMessages
+    final predefinedMessages = (cameraContext == CameraContext.MIXER) ? [] : [];
     predefinedMessages.sort((m1, m2) => m1.order - m2.order);
     return predefinedMessages
         .map((message) => InkWell(

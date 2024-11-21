@@ -1,0 +1,1 @@
+enum CameraContext { MIXER, CAMERA }

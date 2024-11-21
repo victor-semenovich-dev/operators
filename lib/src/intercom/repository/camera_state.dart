@@ -6,7 +6,7 @@ import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/data/util/dateTime.dart';
 
 import '../data/camera.dart';
-import '../ui/widget/camera_widget.dart';
+import '../ui/widget/camera_context.dart';
 
 FirebaseDatabase intercomFirebaseDatabase = FirebaseDatabase.instance;
 

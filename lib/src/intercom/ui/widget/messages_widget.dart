@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:operators/src/intercom/data/camera.dart';
-import 'package:operators/src/intercom/ui/widget/camera_widget.dart';
+
+import 'camera_context.dart';
 
 class MessagesWidget extends StatelessWidget {
   final List<Message> messages;

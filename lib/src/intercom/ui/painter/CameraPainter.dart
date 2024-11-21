@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 
-import '../../data/camera.dart';
-
 class CameraPainter extends CustomPainter {
-  final Camera camera;
+  final bool showCross;
 
-  CameraPainter(this.camera);
+  CameraPainter({required this.showCross});
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (!camera.isOk) {
+    if (showCross) {
       Paint linePaint = Paint();
       linePaint.color = Colors.black;
       linePaint.strokeWidth = 4;
@@ -21,7 +19,6 @@ class CameraPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) {
-    final oldCamera = (oldDelegate as CameraPainter).camera;
-    return camera.isOk != oldCamera.isOk;
+    return showCross != (oldDelegate as CameraPainter).showCross;
   }
 }

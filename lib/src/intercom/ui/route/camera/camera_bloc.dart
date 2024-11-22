@@ -24,6 +24,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
     await _webSocketChannel.ready;
     debugPrint('connected!');
     emit(CameraRouteState(socketConnected: true, socketClosed: false));
+    // TODO add timeout
   }
 
   void toggleReady() {

@@ -9,10 +9,37 @@ const KEY_INTERCOM_SERVER_LOCATION = "intercom_server_location";
 const VALUE_LOCATION_USA = "usa";
 const VALUE_LOCATION_EU = "eu";
 
-class IntercomRoute extends StatelessWidget {
+class IntercomRoute extends StatefulWidget {
   final TableUser? user;
 
   const IntercomRoute({Key? key, required this.user}) : super(key: key);
+
+  @override
+  State<IntercomRoute> createState() => _IntercomRouteState();
+}
+
+class _IntercomRouteState extends State<IntercomRoute> {
+  late TextEditingController _socketAddressController;
+  bool _isAddressFormatCorrect = true;
+
+  @override
+  void initState() {
+    _socketAddressController = TextEditingController(
+      text: 'ws://192.168.0.27:8080',
+    );
+    _socketAddressController.addListener(() {
+      setState(() {
+        _isAddressFormatCorrect = true;
+      });
+    });
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _socketAddressController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +55,7 @@ class IntercomRoute extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                       builder: (context) => MixerRoute(
-                        user: user,
+                        user: widget.user,
                       ),
                     ),
                   )),
@@ -37,67 +64,77 @@ class IntercomRoute extends StatelessWidget {
             height: 1,
           ),
           ListItem(
-              'Камера 1',
-              () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CameraRoute(
-                        id: 0,
-                        user: user,
-                      ),
-                    ),
-                  )),
+            'Камера 1',
+            () => _validateAndOpenCameraRoute(0),
+          ),
           const Divider(
             color: Colors.black,
             height: 1,
           ),
           ListItem(
-              'Камера 2',
-              () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CameraRoute(
-                        id: 1,
-                        user: user,
-                      ),
-                    ),
-                  )),
+            'Камера 2',
+            () => _validateAndOpenCameraRoute(1),
+          ),
           const Divider(
             color: Colors.black,
             height: 1,
           ),
           ListItem(
-              'Камера 3',
-              () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CameraRoute(
-                        id: 2,
-                        user: user,
-                      ),
-                    ),
-                  )),
+            'Камера 3',
+            () => _validateAndOpenCameraRoute(2),
+          ),
           const Divider(
             color: Colors.black,
             height: 1,
           ),
           ListItem(
-              'Камера 4',
-              () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => CameraRoute(
-                        id: 3,
-                        user: user,
-                      ),
-                    ),
-                  )),
+            'Камера 4',
+            () => _validateAndOpenCameraRoute(3),
+          ),
           const Divider(
             color: Colors.black,
             height: 1,
+          ),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              controller: _socketAddressController,
+              decoration: InputDecoration(
+                labelText: 'Адрес сервера',
+                errorText:
+                    _isAddressFormatCorrect ? null : 'Неверный формат адреса',
+              ),
+            ),
           ),
         ],
       ),
     );
+  }
+
+  void _validateAndOpenCameraRoute(int cameraId) {
+    final socketUri = _validateAndGetSocketUri();
+    if (socketUri != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => CameraRoute(
+            id: cameraId,
+            socketUri: socketUri,
+          ),
+        ),
+      );
+    }
+  }
+
+  Uri? _validateAndGetSocketUri() {
+    final address = _socketAddressController.value.text;
+    try {
+      return Uri.parse(address);
+    } on FormatException {
+      setState(() {
+        _isAddressFormatCorrect = false;
+      });
+    }
+    return null;
   }
 }

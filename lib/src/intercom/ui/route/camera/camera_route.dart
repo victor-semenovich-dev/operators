@@ -4,7 +4,6 @@ import 'package:operators/src/intercom/ui/route/camera/camera_bloc.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_state.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import '../../../../data/model/user.dart';
 import '../../../data/camera.dart';
 import '../../../repository/camera_repository.dart';
 import '../../widget/camera_context.dart';
@@ -13,13 +12,13 @@ import '../../widget/messages_widget.dart';
 import '../../widget/state_button.dart';
 
 class CameraRoute extends StatefulWidget {
-  final TableUser? user;
   final int id;
+  final Uri socketUri;
 
   const CameraRoute({
     Key? key,
     required this.id,
-    required this.user,
+    required this.socketUri,
   }) : super(key: key);
 
   @override
@@ -55,7 +54,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
       body: BlocProvider<CameraBloc>(
         create: (_) => CameraBloc(
           id: widget.id,
-          socketUri: Uri.parse('ws://192.168.0.27:8080'),
+          socketUri: widget.socketUri,
         ),
         child: BlocBuilder<CameraBloc, CameraRouteState>(
             builder: (context, state) {

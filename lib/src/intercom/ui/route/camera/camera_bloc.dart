@@ -30,7 +30,16 @@ class CameraBloc extends Cubit<CameraRouteState> {
   }
 
   void toggleReady() {
-    // TODO not implemented
+    final camera = state.camera;
+    if (camera != null) {
+      final newReady = !camera.ready;
+      final messageMap = {
+        'id': id,
+        'ready': newReady,
+      };
+      final messageJson = json.encode(messageMap);
+      _webSocketChannel.sink.add(messageJson);
+    }
   }
 
   void toggleAttention() {

@@ -109,7 +109,10 @@ class MixerRoute extends StatelessWidget {
       stateAttention: camera.attention,
       stateChange: camera.change,
       onTap: () {
-        context.read<MixerBloc>().toggleLive(cameraId: id);
+        context.read<MixerBloc>().setLive(cameraId: id);
+      },
+      onLongPress: () {
+        context.read<MixerBloc>().toggleChange(cameraId: id);
       },
       sendMessage: (message) async {
         await context

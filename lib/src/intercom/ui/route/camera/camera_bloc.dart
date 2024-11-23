@@ -36,6 +36,8 @@ class CameraBloc extends Cubit<CameraRouteState> {
       final messageMap = {
         'id': id,
         'ready': newReady,
+        'change': false,
+        'attention': false,
       };
       final messageJson = json.encode(messageMap);
       _webSocketChannel.sink.add(messageJson);
@@ -43,10 +45,18 @@ class CameraBloc extends Cubit<CameraRouteState> {
   }
 
   void toggleAttention() {
-    // TODO not implemented
-    // cameraRepository.setRequested(
-    //     _id, !snapshot.data!.isRequested);
-    // cameraRepository.setReady(_id, true);
+    final camera = state.camera;
+    if (camera != null) {
+      final newAttention = !camera.attention;
+      final messageMap = {
+        'id': id,
+        'ready': true,
+        'change': false,
+        'attention': newAttention,
+      };
+      final messageJson = json.encode(messageMap);
+      _webSocketChannel.sink.add(messageJson);
+    }
   }
 
   Future<void> sendMessage(String message) async {

@@ -58,8 +58,32 @@ class MixerBloc extends Cubit<MixerRouteState> {
     });
   }
 
-  void toggleLive({required int cameraId}) {
-    // TODO not implemented
+  void toggleChange({required int cameraId}) {
+    final cameraList = state.cameraList;
+    if (cameraList != null) {
+      final camera = cameraList[cameraId];
+      if (!camera.live) {
+        final newChange = !camera.change;
+        final messageMap = {
+          'id': cameraId,
+          'change': newChange,
+          'attention': false,
+        };
+        final messageJson = json.encode(messageMap);
+        _webSocketChannel.sink.add(messageJson);
+      }
+    }
+  }
+
+  void setLive({required int cameraId}) {
+    final messageMap = {
+      'id': cameraId,
+      'live': true,
+      'change': false,
+      'attention': false,
+    };
+    final messageJson = json.encode(messageMap);
+    _webSocketChannel.sink.add(messageJson);
   }
 
   Future<void> sendMessage({

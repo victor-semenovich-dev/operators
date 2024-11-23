@@ -60,7 +60,7 @@ class CameraRoute extends StatelessWidget {
                             width: double.infinity,
                             margin: const EdgeInsets.all(16),
                             child: StateButton(
-                              onClick: camera.live
+                              onClick: camera.live || camera.change
                                   ? null
                                   : () {
                                       context

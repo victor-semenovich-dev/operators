@@ -14,4 +14,10 @@ class MixerBloc extends Cubit<MixerRouteState> {
   }) async {
     // TODO not implemented
   }
+
+  void _safeEmit(MixerRouteState state) {
+    if (!this.isClosed) {
+      emit(state);
+    }
+  }
 }

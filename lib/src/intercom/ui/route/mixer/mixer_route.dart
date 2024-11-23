@@ -4,6 +4,7 @@ import 'package:operators/src/intercom/model/camera.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_bloc.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_state.dart';
 import 'package:operators/src/intercom/ui/widget/camera_widget_2.dart';
+import 'package:operators/src/intercom/ui/widget/flash_wrapper.dart';
 import 'package:operators/src/intercom/ui/widget/messages_widget_2.dart';
 import 'package:operators/src/intercom/ui/widget/wakelock_widget.dart';
 
@@ -32,29 +33,31 @@ class MixerRoute extends StatelessWidget {
         ),
         body: BlocProvider<MixerBloc>(
           create: (_) => MixerBloc(),
-          child: BlocBuilder<MixerBloc, MixerRouteState>(
-            builder: (context, state) {
-              final cameras = state.cameras;
-              return Stack(
-                children: [
-                  if (cameras != null) _camerasWidget(context, cameras),
-                  AnimatedOpacity(
-                    opacity: state.messages.isEmpty ? 0.0 : 1.0,
-                    duration: const Duration(milliseconds: 300),
-                    child: MessagesWidget2(
-                      messages: state.messages,
-                      onClick: () {
-                        // TODO cancel messages
-                      },
+          child: FlashWrapper(
+            child: BlocBuilder<MixerBloc, MixerRouteState>(
+              builder: (context, state) {
+                final cameras = state.cameras;
+                return Stack(
+                  children: [
+                    if (cameras != null) _camerasWidget(context, cameras),
+                    AnimatedOpacity(
+                      opacity: state.messages.isEmpty ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 300),
+                      child: MessagesWidget2(
+                        messages: state.messages,
+                        onClick: () {
+                          // TODO cancel messages
+                        },
+                      ),
                     ),
-                  ),
-                  if (!state.socketConnected)
-                    const Center(child: CircularProgressIndicator()),
-                  if (state.socketClosed)
-                    const SizedBox(), // TODO socket closed
-                ],
-              );
-            },
+                    if (!state.socketConnected)
+                      const Center(child: CircularProgressIndicator()),
+                    if (state.socketClosed)
+                      const SizedBox(), // TODO socket closed
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

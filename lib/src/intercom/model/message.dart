@@ -14,4 +14,9 @@ class Message {
   String dateTimeReadable() {
     return DateFormat('HH:mm').format(dateTime);
   }
+
+  @override
+  String toString() {
+    return 'Message{cameraId: $cameraId, dateTime: $dateTime, message: $message}';
+  }
 }

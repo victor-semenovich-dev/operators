@@ -25,7 +25,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
     _webSocketChannel = WebSocketChannel.connect(socketUri);
     await _webSocketChannel.ready;
     debugPrint('connected!');
-    emit(state.copyWith(socketConnected: true));
+    _safeEmit(state.copyWith(socketConnected: true));
     // TODO add timeout
   }
 
@@ -57,14 +57,22 @@ class CameraBloc extends Cubit<CameraRouteState> {
             attention: cameraData['attention'],
             change: cameraData['change'],
           );
-          emit(state.copyWith(camera: camera));
+          _safeEmit(state.copyWith(camera: camera));
         }
       } catch (e) {
         debugPrint(e.toString());
       }
     }).onDone(() {
-      emit(state.copyWith(socketClosed: true));
+      if (!this.isClosed) {
+        _safeEmit(state.copyWith(socketClosed: true));
+      }
     });
+  }
+
+  void _safeEmit(CameraRouteState state) {
+    if (!this.isClosed) {
+      emit(state);
+    }
   }
 
   @override

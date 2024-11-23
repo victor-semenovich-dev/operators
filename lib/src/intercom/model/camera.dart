@@ -10,4 +10,9 @@ class Camera {
     required this.attention,
     required this.change,
   });
+
+  @override
+  String toString() {
+    return 'Camera{live: $live, ready: $ready, attention: $attention, change: $change}';
+  }
 }

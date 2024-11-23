@@ -27,4 +27,9 @@ class CameraRouteState {
       messages: messages ?? this.messages,
     );
   }
+
+  @override
+  String toString() {
+    return 'CameraRouteState{socketConnected: $socketConnected, socketClosed: $socketClosed, camera: $camera, messages: $messages}';
+  }
 }

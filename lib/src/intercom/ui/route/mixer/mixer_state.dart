@@ -4,26 +4,26 @@ import 'package:operators/src/intercom/model/message.dart';
 class MixerRouteState {
   final bool socketConnected;
   final bool socketClosed;
-  final List<Camera>? cameras;
+  final List<Camera>? cameraList;
   final List<Message> messages;
 
   MixerRouteState({
     this.socketConnected = false,
     this.socketClosed = false,
-    this.cameras,
+    this.cameraList,
     this.messages = const [],
   });
 
   MixerRouteState copyWith({
     bool? socketConnected,
     bool? socketClosed,
-    Camera? camera,
+    List<Camera>? cameraList,
     List<Message>? messages,
   }) {
     return MixerRouteState(
       socketConnected: socketConnected ?? this.socketConnected,
       socketClosed: socketClosed ?? this.socketClosed,
-      cameras: cameras ?? this.cameras,
+      cameraList: cameraList ?? this.cameraList,
       messages: messages ?? this.messages,
     );
   }

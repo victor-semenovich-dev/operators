@@ -12,7 +12,9 @@ import '../../../model/camera_context.dart';
 import 'mixer_settings_route.dart';
 
 class MixerRoute extends StatelessWidget {
-  const MixerRoute({Key? key}) : super(key: key);
+  final Uri socketUri;
+
+  const MixerRoute({Key? key, required this.socketUri}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +34,14 @@ class MixerRoute extends StatelessWidget {
           ],
         ),
         body: BlocProvider<MixerBloc>(
-          create: (_) => MixerBloc(),
+          create: (_) => MixerBloc(socketUri: socketUri),
           child: FlashWrapper(
             child: BlocBuilder<MixerBloc, MixerRouteState>(
               builder: (context, state) {
-                final cameras = state.cameras;
+                final cameraList = state.cameraList;
                 return Stack(
                   children: [
-                    if (cameras != null) _camerasWidget(context, cameras),
+                    if (cameraList != null) _camerasWidget(context, cameraList),
                     AnimatedOpacity(
                       opacity: state.messages.isEmpty ? 0.0 : 1.0,
                       duration: const Duration(milliseconds: 300),
@@ -64,18 +66,18 @@ class MixerRoute extends StatelessWidget {
     );
   }
 
-  Widget _camerasWidget(BuildContext context, List<Camera> cameras) {
+  Widget _camerasWidget(BuildContext context, List<Camera> cameraList) {
     return Row(
       children: [
         Expanded(
           child: Column(
             children: [
               Expanded(
-                child: _singleCameraWidget(context, 0, cameras[0]),
+                child: _singleCameraWidget(context, 0, cameraList[0]),
               ),
               const Divider(color: Colors.black, height: 1),
               Expanded(
-                child: _singleCameraWidget(context, 2, cameras[2]),
+                child: _singleCameraWidget(context, 2, cameraList[2]),
               )
             ],
           ),
@@ -85,11 +87,11 @@ class MixerRoute extends StatelessWidget {
           child: Column(
             children: [
               Expanded(
-                child: _singleCameraWidget(context, 1, cameras[1]),
+                child: _singleCameraWidget(context, 1, cameraList[1]),
               ),
               const Divider(color: Colors.black, height: 1),
               Expanded(
-                child: _singleCameraWidget(context, 3, cameras[3]),
+                child: _singleCameraWidget(context, 3, cameraList[3]),
               )
             ],
           ),

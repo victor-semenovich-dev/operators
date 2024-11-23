@@ -112,7 +112,9 @@ class _IntercomRouteState extends State<IntercomRoute> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MixerRoute(),
+          builder: (context) => MixerRoute(
+            socketUri: socketUri,
+          ),
         ),
       );
     }

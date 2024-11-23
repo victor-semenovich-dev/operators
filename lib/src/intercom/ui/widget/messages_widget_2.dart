@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:operators/src/intercom/data/camera.dart';
+import 'package:operators/src/intercom/model/message.dart';
 
-import '../../model/camera_context.dart';
-
-class MessagesWidget extends StatelessWidget {
+class MessagesWidget2 extends StatelessWidget {
   final List<Message> messages;
-  final CameraContext cameraContext;
   final Function() onClick;
 
-  const MessagesWidget({
+  const MessagesWidget2({
     Key? key,
     required this.messages,
-    required this.cameraContext,
     required this.onClick,
   }) : super(key: key);
 
@@ -26,40 +22,31 @@ class MessagesWidget extends StatelessWidget {
       final Message message = messages[i];
 
       final cameraId = message.cameraId;
-      final author = message.author;
+      final author = null;
       final prefix = cameraId == null
           ? (author == null ? '' : author)
           : "$cameraId ${author == null ? '' : '($author)'}".trim();
 
-      final text = message.text;
+      final text = message.message;
 
       final messageText = "${prefix.isEmpty ? '' : '$prefix: $text'}";
 
       messageWidgets.add(
-        message.dateTimeReadable() == null
-            ? Padding(
-                padding: const EdgeInsets.only(right: 16.0),
-                child: Text(
-                  messageText,
-                  style: const TextStyle(color: Colors.white, fontSize: 20),
+        Padding(
+          padding: const EdgeInsets.only(right: 8.0),
+          child: RichText(
+            text: TextSpan(
+              text: messageText,
+              style: const TextStyle(color: Colors.white, fontSize: 20),
+              children: <TextSpan>[
+                TextSpan(
+                  text: '  ${message.dateTimeReadable()}',
+                  style: const TextStyle(color: Colors.white, fontSize: 10),
                 ),
-              )
-            : Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: RichText(
-                  text: TextSpan(
-                    text: messageText,
-                    style: const TextStyle(color: Colors.white, fontSize: 20),
-                    children: <TextSpan>[
-                      TextSpan(
-                        text: '  ${message.dateTimeReadable()}',
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 10),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              ],
+            ),
+          ),
+        ),
       );
     }
 

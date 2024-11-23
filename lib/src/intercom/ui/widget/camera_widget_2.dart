@@ -8,13 +8,13 @@ import '../../../../main.dart';
 import '../../repository/camera_repository.dart';
 import '../painter/CameraPainter.dart';
 import '../route/mixer_settings_route.dart';
-import 'camera_context.dart';
+import '../../model/camera_context.dart';
 
 class CameraWidget2 extends StatefulWidget {
   final Function() onTap;
   final Function()? onLongPress;
   final Future<void> Function(String message) sendMessage;
-  final int cameraId;
+  final int cameraId; // 0 based
   final bool stateLive;
   final bool stateReady;
   final bool stateAttention;
@@ -118,7 +118,8 @@ class _CameraWidgetState extends State<CameraWidget2>
               painter: CameraPainter(showCross: widget.stateChange),
               child: Stack(children: [
                 Container(
-                  color: (widget.stateLive) ? Colors.red[300] : Colors.transparent,
+                  color:
+                      (widget.stateLive) ? Colors.red[300] : Colors.transparent,
                   child: Center(
                     child: Text('${widget.cameraId + 1}',
                         style: TextStyle(fontSize: widget.textSize)),
@@ -229,7 +230,8 @@ class _CameraWidgetState extends State<CameraWidget2>
             SnackBar(content: Text('Сообщение отправлено: "$message"')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Сообщение отправлено (${widget.cameraId}): "$message"')));
+            content:
+                Text('Сообщение отправлено (${widget.cameraId}): "$message"')));
       }
     }
   }

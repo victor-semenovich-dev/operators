@@ -24,6 +24,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
 
   @override
   void initState() {
+    // TODO save the address to prefs
     _socketAddressController = TextEditingController(
       text: 'ws://192.168.0.27:8080',
     );
@@ -50,15 +51,9 @@ class _IntercomRouteState extends State<IntercomRoute> {
       body: ListView(
         children: [
           ListItem(
-              'Видеопульт',
-              () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => MixerRoute(
-                        user: widget.user,
-                      ),
-                    ),
-                  )),
+            'Видеопульт',
+            () => _validateAndOpenMixerRoute(),
+          ),
           const Divider(
             color: Colors.black,
             height: 1,
@@ -109,6 +104,20 @@ class _IntercomRouteState extends State<IntercomRoute> {
         ],
       ),
     );
+  }
+
+  void _validateAndOpenMixerRoute() {
+    final socketUri = _validateAndGetSocketUri();
+    if (socketUri != null) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MixerRoute(
+            user: widget.user,
+          ),
+        ),
+      );
+    }
   }
 
   void _validateAndOpenCameraRoute(int cameraId) {

@@ -4,7 +4,7 @@ import 'package:operators/src/data/model/user.dart';
 import 'package:rxdart/rxdart.dart';
 
 import '../data/camera.dart';
-import '../ui/widget/camera_context.dart';
+import '../model/camera_context.dart';
 import 'camera_state.dart';
 
 class CameraRepository {

@@ -10,7 +10,7 @@ import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../painter/CameraPainter.dart';
 import '../route/mixer_settings_route.dart';
-import 'camera_context.dart';
+import '../../model/camera_context.dart';
 
 class CameraWidget extends StatefulWidget {
   final TableUser? user;

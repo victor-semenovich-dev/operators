@@ -5,6 +5,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_state.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
+import '../../../model/camera.dart';
+
 class CameraBloc extends Cubit<CameraRouteState> {
   final int id;
   final Uri socketUri;
@@ -23,7 +25,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
     _webSocketChannel = WebSocketChannel.connect(socketUri);
     await _webSocketChannel.ready;
     debugPrint('connected!');
-    emit(CameraRouteState(socketConnected: true, socketClosed: false));
+    emit(state.copyWith(socketConnected: true));
     // TODO add timeout
   }
 
@@ -49,23 +51,19 @@ class CameraBloc extends Cubit<CameraRouteState> {
         if (json.containsKey('cameras')) {
           final List cameras = json['cameras'];
           final Map<String, dynamic> cameraData = cameras[id];
-          final cameraState = CameraState(
+          final camera = Camera(
             live: cameraData['live'],
             ready: cameraData['ready'],
             attention: cameraData['attention'],
             change: cameraData['change'],
           );
-          emit(CameraRouteState(
-            socketConnected: true,
-            socketClosed: false,
-            cameraState: cameraState,
-          ));
+          emit(state.copyWith(camera: camera));
         }
       } catch (e) {
         debugPrint(e.toString());
       }
     }).onDone(() {
-      emit(CameraRouteState(socketConnected: false, socketClosed: true));
+      emit(state.copyWith(socketClosed: true));
     });
   }
 

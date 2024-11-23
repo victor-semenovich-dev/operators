@@ -7,7 +7,7 @@ import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
 import 'package:operators/src/data/repository/telegram.dart';
 
-import 'intercom/ui/route/home_route.dart';
+import 'intercom/ui/route/intercom_route.dart';
 
 class OperatorsApp extends StatelessWidget {
   @override

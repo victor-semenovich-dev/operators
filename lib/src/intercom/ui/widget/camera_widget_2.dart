@@ -7,7 +7,7 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import '../../../../main.dart';
 import '../../repository/camera_repository.dart';
 import '../painter/CameraPainter.dart';
-import '../route/mixer_settings_route.dart';
+import '../route/mixer/mixer_settings_route.dart';
 import '../../model/camera_context.dart';
 
 class CameraWidget2 extends StatefulWidget {
@@ -112,7 +112,14 @@ class _CameraWidgetState extends State<CameraWidget2>
             defaultValue: false),
         builder: (context, isManualSelectionEnabled) {
           return GestureDetector(
-            onTap: widget.onTap,
+            onTap: () {
+              if (cameraContext == CameraContext.MIXER &&
+                  !isManualSelectionEnabled) {
+                _sendMessage(context);
+              } else {
+                widget.onTap();
+              }
+            },
             onLongPress: widget.onLongPress,
             child: CustomPaint(
               painter: CameraPainter(showCross: widget.stateChange),

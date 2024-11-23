@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
-import '../../../../main.dart';
+import '../../../../../main.dart';
 
 const KEY_IS_MANUAL_SELECTION_ENABLED = 'is_manual_selection_enabled';
 

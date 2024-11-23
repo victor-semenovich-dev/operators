@@ -82,7 +82,7 @@ class CameraRoute extends StatelessWidget {
                     },
                   ),
                 ),
-                if (camera == null && !state.socketClosed)
+                if (!state.socketConnected)
                   const Center(child: CircularProgressIndicator()),
                 if (state.socketClosed) const SizedBox(), // TODO socket closed
               ],

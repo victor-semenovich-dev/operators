@@ -3,7 +3,7 @@ import 'package:operators/src/data/model/user.dart';
 
 import '../widget/list_item.dart';
 import 'camera/camera_route.dart';
-import 'mixer_route.dart';
+import 'mixer/mixer_route.dart';
 
 const KEY_INTERCOM_SERVER_LOCATION = "intercom_server_location";
 const VALUE_LOCATION_USA = "usa";
@@ -112,9 +112,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => MixerRoute(
-            user: widget.user,
-          ),
+          builder: (context) => MixerRoute(),
         ),
       );
     }

@@ -90,7 +90,13 @@ class MixerBloc extends Cubit<MixerRouteState> {
     required int cameraId,
     required String message,
   }) async {
-    // TODO not implemented
+    final messageMap = {
+      'to': cameraId,
+      'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'message': message,
+    };
+    final messageJson = json.encode(messageMap);
+    _webSocketChannel.sink.add(messageJson);
   }
 
   void _safeEmit(MixerRouteState state) {

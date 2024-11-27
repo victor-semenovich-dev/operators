@@ -11,6 +11,12 @@ class Camera {
     required this.change,
   });
 
+  Camera.fromJson(Map<String, dynamic> json)
+      : live = json['live'],
+        ready = json['ready'],
+        attention = json['attention'],
+        change = json['change'];
+
   @override
   String toString() {
     return 'Camera{live: $live, ready: $ready, attention: $attention, change: $change}';

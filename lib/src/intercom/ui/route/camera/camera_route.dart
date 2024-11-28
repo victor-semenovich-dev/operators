@@ -62,11 +62,7 @@ class CameraRoute extends StatelessWidget {
                             child: StateButton(
                               onClick: camera.live || camera.change
                                   ? null
-                                  : () {
-                                      context
-                                          .read<CameraBloc>()
-                                          .toggleAttention();
-                                    },
+                                  : context.read<CameraBloc>().toggleAttention,
                               state: camera.attention
                                   ? ButtonState.FILLED
                                   : ButtonState.NORMAL,
@@ -74,16 +70,13 @@ class CameraRoute extends StatelessWidget {
                                   ? 'Отменить запрос камеры в трансляцию'
                                   : 'Попросить пустить камеру в трансляцию',
                             ))),
-                  // TODO show messages
                   AnimatedOpacity(
                     opacity: state.messages.isEmpty ? 0.0 : 1.0,
                     duration: const Duration(milliseconds: 300),
                     child: MessagesWidget2(
                       messages: state.messages,
                       cameraContext: CameraContext.CAMERA,
-                      onClick: () {
-                        // TODO cancel messages
-                      },
+                      onClick: context.read<CameraBloc>().cancelMessages,
                     ),
                   ),
                   if (!state.socketConnected)

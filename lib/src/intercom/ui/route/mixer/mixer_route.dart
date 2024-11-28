@@ -48,9 +48,7 @@ class MixerRoute extends StatelessWidget {
                       child: MessagesWidget2(
                         messages: state.messages,
                         cameraContext: CameraContext.MIXER,
-                        onClick: () {
-                          // TODO cancel messages
-                        },
+                        onClick: context.read<MixerBloc>().cancelMessages,
                       ),
                     ),
                     if (!state.socketConnected)

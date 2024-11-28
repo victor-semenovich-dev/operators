@@ -68,6 +68,15 @@ class CameraBloc extends Cubit<CameraRouteState> {
     _webSocketChannel.sink.add(messageJson);
   }
 
+  void cancelMessages() {
+    final messageMap = {
+      'command': 'cancelOutcomingMessages',
+      'to': id,
+    };
+    final messageJson = json.encode(messageMap);
+    _webSocketChannel.sink.add(messageJson);
+  }
+
   void _listenWebSocket() {
     _webSocketChannel.stream.listen((message) {
       try {

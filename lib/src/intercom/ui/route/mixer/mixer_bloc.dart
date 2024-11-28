@@ -89,6 +89,14 @@ class MixerBloc extends Cubit<MixerRouteState> {
     _webSocketChannel.sink.add(messageJson);
   }
 
+  void cancelMessages() {
+    final messageMap = {
+      'command': 'cancelIncomingMessages',
+    };
+    final messageJson = json.encode(messageMap);
+    _webSocketChannel.sink.add(messageJson);
+  }
+
   void _safeEmit(MixerRouteState state) {
     if (!this.isClosed) {
       emit(state);

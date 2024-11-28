@@ -37,10 +37,7 @@ class CameraRoute extends StatelessWidget {
             child: BlocConsumer<CameraBloc, CameraRouteState>(
                 listener: (context, state) {
               if (state.socketClosed) {
-                showCustomDialog(
-                  context: context,
-                  message: 'Соединение с сервером прервано',
-                );
+                showConnectionErrorDialog(context: context);
               }
             }, builder: (context, state) {
               debugPrint(state.toString());

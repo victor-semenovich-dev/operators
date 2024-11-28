@@ -21,11 +21,12 @@ class CameraBloc extends Cubit<CameraRouteState> {
 
   Future<void> _connectToWebSocket() async {
     debugPrint('connect...');
-    _webSocketChannel = WebSocketChannel.connect(socketUri);
-    await _webSocketChannel.ready;
-    debugPrint('connected!');
-    _safeEmit(state.copyWith(socketConnected: true));
-    // TODO add timeout
+    try {
+      _webSocketChannel = WebSocketChannel.connect(socketUri);
+      await _webSocketChannel.ready;
+      debugPrint('connected!');
+      _safeEmit(state.copyWith(socketConnected: true));
+    } catch (e) {}
   }
 
   void toggleReady() {

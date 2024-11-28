@@ -40,10 +40,7 @@ class MixerRoute extends StatelessWidget {
             child: BlocConsumer<MixerBloc, MixerRouteState>(
               listener: (context, state) {
                 if (state.socketClosed) {
-                  showCustomDialog(
-                    context: context,
-                    message: 'Соединение с сервером прервано',
-                  );
+                  showConnectionErrorDialog(context: context);
                 }
               },
               builder: (context, state) {

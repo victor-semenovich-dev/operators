@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-void showCustomDialog({
+void showConnectionErrorDialog({
   required BuildContext context,
-  required String message,
 }) {
   showDialog(
     context: context,
-    barrierDismissible: false,
     builder: (context) {
-      return CustomAlertDialog(message: message);
+      return CustomAlertDialog(message: 'Отсутствует соединение с сервером');
     },
-  );
+  ).then((_) {
+    Navigator.of(context).pop();
+  });
 }
 
 class CustomAlertDialog extends StatelessWidget {
@@ -20,20 +20,16 @@ class CustomAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope(
-      canPop: false,
-      child: AlertDialog(
-        content: Text(message),
-        actions: <Widget>[
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
-            },
-            child: Text('OK'),
-          ),
-        ],
-      ),
+    return AlertDialog(
+      content: Text(message),
+      actions: <Widget>[
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          child: Text('OK'),
+        ),
+      ],
     );
   }
 }

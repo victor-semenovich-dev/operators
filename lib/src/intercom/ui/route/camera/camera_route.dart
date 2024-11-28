@@ -80,6 +80,7 @@ class CameraRoute extends StatelessWidget {
                     duration: const Duration(milliseconds: 300),
                     child: MessagesWidget2(
                       messages: state.messages,
+                      cameraContext: CameraContext.CAMERA,
                       onClick: () {
                         // TODO cancel messages
                       },

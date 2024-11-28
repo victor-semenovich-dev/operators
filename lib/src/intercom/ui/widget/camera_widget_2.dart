@@ -237,8 +237,8 @@ class _CameraWidgetState extends State<CameraWidget2>
             SnackBar(content: Text('Сообщение отправлено: "$message"')));
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content:
-                Text('Сообщение отправлено (${widget.cameraId}): "$message"')));
+            content: Text(
+                'Сообщение отправлено (${widget.cameraId + 1}): "$message"')));
       }
     }
   }

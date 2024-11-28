@@ -26,7 +26,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void initState() {
     // TODO save the address to prefs
     _socketAddressController = TextEditingController(
-      text: 'ws://192.168.0.27:8080',
+      text: 'ws://192.168.61.141:8080',
     );
     _socketAddressController.addListener(() {
       setState(() {

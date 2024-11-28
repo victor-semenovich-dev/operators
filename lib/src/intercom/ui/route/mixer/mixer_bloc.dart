@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/intercom/model/camera.dart';
+import 'package:operators/src/intercom/model/mixer.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_state.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -31,22 +32,11 @@ class MixerBloc extends Cubit<MixerRouteState> {
       try {
         final json = jsonDecode(message) as Map<String, dynamic>;
         if (json.containsKey('cameras')) {
-          final List cameras = json['cameras'];
-          List<Camera> cameraList = <Camera>[];
-
-          for (var i = 0; i < cameras.length; i++) {
-            final Map<String, dynamic> cameraData = cameras[i];
-            cameraList.add(
-              Camera(
-                live: cameraData['live'],
-                ready: cameraData['ready'],
-                attention: cameraData['attention'],
-                change: cameraData['change'],
-              ),
-            );
-          }
-
-          _safeEmit(state.copyWith(cameraList: cameraList));
+          final mixer = Mixer.fromJson(json);
+          _safeEmit(state.copyWith(
+            cameraList: mixer.cameras,
+            messages: mixer.incomingMessages,
+          ));
         }
       } catch (e) {
         debugPrint(e.toString());

@@ -47,6 +47,7 @@ class MixerRoute extends StatelessWidget {
                       duration: const Duration(milliseconds: 300),
                       child: MessagesWidget2(
                         messages: state.messages,
+                        cameraContext: CameraContext.MIXER,
                         onClick: () {
                           // TODO cancel messages
                         },

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:operators/src/intercom/model/camera_context.dart';
 import 'package:operators/src/intercom/model/message.dart';
 
 class MessagesWidget2 extends StatelessWidget {
   final List<Message> messages;
+  final CameraContext cameraContext;
   final Function() onClick;
 
   const MessagesWidget2({
     Key? key,
     required this.messages,
+    required this.cameraContext,
     required this.onClick,
   }) : super(key: key);
 
@@ -22,14 +25,10 @@ class MessagesWidget2 extends StatelessWidget {
       final Message message = messages[i];
 
       final cameraId = message.cameraId;
-      final author = null;
-      final prefix = cameraId == null
-          ? (author == null ? '' : author)
-          : "$cameraId ${author == null ? '' : '($author)'}".trim();
-
       final text = message.message;
-
-      final messageText = "${prefix.isEmpty ? '' : '$prefix: $text'}";
+      final messageText = cameraContext == CameraContext.CAMERA
+          ? text
+          : '${cameraId + 1}: $text';
 
       messageWidgets.add(
         Padding(

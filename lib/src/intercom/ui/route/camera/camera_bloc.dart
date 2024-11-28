@@ -2,12 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/intercom/model/message.dart';
 import 'package:operators/src/intercom/model/mixer.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_state.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-
-import '../../../model/camera.dart';
 
 class CameraBloc extends Cubit<CameraRouteState> {
   final int id;

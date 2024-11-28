@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/intercom/model/camera.dart';
 import 'package:operators/src/intercom/model/mixer.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_state.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';

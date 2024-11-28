@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_bloc.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_state.dart';
+import 'package:operators/src/intercom/ui/widget/custom_alert_dialog.dart';
 import 'package:operators/src/intercom/ui/widget/flash_wrapper.dart';
 import 'package:operators/src/intercom/ui/widget/messages_widget_2.dart';
 import 'package:operators/src/intercom/ui/widget/wakelock_widget.dart';
@@ -33,8 +34,15 @@ class CameraRoute extends StatelessWidget {
             socketUri: socketUri,
           ),
           child: FlashWrapper(
-            child: BlocBuilder<CameraBloc, CameraRouteState>(
-                builder: (context, state) {
+            child: BlocConsumer<CameraBloc, CameraRouteState>(
+                listener: (context, state) {
+              if (state.socketClosed) {
+                showCustomDialog(
+                  context: context,
+                  message: 'Соединение с сервером прервано',
+                );
+              }
+            }, builder: (context, state) {
               debugPrint(state.toString());
               final camera = state.camera;
               return Stack(
@@ -81,8 +89,6 @@ class CameraRoute extends StatelessWidget {
                   ),
                   if (!state.socketConnected)
                     const Center(child: CircularProgressIndicator()),
-                  if (state.socketClosed)
-                    const SizedBox(), // TODO socket closed
                 ],
               );
             }),

@@ -95,7 +95,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
             child: TextField(
               controller: _socketAddressController,
               decoration: InputDecoration(
-                labelText: 'Адрес сокета',
+                labelText: 'Адрес сервера',
                 errorText:
                     _isAddressFormatCorrect ? null : 'Неверный формат адреса',
               ),

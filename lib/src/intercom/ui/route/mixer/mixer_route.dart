@@ -4,6 +4,7 @@ import 'package:operators/src/intercom/model/camera.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_bloc.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_state.dart';
 import 'package:operators/src/intercom/ui/widget/camera_widget_2.dart';
+import 'package:operators/src/intercom/ui/widget/custom_alert_dialog.dart';
 import 'package:operators/src/intercom/ui/widget/flash_wrapper.dart';
 import 'package:operators/src/intercom/ui/widget/messages_widget_2.dart';
 import 'package:operators/src/intercom/ui/widget/wakelock_widget.dart';
@@ -36,7 +37,15 @@ class MixerRoute extends StatelessWidget {
         body: BlocProvider<MixerBloc>(
           create: (_) => MixerBloc(socketUri: socketUri),
           child: FlashWrapper(
-            child: BlocBuilder<MixerBloc, MixerRouteState>(
+            child: BlocConsumer<MixerBloc, MixerRouteState>(
+              listener: (context, state) {
+                if (state.socketClosed) {
+                  showCustomDialog(
+                    context: context,
+                    message: 'Соединение с сервером прервано',
+                  );
+                }
+              },
               builder: (context, state) {
                 final cameraList = state.cameraList;
                 return Stack(
@@ -53,8 +62,6 @@ class MixerRoute extends StatelessWidget {
                     ),
                     if (!state.socketConnected)
                       const Center(child: CircularProgressIndicator()),
-                    if (state.socketClosed)
-                      const SizedBox(), // TODO socket closed
                   ],
                 );
               },

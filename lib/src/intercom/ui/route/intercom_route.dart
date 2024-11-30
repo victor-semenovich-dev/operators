@@ -144,7 +144,14 @@ class _IntercomRouteState extends State<IntercomRoute> {
   Uri? _validateAndGetSocketUri() {
     final address = _socketAddressController.value.text;
     try {
-      return Uri.parse(address);
+      final uri = Uri.parse(address);
+      if (uri.isAbsolute) {
+        return uri;
+      } else {
+        setState(() {
+          _isAddressFormatCorrect = false;
+        });
+      }
     } on FormatException {
       setState(() {
         _isAddressFormatCorrect = false;

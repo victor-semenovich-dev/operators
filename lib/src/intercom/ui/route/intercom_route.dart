@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:operators/main.dart';
-import 'package:operators/src/data/model/user.dart';
 
 import '../widget/list_item.dart';
 import 'camera/camera_route.dart';
@@ -9,9 +8,7 @@ import 'mixer/mixer_route.dart';
 const KEY_INTERCOM_WEB_SOCKET = 'intercom_web_socket';
 
 class IntercomRoute extends StatefulWidget {
-  final TableUser? user;
-
-  const IntercomRoute({Key? key, required this.user}) : super(key: key);
+  const IntercomRoute({Key? key}) : super(key: key);
 
   @override
   State<IntercomRoute> createState() => _IntercomRouteState();

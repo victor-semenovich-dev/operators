@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../../../../main.dart';
-import '../../repository/camera_repository.dart';
 import '../painter/CameraPainter.dart';
 import '../route/mixer/mixer_settings_route.dart';
 import '../../model/camera_context.dart';
@@ -64,8 +63,6 @@ class _CameraWidgetState extends State<CameraWidget>
   ];
 
   final CameraContext cameraContext;
-
-  final cameraRepository = CameraRepository();
 
   late Animation<double> animation;
   late AnimationController animationController;

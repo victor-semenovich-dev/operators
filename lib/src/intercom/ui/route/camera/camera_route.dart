@@ -35,60 +35,63 @@ class CameraRoute extends StatelessWidget {
           ),
           child: FlashWrapper(
             child: BlocConsumer<CameraBloc, CameraRouteState>(
-                listener: (context, state) {
-              if (state.socketClosed) {
-                showConnectionErrorDialog(context: context);
-              }
-            }, builder: (context, state) {
-              debugPrint(state.toString());
-              final camera = state.camera;
-              return Stack(
-                children: [
-                  if (camera != null)
-                    CameraWidget2(
-                      cameraContext: CameraContext.CAMERA,
-                      cameraId: id,
-                      stateLive: camera.live,
-                      stateReady: camera.ready,
-                      stateAttention: camera.attention,
-                      stateChange: camera.change,
-                      textSize: 100,
-                      circleSize: 80,
-                      circleMargin: 32,
-                      onTap: context.read<CameraBloc>().toggleReady,
-                      sendMessage: context.read<CameraBloc>().sendMessage,
+              listener: (context, state) {
+                if (state.socketClosed) {
+                  showConnectionErrorDialog(context: context);
+                }
+              },
+              builder: (context, state) {
+                final camera = state.camera;
+                return Stack(
+                  children: [
+                    if (camera != null)
+                      CameraWidget2(
+                        cameraContext: CameraContext.CAMERA,
+                        cameraId: id,
+                        stateLive: camera.live,
+                        stateReady: camera.ready,
+                        stateAttention: camera.attention,
+                        stateChange: camera.change,
+                        textSize: 100,
+                        circleSize: 80,
+                        circleMargin: 32,
+                        onTap: context.read<CameraBloc>().toggleReady,
+                        sendMessage: context.read<CameraBloc>().sendMessage,
+                      ),
+                    if (camera != null)
+                      Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Container(
+                              width: double.infinity,
+                              margin: const EdgeInsets.all(16),
+                              child: StateButton(
+                                onClick: camera.live || camera.change
+                                    ? null
+                                    : context
+                                        .read<CameraBloc>()
+                                        .toggleAttention,
+                                state: camera.attention
+                                    ? ButtonState.FILLED
+                                    : ButtonState.NORMAL,
+                                text: camera.attention
+                                    ? 'Отменить запрос камеры в трансляцию'
+                                    : 'Попросить пустить камеру в трансляцию',
+                              ))),
+                    AnimatedOpacity(
+                      opacity: state.messages.isEmpty ? 0.0 : 1.0,
+                      duration: const Duration(milliseconds: 300),
+                      child: MessagesWidget2(
+                        messages: state.messages,
+                        cameraContext: CameraContext.CAMERA,
+                        onClick: context.read<CameraBloc>().cancelMessages,
+                      ),
                     ),
-                  if (camera != null)
-                    Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Container(
-                            width: double.infinity,
-                            margin: const EdgeInsets.all(16),
-                            child: StateButton(
-                              onClick: camera.live || camera.change
-                                  ? null
-                                  : context.read<CameraBloc>().toggleAttention,
-                              state: camera.attention
-                                  ? ButtonState.FILLED
-                                  : ButtonState.NORMAL,
-                              text: camera.attention
-                                  ? 'Отменить запрос камеры в трансляцию'
-                                  : 'Попросить пустить камеру в трансляцию',
-                            ))),
-                  AnimatedOpacity(
-                    opacity: state.messages.isEmpty ? 0.0 : 1.0,
-                    duration: const Duration(milliseconds: 300),
-                    child: MessagesWidget2(
-                      messages: state.messages,
-                      cameraContext: CameraContext.CAMERA,
-                      onClick: context.read<CameraBloc>().cancelMessages,
-                    ),
-                  ),
-                  if (!state.socketConnected)
-                    const Center(child: CircularProgressIndicator()),
-                ],
-              );
-            }),
+                    if (!state.socketConnected)
+                      const Center(child: CircularProgressIndicator()),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),

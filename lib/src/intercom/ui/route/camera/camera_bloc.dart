@@ -10,23 +10,29 @@ class CameraBloc extends Cubit<CameraRouteState> {
   final int id;
   final Uri socketUri;
 
-  late WebSocketChannel _webSocketChannel;
+  WebSocketChannel? _webSocketChannel;
 
   CameraBloc({
     required this.id,
     required this.socketUri,
   }) : super(CameraRouteState()) {
-    _connectToWebSocket().then((_) => _listenWebSocket());
+    _connectToWebSocket();
   }
 
   Future<void> _connectToWebSocket() async {
     debugPrint('connect...');
+    // this is needed to make the bloc listener work if there is a quick error on route start
+    await Future.delayed(Duration.zero);
     try {
       _webSocketChannel = WebSocketChannel.connect(socketUri);
-      await _webSocketChannel.ready;
+      await _webSocketChannel?.ready.timeout(Duration(seconds: 3));
       debugPrint('connected!');
       _safeEmit(state.copyWith(socketConnected: true));
-    } catch (e) {}
+      _listenWebSocket();
+    } catch (e) {
+      debugPrint('error: $e');
+      _safeEmit(state.copyWith(socketClosed: true));
+    }
   }
 
   void toggleReady() {
@@ -40,7 +46,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
         'attention': false,
       };
       final messageJson = json.encode(messageMap);
-      _webSocketChannel.sink.add(messageJson);
+      _webSocketChannel?.sink.add(messageJson);
     }
   }
 
@@ -55,7 +61,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
         'attention': newAttention,
       };
       final messageJson = json.encode(messageMap);
-      _webSocketChannel.sink.add(messageJson);
+      _webSocketChannel?.sink.add(messageJson);
     }
   }
 
@@ -66,7 +72,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
       'message': message,
     };
     final messageJson = json.encode(messageMap);
-    _webSocketChannel.sink.add(messageJson);
+    _webSocketChannel?.sink.add(messageJson);
   }
 
   void cancelMessages() {
@@ -75,11 +81,11 @@ class CameraBloc extends Cubit<CameraRouteState> {
       'to': id,
     };
     final messageJson = json.encode(messageMap);
-    _webSocketChannel.sink.add(messageJson);
+    _webSocketChannel?.sink.add(messageJson);
   }
 
   void _listenWebSocket() {
-    _webSocketChannel.stream.listen((message) {
+    _webSocketChannel?.stream.listen((message) {
       try {
         final json = jsonDecode(message) as Map<String, dynamic>;
         final mixer = Mixer.fromJson(json);
@@ -92,9 +98,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
         debugPrint(e.toString());
       }
     }).onDone(() {
-      if (!this.isClosed) {
-        _safeEmit(state.copyWith(socketClosed: true));
-      }
+      _safeEmit(state.copyWith(socketClosed: true));
     });
   }
 
@@ -106,7 +110,7 @@ class CameraBloc extends Cubit<CameraRouteState> {
 
   @override
   Future<void> close() {
-    _webSocketChannel.sink.close();
+    _webSocketChannel?.sink.close();
     return super.close();
   }
 }

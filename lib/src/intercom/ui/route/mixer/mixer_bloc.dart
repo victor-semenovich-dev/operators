@@ -9,26 +9,32 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 class MixerBloc extends Cubit<MixerRouteState> {
   final Uri socketUri;
 
-  late WebSocketChannel _webSocketChannel;
+  WebSocketChannel? _webSocketChannel;
 
   MixerBloc({
     required this.socketUri,
   }) : super(MixerRouteState()) {
-    _connectToWebSocket().then((_) => _listenWebSocket());
+    _connectToWebSocket();
   }
 
   Future<void> _connectToWebSocket() async {
+    // this is needed to make the bloc listener work if there is a quick error on route start
+    await Future.delayed(Duration.zero);
     try {
       debugPrint('connect...');
       _webSocketChannel = WebSocketChannel.connect(socketUri);
-      await _webSocketChannel.ready;
+      await _webSocketChannel?.ready.timeout(Duration(seconds: 3));
       debugPrint('connected!');
       _safeEmit(state.copyWith(socketConnected: true));
-    } catch (e) {}
+      _listenWebSocket();
+    } catch (e) {
+      debugPrint('error: $e');
+      _safeEmit(state.copyWith(socketClosed: true));
+    }
   }
 
   void _listenWebSocket() {
-    _webSocketChannel.stream.listen((message) {
+    _webSocketChannel?.stream.listen((message) {
       try {
         final json = jsonDecode(message) as Map<String, dynamic>;
         if (json.containsKey('cameras')) {
@@ -60,7 +66,7 @@ class MixerBloc extends Cubit<MixerRouteState> {
           'attention': false,
         };
         final messageJson = json.encode(messageMap);
-        _webSocketChannel.sink.add(messageJson);
+        _webSocketChannel?.sink.add(messageJson);
       }
     }
   }
@@ -73,7 +79,7 @@ class MixerBloc extends Cubit<MixerRouteState> {
       'attention': false,
     };
     final messageJson = json.encode(messageMap);
-    _webSocketChannel.sink.add(messageJson);
+    _webSocketChannel?.sink.add(messageJson);
   }
 
   Future<void> sendMessage({
@@ -86,7 +92,7 @@ class MixerBloc extends Cubit<MixerRouteState> {
       'message': message,
     };
     final messageJson = json.encode(messageMap);
-    _webSocketChannel.sink.add(messageJson);
+    _webSocketChannel?.sink.add(messageJson);
   }
 
   void cancelMessages() {
@@ -94,7 +100,7 @@ class MixerBloc extends Cubit<MixerRouteState> {
       'command': 'cancelIncomingMessages',
     };
     final messageJson = json.encode(messageMap);
-    _webSocketChannel.sink.add(messageJson);
+    _webSocketChannel?.sink.add(messageJson);
   }
 
   void _safeEmit(MixerRouteState state) {

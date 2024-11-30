@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:operators/main.dart';
 import 'package:operators/src/data/model/user.dart';
 
 import '../widget/list_item.dart';
 import 'camera/camera_route.dart';
 import 'mixer/mixer_route.dart';
 
-const KEY_INTERCOM_SERVER_LOCATION = "intercom_server_location";
-const VALUE_LOCATION_USA = "usa";
-const VALUE_LOCATION_EU = "eu";
+const KEY_INTERCOM_WEB_SOCKET = 'intercom_web_socket';
 
 class IntercomRoute extends StatefulWidget {
   final TableUser? user;
@@ -24,15 +23,20 @@ class _IntercomRouteState extends State<IntercomRoute> {
 
   @override
   void initState() {
-    // TODO save the address to prefs
+    final wsAddress = preferences
+        .getString(KEY_INTERCOM_WEB_SOCKET,
+            defaultValue: 'ws://192.168.61.141:8080')
+        .getValue();
+
     _socketAddressController = TextEditingController(
-      text: 'ws://192.168.61.141:8080',
+      text: wsAddress,
     );
     _socketAddressController.addListener(() {
       setState(() {
         _isAddressFormatCorrect = true;
       });
     });
+
     super.initState();
   }
 
@@ -109,6 +113,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void _validateAndOpenMixerRoute() {
     final socketUri = _validateAndGetSocketUri();
     if (socketUri != null) {
+      preferences.setString(KEY_INTERCOM_WEB_SOCKET, socketUri.toString());
       Navigator.push(
         context,
         MaterialPageRoute(
@@ -123,6 +128,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void _validateAndOpenCameraRoute(int cameraId) {
     final socketUri = _validateAndGetSocketUri();
     if (socketUri != null) {
+      preferences.setString(KEY_INTERCOM_WEB_SOCKET, socketUri.toString());
       Navigator.push(
         context,
         MaterialPageRoute(

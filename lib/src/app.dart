@@ -7,11 +7,8 @@ class OperatorsApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Участие операторов',
+      title: 'Интерком',
       theme: ThemeData(
-        scrollbarTheme: ScrollbarThemeData(
-          thumbVisibility: MaterialStateProperty.all<bool>(true),
-        ),
         useMaterial3: false,
       ),
       localizationsDelegates: [

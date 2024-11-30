@@ -3,10 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/intercom/model/camera.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_bloc.dart';
 import 'package:operators/src/intercom/ui/route/mixer/mixer_state.dart';
-import 'package:operators/src/intercom/ui/widget/camera_widget_2.dart';
+import 'package:operators/src/intercom/ui/widget/camera_widget.dart';
 import 'package:operators/src/intercom/ui/widget/custom_alert_dialog.dart';
 import 'package:operators/src/intercom/ui/widget/flash_wrapper.dart';
-import 'package:operators/src/intercom/ui/widget/messages_widget_2.dart';
+import 'package:operators/src/intercom/ui/widget/messages_widget.dart';
 import 'package:operators/src/intercom/ui/widget/wakelock_widget.dart';
 
 import '../../../model/camera_context.dart';
@@ -51,7 +51,7 @@ class MixerRoute extends StatelessWidget {
                     AnimatedOpacity(
                       opacity: state.messages.isEmpty ? 0.0 : 1.0,
                       duration: const Duration(milliseconds: 300),
-                      child: MessagesWidget2(
+                      child: MessagesWidget(
                         messages: state.messages,
                         cameraContext: CameraContext.MIXER,
                         onClick: context.read<MixerBloc>().cancelMessages,
@@ -104,7 +104,7 @@ class MixerRoute extends StatelessWidget {
   }
 
   Widget _singleCameraWidget(BuildContext context, int id, Camera camera) {
-    return CameraWidget2(
+    return CameraWidget(
       cameraContext: CameraContext.MIXER,
       cameraId: id,
       stateLive: camera.live,

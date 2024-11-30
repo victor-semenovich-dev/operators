@@ -4,11 +4,11 @@ import 'package:operators/src/intercom/ui/route/camera/camera_bloc.dart';
 import 'package:operators/src/intercom/ui/route/camera/camera_state.dart';
 import 'package:operators/src/intercom/ui/widget/custom_alert_dialog.dart';
 import 'package:operators/src/intercom/ui/widget/flash_wrapper.dart';
-import 'package:operators/src/intercom/ui/widget/messages_widget_2.dart';
+import 'package:operators/src/intercom/ui/widget/messages_widget.dart';
 import 'package:operators/src/intercom/ui/widget/wakelock_widget.dart';
 
 import '../../../model/camera_context.dart';
-import '../../widget/camera_widget_2.dart';
+import '../../widget/camera_widget.dart';
 import '../../widget/state_button.dart';
 
 class CameraRoute extends StatelessWidget {
@@ -45,7 +45,7 @@ class CameraRoute extends StatelessWidget {
                 return Stack(
                   children: [
                     if (camera != null)
-                      CameraWidget2(
+                      CameraWidget(
                         cameraContext: CameraContext.CAMERA,
                         cameraId: id,
                         stateLive: camera.live,
@@ -80,7 +80,7 @@ class CameraRoute extends StatelessWidget {
                     AnimatedOpacity(
                       opacity: state.messages.isEmpty ? 0.0 : 1.0,
                       duration: const Duration(milliseconds: 300),
-                      child: MessagesWidget2(
+                      child: MessagesWidget(
                         messages: state.messages,
                         cameraContext: CameraContext.CAMERA,
                         onClick: context.read<CameraBloc>().cancelMessages,

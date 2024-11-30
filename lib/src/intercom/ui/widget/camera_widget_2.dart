@@ -48,6 +48,21 @@ class CameraWidget2 extends StatefulWidget {
 
 class _CameraWidgetState extends State<CameraWidget2>
     with SingleTickerProviderStateMixin {
+  final mixerPredefinedMessages = [
+    'Оставь камеру в таком положении',
+    'Дай крупный план',
+    'Дай общий план',
+    'Покажи кафедры',
+    'Покажи инструменты',
+    'Покажи зал',
+    'Сделай отъезд',
+    'Сделай наезд',
+  ];
+  final cameraPredefinedMessages = [
+    'Сейчас будет отъезд',
+    'Сейчас будет наезд',
+  ];
+
   final CameraContext cameraContext;
 
   final cameraRepository = CameraRepository();
@@ -244,12 +259,12 @@ class _CameraWidgetState extends State<CameraWidget2>
   }
 
   List<Widget> predefinedMessagesWidgets(FlashController<String> controller) {
-    // TODO predefinedMessages
-    final predefinedMessages = (cameraContext == CameraContext.MIXER) ? [] : [];
-    predefinedMessages.sort((m1, m2) => m1.order - m2.order);
+    final predefinedMessages = (cameraContext == CameraContext.MIXER)
+        ? mixerPredefinedMessages
+        : cameraPredefinedMessages;
     return predefinedMessages
         .map((message) => InkWell(
-              onTap: () => controller.dismiss(message.message),
+              onTap: () => controller.dismiss(message),
               child: Container(
                 width: double.infinity,
                 child: Padding(
@@ -259,7 +274,7 @@ class _CameraWidgetState extends State<CameraWidget2>
                       const Icon(Icons.send),
                       Container(width: 8),
                       Text(
-                        message.message,
+                        message,
                         style: const TextStyle(fontSize: 14),
                       ),
                     ],

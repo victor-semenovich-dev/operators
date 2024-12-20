@@ -8,7 +8,6 @@ import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../widget/background_state_widget.dart';
 import '../widget/camera_widget.dart';
-import '../widget/foreground_service_widget.dart';
 import '../widget/messages_widget.dart';
 import 'mixer_settings_route.dart';
 
@@ -71,103 +70,101 @@ class _MixerRouteState extends State<MixerRoute> {
 
   @override
   Widget build(BuildContext context) {
-    return ForegroundServiceWidget(
-      child: BackgroundStateWidget(
-        onBackgroundStateChanged: (isInBackground) {},
-        child: Scaffold(
-          appBar: AppBar(
-            title: const Text('Видеопульт'),
-            actions: [
-              IconButton(
-                icon: const Icon(Icons.settings),
-                onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => MixerSettingsRoute())),
-                tooltip: 'Настройки',
-              ),
-            ],
-          ),
-          body: Overlay(
-            initialEntries: [
-              OverlayEntry(
-                builder: (context) {
-                  return StreamBuilder(
-                      stream: cameraRepository.getAllCamerasStream(),
-                      builder: (context, snapshot) {
-                        return snapshot.hasData
-                            ? Stack(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              child: CameraWidget(
-                                                widget.user,
-                                                snapshot.data![0],
-                                                CameraContext.MIXER,
-                                              ),
+    return BackgroundStateWidget(
+      onBackgroundStateChanged: (isInBackground) {},
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text('Видеопульт'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings),
+              onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => MixerSettingsRoute())),
+              tooltip: 'Настройки',
+            ),
+          ],
+        ),
+        body: Overlay(
+          initialEntries: [
+            OverlayEntry(
+              builder: (context) {
+                return StreamBuilder(
+                    stream: cameraRepository.getAllCamerasStream(),
+                    builder: (context, snapshot) {
+                      return snapshot.hasData
+                          ? Stack(
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![0],
+                                              CameraContext.MIXER,
                                             ),
-                                            const Divider(
-                                                color: Colors.black, height: 1),
-                                            Expanded(
-                                              child: CameraWidget(
-                                                widget.user,
-                                                snapshot.data![2],
-                                                CameraContext.MIXER,
-                                              ),
-                                            )
-                                          ],
-                                        ),
+                                          ),
+                                          const Divider(
+                                              color: Colors.black, height: 1),
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![2],
+                                              CameraContext.MIXER,
+                                            ),
+                                          )
+                                        ],
                                       ),
-                                      const VerticalDivider(
-                                          color: Colors.black, width: 1),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              child: CameraWidget(
-                                                widget.user,
-                                                snapshot.data![1],
-                                                CameraContext.MIXER,
-                                              ),
-                                            ),
-                                            const Divider(
-                                                color: Colors.black, height: 1),
-                                            Expanded(
-                                              child: CameraWidget(
-                                                widget.user,
-                                                snapshot.data![3],
-                                                CameraContext.MIXER,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      )
-                                    ],
-                                  ),
-                                  AnimatedOpacity(
-                                    opacity: _messages.isEmpty ? 0.0 : 1.0,
-                                    duration: const Duration(milliseconds: 300),
-                                    child: MessagesWidget(
-                                      messages: _messages,
-                                      cameraContext: CameraContext.MIXER,
-                                      onClick: () {
-                                        cameraRepository.allMessagesRead(
-                                            CameraContext.MIXER);
-                                      },
                                     ),
+                                    const VerticalDivider(
+                                        color: Colors.black, width: 1),
+                                    Expanded(
+                                      child: Column(
+                                        children: [
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![1],
+                                              CameraContext.MIXER,
+                                            ),
+                                          ),
+                                          const Divider(
+                                              color: Colors.black, height: 1),
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![3],
+                                              CameraContext.MIXER,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    )
+                                  ],
+                                ),
+                                AnimatedOpacity(
+                                  opacity: _messages.isEmpty ? 0.0 : 1.0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: MessagesWidget(
+                                    messages: _messages,
+                                    cameraContext: CameraContext.MIXER,
+                                    onClick: () {
+                                      cameraRepository
+                                          .allMessagesRead(CameraContext.MIXER);
+                                    },
                                   ),
-                                ],
-                              )
-                            : const Center(child: CircularProgressIndicator());
-                      });
-                },
-              )
-            ],
-          ),
+                                ),
+                              ],
+                            )
+                          : const Center(child: CircularProgressIndicator());
+                    });
+              },
+            )
+          ],
         ),
       ),
     );

@@ -8,7 +8,6 @@ import '../../data/camera.dart';
 import '../../repository/camera_repository.dart';
 import '../widget/background_state_widget.dart';
 import '../widget/camera_widget.dart';
-import '../widget/foreground_service_widget.dart';
 import '../widget/messages_widget.dart';
 import '../widget/state_button.dart';
 
@@ -61,73 +60,70 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
 
   @override
   Widget build(BuildContext context) {
-    return ForegroundServiceWidget(
-      child: BackgroundStateWidget(
-        onBackgroundStateChanged: (isInBackground) {
-          debugPrint('isInBackground - $isInBackground');
-        },
-        child: Scaffold(
-            appBar: AppBar(
-              title: Text('Камера $_id'),
-            ),
-            body: Overlay(
-              initialEntries: [
-                OverlayEntry(
-                    builder: (context) => StreamBuilder<Camera>(
-                        stream: cameraRepository.getCameraStream(_id),
-                        builder: (context, snapshot) => snapshot.hasData
-                            ? Stack(
-                                children: [
-                                  CameraWidget(
-                                    widget.user,
-                                    snapshot.data!,
-                                    CameraContext.CAMERA,
-                                    textSize: 100,
-                                    circleSize: 80,
-                                    circleMargin: 32,
+    return BackgroundStateWidget(
+      onBackgroundStateChanged: (isInBackground) {
+        debugPrint('isInBackground - $isInBackground');
+      },
+      child: Scaffold(
+          appBar: AppBar(
+            title: Text('Камера $_id'),
+          ),
+          body: Overlay(
+            initialEntries: [
+              OverlayEntry(
+                  builder: (context) => StreamBuilder<Camera>(
+                      stream: cameraRepository.getCameraStream(_id),
+                      builder: (context, snapshot) => snapshot.hasData
+                          ? Stack(
+                              children: [
+                                CameraWidget(
+                                  widget.user,
+                                  snapshot.data!,
+                                  CameraContext.CAMERA,
+                                  textSize: 100,
+                                  circleSize: 80,
+                                  circleMargin: 32,
+                                ),
+                                Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                        width: double.infinity,
+                                        margin: const EdgeInsets.all(16),
+                                        child: StateButton(
+                                          onClick: snapshot.data!.isLive
+                                              ? null
+                                              : () {
+                                                  cameraRepository.setRequested(
+                                                      _id,
+                                                      !snapshot
+                                                          .data!.isRequested);
+                                                  cameraRepository.setReady(
+                                                      _id, true);
+                                                },
+                                          state: snapshot.data!.isRequested
+                                              ? ButtonState.FILLED
+                                              : ButtonState.NORMAL,
+                                          text: snapshot.data!.isRequested
+                                              ? cameraAlreadyRequested
+                                              : cameraRequest,
+                                        ))),
+                                AnimatedOpacity(
+                                  opacity: _messages.isEmpty ? 0.0 : 1.0,
+                                  duration: const Duration(milliseconds: 300),
+                                  child: MessagesWidget(
+                                    messages: _messages,
+                                    cameraContext: CameraContext.CAMERA,
+                                    onClick: () {
+                                      cameraRepository.messageRead(
+                                          _id, CameraContext.CAMERA);
+                                    },
                                   ),
-                                  Align(
-                                      alignment: Alignment.bottomCenter,
-                                      child: Container(
-                                          width: double.infinity,
-                                          margin: const EdgeInsets.all(16),
-                                          child: StateButton(
-                                            onClick: snapshot.data!.isLive
-                                                ? null
-                                                : () {
-                                                    cameraRepository
-                                                        .setRequested(
-                                                            _id,
-                                                            !snapshot.data!
-                                                                .isRequested);
-                                                    cameraRepository.setReady(
-                                                        _id, true);
-                                                  },
-                                            state: snapshot.data!.isRequested
-                                                ? ButtonState.FILLED
-                                                : ButtonState.NORMAL,
-                                            text: snapshot.data!.isRequested
-                                                ? cameraAlreadyRequested
-                                                : cameraRequest,
-                                          ))),
-                                  AnimatedOpacity(
-                                    opacity: _messages.isEmpty ? 0.0 : 1.0,
-                                    duration: const Duration(milliseconds: 300),
-                                    child: MessagesWidget(
-                                      messages: _messages,
-                                      cameraContext: CameraContext.CAMERA,
-                                      onClick: () {
-                                        cameraRepository.messageRead(
-                                            _id, CameraContext.CAMERA);
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : const Center(child: CircularProgressIndicator())))
-              ],
-            )),
-      ),
+                                ),
+                              ],
+                            )
+                          : const Center(child: CircularProgressIndicator())))
+            ],
+          )),
     );
   }
 }

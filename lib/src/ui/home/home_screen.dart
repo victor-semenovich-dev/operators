@@ -1,8 +1,6 @@
-import 'package:background_fetch/background_fetch.dart';
-import 'package:flutter/foundation.dart';
+// import 'package:background_fetch/background_fetch.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/data/usecase/sync_events.dart';
 import 'package:operators/src/intercom/ui/route/home_route.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
@@ -21,28 +19,28 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   HomeState? _lastState;
 
-  Future<void> _initBackgroundFetch() async {
-    await BackgroundFetch.configure(
-      BackgroundFetchConfig(
-        minimumFetchInterval: 12 * 60,
-        startOnBoot: true,
-        requiredNetworkType: NetworkType.ANY,
-      ),
-      (String taskId) async {
-        final now = DateTime.now();
-        if (now.hour >= 21 || now.hour < 9) {
-          final useCase = SyncEventsUseCase(context.read(), context.read());
-          await useCase.perform();
-        }
-        BackgroundFetch.finish(taskId);
-      },
-      (String taskId) async {
-        // timeout
-        BackgroundFetch.finish(taskId);
-      },
-    );
-    await BackgroundFetch.start();
-  }
+  // Future<void> _initBackgroundFetch() async {
+  //   await BackgroundFetch.configure(
+  //     BackgroundFetchConfig(
+  //       minimumFetchInterval: 12 * 60,
+  //       startOnBoot: true,
+  //       requiredNetworkType: NetworkType.ANY,
+  //     ),
+  //     (String taskId) async {
+  //       final now = DateTime.now();
+  //       if (now.hour >= 21 || now.hour < 9) {
+  //         final useCase = SyncEventsUseCase(context.read(), context.read());
+  //         await useCase.perform();
+  //       }
+  //       BackgroundFetch.finish(taskId);
+  //     },
+  //     (String taskId) async {
+  //       // timeout
+  //       BackgroundFetch.finish(taskId);
+  //     },
+  //   );
+  //   await BackgroundFetch.start();
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -74,13 +72,13 @@ class _HomeScreenState extends State<HomeScreen> {
           cubit.consumeSyncEventsResult();
         }
 
-        if (!kIsWeb && _lastState?.isAdmin != state.isAdmin) {
-          if (state.isAdmin) {
-            _initBackgroundFetch();
-          } else {
-            BackgroundFetch.stop();
-          }
-        }
+        // if (!kIsWeb && _lastState?.isAdmin != state.isAdmin) {
+        //   if (state.isAdmin) {
+        //     _initBackgroundFetch();
+        //   } else {
+        //     BackgroundFetch.stop();
+        //   }
+        // }
 
         if (_lastState == null ||
             _lastState?.currentUser?.id != state.currentUser?.id) {

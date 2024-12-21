@@ -43,6 +43,7 @@ dependencies:
   streaming_shared_preferences: ^2.0.0
   flash: ^3.0.5+1
 #  flutter_foreground_task: ^3.10.0
+  web_socket_channel: ^2.4.0
 
 dev_dependencies:
   build_runner: ^2.3.3

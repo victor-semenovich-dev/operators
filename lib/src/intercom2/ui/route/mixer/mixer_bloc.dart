@@ -109,4 +109,10 @@ class MixerBloc extends Cubit<MixerRouteState> {
       emit(state);
     }
   }
+
+  @override
+  Future<void> close() {
+    _webSocketChannel?.sink.close();
+    return super.close();
+  }
 }

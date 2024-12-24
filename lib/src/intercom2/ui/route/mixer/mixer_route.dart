@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:operators/src/intercom2/ui/widget/lifecycle_widget.dart';
 
 import '../../../model/camera.dart';
 import '../../../model/camera_context.dart';
 import '../../widget/camera_widget.dart';
 import '../../widget/custom_alert_dialog.dart';
 import '../../widget/flash_wrapper.dart';
+import '../../widget/lifecycle_widget.dart';
 import '../../widget/messages_widget.dart';
+import '../../widget/progress_overlay.dart';
 import '../../widget/wakelock_widget.dart';
 import 'mixer_bloc.dart';
 import 'mixer_settings_route.dart';
@@ -79,8 +80,7 @@ class MixerRoute extends StatelessWidget {
                           onClick: context.read<MixerBloc>().cancelMessages,
                         ),
                       ),
-                      if (state.connecting)
-                        const Center(child: CircularProgressIndicator()),
+                      if (state.connecting) const ProgressOverlay(),
                     ],
                   ),
                 );

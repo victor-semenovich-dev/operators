@@ -38,7 +38,7 @@ class MixerBloc extends Cubit<MixerRouteState> {
         reconnectionRequired: false,
       ));
       _webSocketChannel = WebSocketChannel.connect(socketUri);
-      await _webSocketChannel?.ready.timeout(Duration(seconds: 3));
+      await _webSocketChannel?.ready.timeout(Duration(seconds: 5));
       debugPrint('connected!');
       _safeEmit(state.copyWith(connected: true, connecting: false));
       _listenWebSocket();

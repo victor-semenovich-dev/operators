@@ -17,12 +17,14 @@ class _WakelockWidgetState extends State<WakelockWidget>
   @override
   void initState() {
     super.initState();
+    WakelockPlus.enable();
     WidgetsBinding.instance.addObserver(this);
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    WakelockPlus.disable();
     super.dispose();
   }
 
@@ -33,13 +35,10 @@ class _WakelockWidgetState extends State<WakelockWidget>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    debugPrint('state - $state');
     if (state == AppLifecycleState.paused) {
-      debugPrint('disable');
       WakelockPlus.disable();
     }
     if (state == AppLifecycleState.resumed) {
-      debugPrint('enable');
       WakelockPlus.enable();
     }
   }

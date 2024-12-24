@@ -18,19 +18,33 @@ class MixerBloc extends Cubit<MixerRouteState> {
     _connectToWebSocket();
   }
 
+  void reconnect() {
+    _connectToWebSocket();
+  }
+
+  void reconnectionRequired(bool reconnectionRequired) {
+    _safeEmit(state.copyWith(reconnectionRequired: reconnectionRequired));
+  }
+
   Future<void> _connectToWebSocket() async {
     // this is needed to make the bloc listener work if there is a quick error on route start
     await Future.delayed(Duration.zero);
     try {
       debugPrint('connect...');
+      _safeEmit(state.copyWith(
+        connectionClosed: false,
+        connectionError: false,
+        connecting: true,
+        reconnectionRequired: false,
+      ));
       _webSocketChannel = WebSocketChannel.connect(socketUri);
       await _webSocketChannel?.ready.timeout(Duration(seconds: 3));
       debugPrint('connected!');
-      _safeEmit(state.copyWith(socketConnected: true));
+      _safeEmit(state.copyWith(connected: true, connecting: false));
       _listenWebSocket();
     } catch (e) {
       debugPrint('error: $e');
-      _safeEmit(state.copyWith(socketClosed: true));
+      _safeEmit(state.copyWith(connectionError: true, connecting: false));
     }
   }
 
@@ -50,7 +64,10 @@ class MixerBloc extends Cubit<MixerRouteState> {
       }
     }).onDone(() {
       if (!this.isClosed) {
-        _safeEmit(state.copyWith(socketClosed: true));
+        _safeEmit(state.copyWith(
+          connected: false,
+          connectionClosed: true,
+        ));
       }
     });
   }

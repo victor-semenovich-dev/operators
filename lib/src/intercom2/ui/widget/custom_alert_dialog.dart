@@ -6,7 +6,22 @@ void showConnectionErrorDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return CustomAlertDialog(message: 'Отсутствует соединение с сервером');
+      return CustomAlertDialog(
+          message:
+              'Не удалось подключиться к сокету. Проверьте адрес сокета и убедитесь, что он запущен.');
+    },
+  ).then((_) {
+    Navigator.of(context).pop();
+  });
+}
+
+void showConnectionClosedDialog({
+  required BuildContext context,
+}) {
+  showDialog(
+    context: context,
+    builder: (context) {
+      return CustomAlertDialog(message: 'Соединение с сокетом прервано.');
     },
   ).then((_) {
     Navigator.of(context).pop();

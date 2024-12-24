@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:operators/src/intercom2/ui/widget/lifecycle_widget.dart';
 
 import '../../../model/camera.dart';
 import '../../../model/camera_context.dart';
@@ -39,27 +40,49 @@ class MixerRoute extends StatelessWidget {
           child: FlashWrapper(
             child: BlocConsumer<MixerBloc, MixerRouteState>(
               listener: (context, state) {
-                if (state.socketClosed) {
+                debugPrint('listener: $state');
+                if (state.connectionClosed && !state.reconnectionRequired) {
+                  debugPrint('showConnectionClosedDialog');
+                  showConnectionClosedDialog(context: context);
+                }
+                if (state.connectionError && !state.reconnectionRequired) {
+                  debugPrint('showConnectionErrorDialog');
                   showConnectionErrorDialog(context: context);
                 }
               },
               builder: (context, state) {
                 final cameraList = state.cameraList;
-                return Stack(
-                  children: [
-                    if (cameraList != null) _camerasWidget(context, cameraList),
-                    AnimatedOpacity(
-                      opacity: state.messages.isEmpty ? 0.0 : 1.0,
-                      duration: const Duration(milliseconds: 300),
-                      child: MessagesWidget(
-                        messages: state.messages,
-                        cameraContext: CameraContext.MIXER,
-                        onClick: context.read<MixerBloc>().cancelMessages,
+                return LifecycleWidget(
+                  onLifecycleStateChanged: (lifecycleState) {
+                    if (lifecycleState == AppLifecycleState.paused) {
+                      context.read<MixerBloc>().reconnectionRequired(true);
+                    }
+                    if (lifecycleState == AppLifecycleState.resumed &&
+                        state.reconnectionRequired) {
+                      if (state.connected) {
+                        context.read<MixerBloc>().reconnectionRequired(false);
+                      } else {
+                        context.read<MixerBloc>().reconnect();
+                      }
+                    }
+                  },
+                  child: Stack(
+                    children: [
+                      if (cameraList != null)
+                        _camerasWidget(context, cameraList),
+                      AnimatedOpacity(
+                        opacity: state.messages.isEmpty ? 0.0 : 1.0,
+                        duration: const Duration(milliseconds: 300),
+                        child: MessagesWidget(
+                          messages: state.messages,
+                          cameraContext: CameraContext.MIXER,
+                          onClick: context.read<MixerBloc>().cancelMessages,
+                        ),
                       ),
-                    ),
-                    if (!state.socketConnected)
-                      const Center(child: CircularProgressIndicator()),
-                  ],
+                      if (state.connecting)
+                        const Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
                 );
               },
             ),

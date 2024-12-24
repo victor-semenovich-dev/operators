@@ -2,27 +2,39 @@ import '../../../model/camera.dart';
 import '../../../model/message.dart';
 
 class CameraRouteState {
-  final bool socketConnected;
-  final bool socketClosed;
+  final bool connecting;
+  final bool connected;
+  final bool connectionClosed;
+  final bool connectionError;
+  final bool reconnectionRequired;
   final Camera? camera;
   final List<Message> messages;
 
   CameraRouteState({
-    this.socketConnected = false,
-    this.socketClosed = false,
+    this.connecting = false,
+    this.connected = false,
+    this.connectionClosed = false,
+    this.connectionError = false,
+    this.reconnectionRequired = false,
     this.camera,
     this.messages = const [],
   });
 
   CameraRouteState copyWith({
-    bool? socketConnected,
-    bool? socketClosed,
+    bool? connecting,
+    bool? connected,
+    bool? connectionClosed,
+    bool? connectionError,
+    bool? reconnectionRequired,
     Camera? camera,
     List<Message>? messages,
   }) {
     return CameraRouteState(
-      socketConnected: socketConnected ?? this.socketConnected,
-      socketClosed: socketClosed ?? this.socketClosed,
+      connecting: connecting ?? this.connecting,
+      connected: connected ?? this.connected,
+      connectionClosed: connectionClosed ?? this.connectionClosed,
+      connectionError: connectionError ?? this.connectionError,
+      reconnectionRequired: reconnectionRequired ?? this.reconnectionRequired,
       camera: camera ?? this.camera,
       messages: messages ?? this.messages,
     );
@@ -30,6 +42,6 @@ class CameraRouteState {
 
   @override
   String toString() {
-    return 'CameraRouteState{socketConnected: $socketConnected, socketClosed: $socketClosed, camera: $camera, messages: $messages}';
+    return 'CameraRouteState{connecting: $connecting, connected: $connected, connectionClosed: $connectionClosed, connectionError: $connectionError, reconnectionRequired: $reconnectionRequired}';
   }
 }

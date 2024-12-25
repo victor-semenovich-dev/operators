@@ -8,7 +8,7 @@ void showConnectionErrorDialog({
     builder: (context) {
       return CustomAlertDialog(
           message:
-              'Не удалось подключиться к сокету. Проверьте адрес сокета и убедитесь, что он запущен.');
+              'Не удалось подключиться к сокету. Убедитесь, что он запущен, и проверьте адрес.');
     },
   ).then((_) {
     Navigator.of(context).pop();
@@ -21,7 +21,8 @@ void showConnectionClosedDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return CustomAlertDialog(message: 'Соединение с сокетом прервано.');
+      return CustomAlertDialog(
+          message: 'Соединение с сокетом прервано. Попробуйте зайти снова.');
     },
   ).then((_) {
     Navigator.of(context).pop();

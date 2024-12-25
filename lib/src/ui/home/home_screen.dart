@@ -97,16 +97,31 @@ class _HomeScreenState extends State<HomeScreen> {
                     : Text(state.currentUser?.name ?? ''),
             actions: [
               if (!state.isLoggedIn)
-                IconButton(
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AuthorizationDialogProvider(),
-                    );
-                  },
-                  icon: Icon(Icons.login),
-                  tooltip: 'Авторизация',
-                ),
+                if (state.showIntercomOption)
+                  IconButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => IntercomRoute(
+                            user: state.currentUser,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: Icon(Icons.videocam_outlined),
+                    tooltip: 'Интерком',
+                  ),
+              IconButton(
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AuthorizationDialogProvider(),
+                  );
+                },
+                icon: Icon(Icons.login),
+                tooltip: 'Авторизация',
+              ),
               if (state.isAdmin)
                 SortDropdown(
                   selectedItem: state.sortType,
@@ -133,21 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     icon: Icon(Icons.sync),
                     tooltip: 'Обновить',
                   ),
-              if (state.showIntercomOption)
-                IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => IntercomRoute(
-                          user: state.currentUser,
-                        ),
-                      ),
-                    );
-                  },
-                  icon: Icon(Icons.videocam_outlined),
-                  tooltip: 'Интерком',
-                ),
               if (state.isLoggedIn)
                 PopupMenuButton<String>(
                   tooltip: 'Меню',

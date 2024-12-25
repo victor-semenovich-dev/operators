@@ -422,8 +422,7 @@ class HomeState with _$HomeState {
   TableUser? get currentUser => tableData?.users
       .firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
 
-  bool get showIntercomOption =>
-      currentUser?.roles.contains(Role.CAMERA) == true;
+  bool get showIntercomOption => true;
 
   List<TableEvent> get inactiveEvents => allEvents
       .where((e) => !e.isActive)

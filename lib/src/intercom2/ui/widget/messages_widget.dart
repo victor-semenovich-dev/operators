@@ -27,7 +27,7 @@ class MessagesWidget extends StatelessWidget {
 
       final cameraId = message.cameraId;
       final userName = message.userName;
-      final prefix = cameraContext == CameraContext.MIXER
+      final prefix = cameraContext == CameraContext.CAMERA
           ? (userName == null ? '' : userName)
           : "${cameraId + 1} ${userName == null ? '' : '($userName)'}".trim();
 

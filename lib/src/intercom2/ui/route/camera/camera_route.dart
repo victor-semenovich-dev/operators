@@ -16,11 +16,13 @@ import 'camera_state.dart';
 class CameraRoute extends StatelessWidget {
   final int id; // 0 based
   final Uri socketUri;
+  final String? userName;
 
   const CameraRoute({
     Key? key,
     required this.id,
     required this.socketUri,
+    this.userName,
   }) : super(key: key);
 
   @override
@@ -78,7 +80,12 @@ class CameraRoute extends StatelessWidget {
                           circleSize: 80,
                           circleMargin: 32,
                           onTap: context.read<CameraBloc>().toggleReady,
-                          sendMessage: context.read<CameraBloc>().sendMessage,
+                          sendMessage: (message) async {
+                            await context.read<CameraBloc>().sendMessage(
+                                  message: message,
+                                  userName: userName,
+                                );
+                          },
                         ),
                       if (camera != null)
                         Align(

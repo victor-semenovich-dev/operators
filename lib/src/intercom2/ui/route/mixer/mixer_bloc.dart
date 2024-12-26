@@ -103,11 +103,13 @@ class MixerBloc extends Cubit<MixerRouteState> {
   Future<void> sendMessage({
     required int cameraId,
     required String message,
+    String? userName,
   }) async {
     final messageMap = {
       'to': cameraId,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'message': message,
+      'userName': userName,
     };
     final messageJson = json.encode(messageMap);
     _webSocketChannel?.sink.add(messageJson);

@@ -167,6 +167,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
           MaterialPageRoute(
             builder: (context) => mixer2.MixerRoute(
               socketUri: socketUri,
+              userName: widget.user?.shortName ?? widget.user?.name,
             ),
           ),
         );
@@ -194,6 +195,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
             builder: (context) => camera2.CameraRoute(
               id: cameraId,
               socketUri: socketUri,
+              userName: widget.user?.shortName ?? widget.user?.name,
             ),
           ),
         );

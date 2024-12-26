@@ -16,8 +16,13 @@ import 'mixer_state.dart';
 
 class MixerRoute extends StatelessWidget {
   final Uri socketUri;
+  final String? userName;
 
-  const MixerRoute({Key? key, required this.socketUri}) : super(key: key);
+  const MixerRoute({
+    Key? key,
+    required this.socketUri,
+    this.userName,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -143,7 +148,7 @@ class MixerRoute extends StatelessWidget {
       sendMessage: (message) async {
         await context
             .read<MixerBloc>()
-            .sendMessage(cameraId: id, message: message);
+            .sendMessage(cameraId: id, message: message, userName: userName);
       },
     );
   }

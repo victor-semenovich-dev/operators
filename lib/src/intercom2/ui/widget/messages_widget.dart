@@ -26,10 +26,14 @@ class MessagesWidget extends StatelessWidget {
       final Message message = messages[i];
 
       final cameraId = message.cameraId;
+      final userName = message.userName;
+      final prefix = cameraContext == CameraContext.MIXER
+          ? (userName == null ? '' : userName)
+          : "${cameraId + 1} ${userName == null ? '' : '($userName)'}".trim();
+
       final text = message.message;
-      final messageText = cameraContext == CameraContext.CAMERA
-          ? text
-          : '${cameraId + 1}: $text';
+
+      final messageText = "${prefix.isEmpty ? text : '$prefix: $text'}";
 
       messageWidgets.add(
         Padding(

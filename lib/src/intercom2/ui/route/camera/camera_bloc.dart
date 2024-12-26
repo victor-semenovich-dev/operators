@@ -80,11 +80,12 @@ class CameraBloc extends Cubit<CameraRouteState> {
     }
   }
 
-  Future<void> sendMessage(String message) async {
+  Future<void> sendMessage({required String message, String? userName}) async {
     final messageMap = {
       'from': id,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
       'message': message,
+      'userName': userName,
     };
     final messageJson = json.encode(messageMap);
     _webSocketChannel?.sink.add(messageJson);

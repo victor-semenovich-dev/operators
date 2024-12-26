@@ -96,32 +96,32 @@ class _HomeScreenState extends State<HomeScreen> {
                     ? Container()
                     : Text(state.currentUser?.name ?? ''),
             actions: [
-              if (!state.isLoggedIn)
-                if (state.showIntercomOption)
-                  IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => IntercomRoute(
-                            user: state.currentUser,
-                          ),
+              if (state.showIntercomOption)
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IntercomRoute(
+                          user: state.currentUser,
                         ),
-                      );
-                    },
-                    icon: Icon(Icons.videocam_outlined),
-                    tooltip: 'Интерком',
-                  ),
-              IconButton(
-                onPressed: () {
-                  showDialog(
-                    context: context,
-                    builder: (context) => AuthorizationDialogProvider(),
-                  );
-                },
-                icon: Icon(Icons.login),
-                tooltip: 'Авторизация',
-              ),
+                      ),
+                    );
+                  },
+                  icon: Icon(Icons.videocam_outlined),
+                  tooltip: 'Интерком',
+                ),
+              if (!state.isLoggedIn)
+                IconButton(
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AuthorizationDialogProvider(),
+                    );
+                  },
+                  icon: Icon(Icons.login),
+                  tooltip: 'Авторизация',
+                ),
               if (state.isAdmin)
                 SortDropdown(
                   selectedItem: state.sortType,

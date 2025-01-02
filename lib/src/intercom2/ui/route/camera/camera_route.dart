@@ -88,24 +88,27 @@ class CameraRoute extends StatelessWidget {
                           },
                         ),
                       if (camera != null)
-                        Align(
-                            alignment: Alignment.bottomCenter,
-                            child: Container(
-                                width: double.infinity,
-                                margin: const EdgeInsets.all(16),
-                                child: StateButton(
-                                  onClick: camera.live || camera.change
-                                      ? null
-                                      : context
-                                          .read<CameraBloc>()
-                                          .toggleAttention,
-                                  state: camera.attention
-                                      ? ButtonState.FILLED
-                                      : ButtonState.NORMAL,
-                                  text: camera.attention
-                                      ? 'Отменить запрос камеры в трансляцию'
-                                      : 'Попросить пустить камеру в трансляцию',
-                                ))),
+                        SafeArea(
+                          child: Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Container(
+                                  width: double.infinity,
+                                  margin: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  child: StateButton(
+                                    onClick: camera.live || camera.change
+                                        ? null
+                                        : context
+                                            .read<CameraBloc>()
+                                            .toggleAttention,
+                                    state: camera.attention
+                                        ? ButtonState.FILLED
+                                        : ButtonState.NORMAL,
+                                    text: camera.attention
+                                        ? 'Отменить запрос камеры в трансляцию'
+                                        : 'Попросить пустить камеру в трансляцию',
+                                  ))),
+                        ),
                       AnimatedOpacity(
                         opacity: state.messages.isEmpty ? 0.0 : 1.0,
                         duration: const Duration(milliseconds: 300),

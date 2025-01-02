@@ -84,29 +84,33 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
                                   circleSize: 80,
                                   circleMargin: 32,
                                 ),
-                                Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Container(
-                                        width: double.infinity,
-                                        margin: const EdgeInsets.all(16),
-                                        child: StateButton(
-                                          onClick: snapshot.data!.isLive
-                                              ? null
-                                              : () {
-                                                  cameraRepository.setRequested(
-                                                      _id,
-                                                      !snapshot
-                                                          .data!.isRequested);
-                                                  cameraRepository.setReady(
-                                                      _id, true);
-                                                },
-                                          state: snapshot.data!.isRequested
-                                              ? ButtonState.FILLED
-                                              : ButtonState.NORMAL,
-                                          text: snapshot.data!.isRequested
-                                              ? cameraAlreadyRequested
-                                              : cameraRequest,
-                                        ))),
+                                SafeArea(
+                                  child: Align(
+                                      alignment: Alignment.bottomCenter,
+                                      child: Container(
+                                          width: double.infinity,
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 8),
+                                          child: StateButton(
+                                            onClick: snapshot.data!.isLive
+                                                ? null
+                                                : () {
+                                                    cameraRepository
+                                                        .setRequested(
+                                                            _id,
+                                                            !snapshot.data!
+                                                                .isRequested);
+                                                    cameraRepository.setReady(
+                                                        _id, true);
+                                                  },
+                                            state: snapshot.data!.isRequested
+                                                ? ButtonState.FILLED
+                                                : ButtonState.NORMAL,
+                                            text: snapshot.data!.isRequested
+                                                ? cameraAlreadyRequested
+                                                : cameraRequest,
+                                          ))),
+                                ),
                                 AnimatedOpacity(
                                   opacity: _messages.isEmpty ? 0.0 : 1.0,
                                   duration: const Duration(milliseconds: 300),

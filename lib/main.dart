@@ -37,7 +37,7 @@ void main() async {
       await FirebaseMessaging.instance.subscribeToTopic('release');
     }
   }
-  FirebaseMessaging.instance.requestPermission();
+  // FirebaseMessaging.instance.requestPermission();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

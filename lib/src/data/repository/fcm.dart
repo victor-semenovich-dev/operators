@@ -52,6 +52,7 @@ class FcmRepository {
     }
   }
 
+  @Deprecated('Not working anymore')
   Future<SendNotificationResult> sendNotification(
     String title,
     String body,
@@ -97,6 +98,7 @@ class FcmRepository {
     }
   }
 
+  @Deprecated('Not working anymore')
   Future<SendNotificationResult> sendNotificationToUsers(
     String title,
     String body,

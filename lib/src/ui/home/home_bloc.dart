@@ -256,30 +256,27 @@ class HomeCubit extends Cubit<HomeState> {
     List<TableUser> users,
     List<TelegramConfig> telegramConfigs,
   ) async {
-    for (final config in telegramConfigs) {
-      final message =
-          config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
-      if (message != null) {
-        if (config.messageThreadId == null) {
-          telegramRepository.sendMessageToTelegramChat(message, config.chatId);
-        } else {
-          telegramRepository.sendMessageToTelegramChatThread(
-              message, config.chatId, config.messageThreadId!);
+    try {
+      for (final config in telegramConfigs) {
+        final message =
+            config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
+        if (message != null) {
+          if (config.messageThreadId == null) {
+            telegramRepository.sendMessageToTelegramChat(
+                message, config.chatId);
+          } else {
+            telegramRepository.sendMessageToTelegramChatThread(
+                message, config.chatId, config.messageThreadId!);
+          }
         }
       }
+      telegramRepository.lastTimeRemind = DateTime.now();
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.SUCCESS));
+    } catch (e) {
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.FAILURE));
     }
-    telegramRepository.lastTimeRemind = DateTime.now();
-
-    final result = await fcmRepository.sendNotificationToUsers(
-      'Напоминание',
-      'Отметься на служение "${event.title}"',
-      users
-          .map((e) => e.uid)
-          .where((uid) => uid != null)
-          .map((e) => e!)
-          .toList(),
-    );
-    emit(state.copyWith(sendNotificationResult: result));
   }
 
   void sendNotification(
@@ -287,18 +284,22 @@ class HomeCubit extends Cubit<HomeState> {
     String body,
     List<TelegramConfig> telegramConfigs,
   ) async {
-    for (final config in telegramConfigs) {
-      if (config.messageThreadId == null) {
-        telegramRepository.sendMessageToTelegramChat(
-            "$title\n\n$body", config.chatId);
-      } else {
-        telegramRepository.sendMessageToTelegramChatThread(
-            "$title\n\n$body", config.chatId, config.messageThreadId!);
+    try {
+      for (final config in telegramConfigs) {
+        if (config.messageThreadId == null) {
+          telegramRepository.sendMessageToTelegramChat(
+              "$title\n\n$body", config.chatId);
+        } else {
+          telegramRepository.sendMessageToTelegramChatThread(
+              "$title\n\n$body", config.chatId, config.messageThreadId!);
+        }
       }
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.SUCCESS));
+    } catch (e) {
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.FAILURE));
     }
-
-    final result = await fcmRepository.sendNotification(title, body);
-    emit(state.copyWith(sendNotificationResult: result));
   }
 
   String? getNotificationResultReadableText() {

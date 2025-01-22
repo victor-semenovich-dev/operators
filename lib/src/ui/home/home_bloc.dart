@@ -238,9 +238,12 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
-  List<TableUser> getMissedMarksUsers(TableEvent event) {
+  List<TableUser> _getMissedMarksUsers(TableEvent event, Role role) {
     return state.tableData?.users
-            .where((user) => event.state[user.id]?.canHelp == null)
+            .where((user) =>
+                user.roles.contains(role) &&
+                event.state[user.id]?.canHelp == null)
+            .sortedBy((user) => user.name)
             .toList() ??
         [];
   }
@@ -253,19 +256,26 @@ class HomeCubit extends Cubit<HomeState> {
 
   void sendRemind(
     TableEvent event,
-    List<TableUser> users,
     List<TelegramConfig> telegramConfigs,
   ) async {
     try {
       for (final config in telegramConfigs) {
-        final message =
-            config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
-        if (message != null) {
+        final role = config.role;
+        final List<TableUser> users =
+            role != null ? _getMissedMarksUsers(event, role) : [];
+        if (users.isNotEmpty) {
+          final commonPart =
+              config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
+          final usersPart = users
+              .map((user) => user.telegram != null ? user.telegram : user.name)
+              .join('\n');
+          final message = '$commonPart\n\n$usersPart';
+
           if (config.messageThreadId == null) {
-            telegramRepository.sendMessageToTelegramChat(
+            await telegramRepository.sendMessageToTelegramChat(
                 message, config.chatId);
           } else {
-            telegramRepository.sendMessageToTelegramChatThread(
+            await telegramRepository.sendMessageToTelegramChatThread(
                 message, config.chatId, config.messageThreadId!);
           }
         }
@@ -287,10 +297,10 @@ class HomeCubit extends Cubit<HomeState> {
     try {
       for (final config in telegramConfigs) {
         if (config.messageThreadId == null) {
-          telegramRepository.sendMessageToTelegramChat(
+          await telegramRepository.sendMessageToTelegramChat(
               "$title\n\n$body", config.chatId);
         } else {
-          telegramRepository.sendMessageToTelegramChatThread(
+          await telegramRepository.sendMessageToTelegramChatThread(
               "$title\n\n$body", config.chatId, config.messageThreadId!);
         }
       }

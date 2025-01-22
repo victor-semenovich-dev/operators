@@ -4,7 +4,11 @@ import 'package:operators/src/data/model/telegram.dart';
 import 'package:operators/src/data/remote/service/telegram.dart';
 import 'package:rxdart/rxdart.dart';
 
+import '../model/event.dart';
+
 const MARKS_REMINDER_KEY = 'marksReminder';
+
+const TEST_CHANNEL_ID = '-970906901';
 
 class TelegramRepository {
   final _chopper = ChopperClient(
@@ -34,12 +38,14 @@ class TelegramRepository {
 
   Future<void> sendMessageToTelegramChat(
       String message, String channelId) async {
-    _chopper.getService<TelegramService>().sendMessage(channelId, message);
+    await _chopper
+        .getService<TelegramService>()
+        .sendMessage(channelId, message);
   }
 
   Future<void> sendMessageToTelegramChatThread(
       String message, String channelId, String threadId) async {
-    _chopper
+    await _chopper
         .getService<TelegramService>()
         .sendMessageToThread(channelId, threadId, message);
   }
@@ -60,6 +66,7 @@ class TelegramRepository {
       title: data['title'],
       messages: messages,
       chatId: data['chatId'].toString(),
+      role: stringToRole(data['role'].toString()),
       messageThreadId: data['messageThreadId'].toString(),
     );
   }

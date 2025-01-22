@@ -39,24 +39,20 @@ class _NotificationConfirmationDialogState
 
   @override
   Widget build(BuildContext context) {
-    final telegramWidgets = _telegramConfigsState.map((s) => CheckboxListTile(
-          value: s.isChecked,
-          onChanged: (value) {
-            setState(() => s.isChecked = value ?? false);
-          },
-          title: Text(s.config.title),
-        ));
+    final telegramWidgets = _telegramConfigsState
+        .map((s) => CheckboxListTile(
+              value: s.isChecked,
+              onChanged: (value) {
+                setState(() => s.isChecked = value ?? false);
+              },
+              title: Text(s.config.title),
+            ))
+        .toList();
     return AlertDialog(
       title: widget.title == null ? null : Text(widget.title ?? ''),
       contentPadding: EdgeInsets.zero,
       content: Wrap(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(widget.message),
-          ),
-          ...telegramWidgets,
-        ],
+        children: telegramWidgets,
       ),
       actions: <Widget>[
         TextButton(

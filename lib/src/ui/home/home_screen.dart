@@ -239,17 +239,15 @@ class _HomeScreenState extends State<HomeScreen> {
               );
             },
             onRemindClick: (event) {
-              final users = cubit.getMissedMarksUsers(event);
               showDialog(
                 context: context,
                 builder: (context) => NotificationConfirmationDialog(
-                  message: users.map((e) => e.name).join('\n'),
+                  message: '',
                   telegramConfigs: state.telegramConfigs,
                   telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
                   onConfirmationClick: (telegramConfigs) {
                     cubit.sendRemind(
                       event,
-                      users,
                       telegramConfigs,
                     );
                   },

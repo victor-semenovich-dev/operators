@@ -150,6 +150,7 @@ class TableRepository {
     String name = userData['name'];
     String? shortName = userData['shortName'];
     String? uid = userData['uid'];
+    String? telegram = userData['telegram'];
 
     List<Role> roles = [];
     List<dynamic>? rolesData = userData['roles'];
@@ -169,6 +170,7 @@ class TableRepository {
       uid: uid,
       roles: roles,
       isActive: isActive,
+      telegram: telegram,
     );
   }
 

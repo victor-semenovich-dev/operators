@@ -7,6 +7,7 @@ class TableUser {
   final String? uid;
   final List<Role> roles;
   final bool isActive;
+  final String? telegram;
 
   const TableUser({
     required this.id,
@@ -15,5 +16,6 @@ class TableUser {
     required this.uid,
     required this.roles,
     required this.isActive,
+    required this.telegram,
   });
 }

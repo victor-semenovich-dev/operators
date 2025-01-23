@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:operators/src/data/repository/auth.dart';
@@ -23,7 +24,10 @@ class OperatorsApp extends StatelessWidget {
         title: 'Участие операторов',
         theme: ThemeData(
           scrollbarTheme: ScrollbarThemeData(
-            thumbVisibility: MaterialStateProperty.all<bool>(true),
+            thumbVisibility: WidgetStateProperty.all<bool>(true),
+          ),
+          appBarTheme: AppBarTheme(
+            systemOverlayStyle: SystemUiOverlayStyle.light,
           ),
           useMaterial3: false,
         ),

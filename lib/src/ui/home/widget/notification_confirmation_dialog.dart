@@ -3,7 +3,7 @@ import 'package:operators/src/data/model/telegram.dart';
 
 class NotificationConfirmationDialog extends StatefulWidget {
   final String? title;
-  final String message;
+  final String? message;
   final List<TelegramConfig> telegramConfigs;
   final bool telegramInitialValue;
 
@@ -12,7 +12,7 @@ class NotificationConfirmationDialog extends StatefulWidget {
   const NotificationConfirmationDialog({
     super.key,
     this.title,
-    required this.message,
+    this.message,
     required this.onConfirmationClick,
     required this.telegramConfigs,
     this.telegramInitialValue = true,
@@ -39,20 +39,26 @@ class _NotificationConfirmationDialogState
 
   @override
   Widget build(BuildContext context) {
-    final telegramWidgets = _telegramConfigsState
-        .map((s) => CheckboxListTile(
-              value: s.isChecked,
-              onChanged: (value) {
-                setState(() => s.isChecked = value ?? false);
-              },
-              title: Text(s.config.title),
-            ))
-        .toList();
+    final telegramWidgets = _telegramConfigsState.map((s) => CheckboxListTile(
+          value: s.isChecked,
+          onChanged: (value) {
+            setState(() => s.isChecked = value ?? false);
+          },
+          title: Text(s.config.title),
+        ));
     return AlertDialog(
       title: widget.title == null ? null : Text(widget.title ?? ''),
       contentPadding: EdgeInsets.zero,
       content: Wrap(
-        children: telegramWidgets,
+        children: [
+          widget.message != null
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text(widget.message ?? ''),
+                )
+              : Container(height: 16),
+          ...telegramWidgets,
+        ],
       ),
       actions: <Widget>[
         TextButton(

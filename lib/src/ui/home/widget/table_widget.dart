@@ -20,6 +20,7 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, Role? role) onRoleSelected;
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
+  final Function(TableEvent event) onAppointClick;
   final Function(TableEvent event) onNotificationClick;
   final Function(TableEvent event) onRemindClick;
   final Function(TableEvent event) onEditClick;
@@ -31,6 +32,7 @@ class TableWidget extends StatelessWidget {
     required this.onToggleCanHelp,
     required this.onRoleSelected,
     required this.onCanHelpSelected,
+    required this.onAppointClick,
     required this.onNotificationClick,
     required this.onRemindClick,
     required this.onEditClick,
@@ -129,6 +131,10 @@ class TableWidget extends StatelessWidget {
                       child: baseWidget,
                       onPressed: () {},
                       menuItems: [
+                        FocusedMenuItem(
+                          title: Text('Назначить операторов'),
+                          onPressed: () => onAppointClick(event),
+                        ),
                         FocusedMenuItem(
                           title: Text('Уведомление: участие'),
                           onPressed: () => onNotificationClick(event),

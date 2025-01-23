@@ -220,6 +220,25 @@ class _HomeScreenState extends State<HomeScreen> {
             onToggleCanHelp: context.read<HomeCubit>().toggleCanHelp,
             onRoleSelected: context.read<HomeCubit>().onRoleSelected,
             onCanHelpSelected: context.read<HomeCubit>().onCanHelpSelected,
+            onAppointClick: (event) {
+              final appointment = cubit.appoint(event);
+              final text = cubit.getAppointmentNotificationText(appointment);
+              showDialog(
+                context: context,
+                builder: (context) => NotificationConfirmationDialog(
+                  title: event.title,
+                  message: text,
+                  telegramConfigs: state.telegramConfigs,
+                  onConfirmationClick: (telegramConfigs) {
+                    cubit.sendNotification(
+                      event.title,
+                      text,
+                      telegramConfigs,
+                    );
+                  },
+                ),
+              );
+            },
             onNotificationClick: (event) {
               final text = cubit.getNotificationText(event);
               showDialog(
@@ -242,7 +261,7 @@ class _HomeScreenState extends State<HomeScreen> {
               showDialog(
                 context: context,
                 builder: (context) => NotificationConfirmationDialog(
-                  message: '',
+                  title: 'Напоминание про отметки',
                   telegramConfigs: state.telegramConfigs,
                   telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
                   onConfirmationClick: (telegramConfigs) {

@@ -23,6 +23,11 @@ class FcmRepository {
   );
 
   Future<void> updateUserFcmData() async {
+    if (Platform.isIOS) {
+      // iOS is not supported for now
+      return;
+    }
+
     final fcmToken = await FirebaseMessaging.instance.getToken(
       vapidKey: kIsWeb
           ? 'BNzLWzfJdWtA7l6uAfDkqDwX-I00QjykYZ5un3Zta7yeFGTgUUZyKZvbGpAoLmmpUSudghe0qW-lqxmqNyGh1W0'

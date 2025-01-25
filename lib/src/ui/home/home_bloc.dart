@@ -158,9 +158,16 @@ class HomeCubit extends Cubit<HomeState> {
     return rating?.lastDate ?? DateTime.fromMillisecondsSinceEpoch(0);
   }
 
-  int _compareByRating(TableUser user1, TableUser user2, Role role) {
-    final rating1 = getRating(user1);
-    final rating2 = getRating(user2);
+  int _compareByRating(
+    TableUser user1,
+    TableUser user2,
+    Role role, {
+    DateTime? dateTime,
+  }) {
+    final rating1 =
+        dateTime == null ? getRating(user1) : _getRating(user1, dateTime);
+    final rating2 =
+        dateTime == null ? getRating(user2) : _getRating(user2, dateTime);
     final rating1Value = _getValue(rating1, role);
     final rating2Value = _getValue(rating2, role);
     final lastDate1 = _getLastDate(rating1, role);
@@ -215,11 +222,15 @@ class HomeCubit extends Cubit<HomeState> {
     final canHelpPcOperators = canHelpOperators
         .where((operator) => operator.roles.contains(Role.PC))
         .sortedByCompare(
-            (user) => user, (u1, u2) => _compareByRating(u1, u2, Role.PC));
+            (user) => user,
+            (u1, u2) =>
+                _compareByRating(u1, u2, Role.PC, dateTime: event.date));
     final canHelpVideoOperators = canHelpOperators
         .where((operator) => operator.roles.contains(Role.CAMERA))
         .sortedByCompare(
-            (user) => user, (u1, u2) => _compareByRating(u1, u2, Role.CAMERA));
+            (user) => user,
+            (u1, u2) =>
+                _compareByRating(u1, u2, Role.CAMERA, dateTime: event.date));
 
     final appointment1 = _buildAppointment(
       pcOperators: canHelpPcOperators,

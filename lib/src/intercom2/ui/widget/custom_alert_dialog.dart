@@ -6,9 +6,8 @@ void showConnectionErrorDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return CustomAlertDialog(
-          message:
-              'Не удалось подключиться к сокету. Убедитесь, что он запущен, и проверьте адрес.');
+      return CustomAlertDialog.message(
+          'Не удалось подключиться к сокету. Убедитесь, что он запущен, и проверьте адрес.');
     },
   ).then((_) {
     Navigator.of(context).pop();
@@ -21,8 +20,8 @@ void showConnectionClosedDialog({
   showDialog(
     context: context,
     builder: (context) {
-      return CustomAlertDialog(
-          message: 'Соединение с сокетом прервано. Попробуйте зайти снова.');
+      return CustomAlertDialog.message(
+          'Соединение с сокетом прервано. Попробуйте зайти снова.');
     },
   ).then((_) {
     Navigator.of(context).pop();
@@ -30,14 +29,18 @@ void showConnectionClosedDialog({
 }
 
 class CustomAlertDialog extends StatelessWidget {
-  final String message;
+  late final Widget child;
 
-  const CustomAlertDialog({super.key, required this.message});
+  CustomAlertDialog({super.key, required this.child});
+
+  CustomAlertDialog.message(String message) {
+    child = Text(message);
+  }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      content: Text(message),
+      content: child,
       actions: <Widget>[
         TextButton(
           onPressed: () {

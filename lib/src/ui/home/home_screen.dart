@@ -229,16 +229,21 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: event.title,
                   message: text,
                   telegramConfigs: state.telegramConfigs,
-                  onConfirmationClick: (telegramConfigs) {
+                  showRefreshTable: true,
+                  onConfirmationClick: (telegramConfigs, refreshTable) {
                     cubit.sendNotification(
                       event.title,
                       text,
                       telegramConfigs,
                     );
+                    if (refreshTable) {
+                      cubit.updateEvents(dateTimeFrom: event.date);
+                    }
                   },
                 ),
               );
             },
+            onCancelAppointmentsClick: cubit.cancelAppointments,
             onNotificationClick: (event) {
               final text = cubit.getNotificationText(event);
               showDialog(
@@ -247,7 +252,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: event.title,
                   message: text,
                   telegramConfigs: state.telegramConfigs,
-                  onConfirmationClick: (telegramConfigs) {
+                  onConfirmationClick: (telegramConfigs, refreshTable) {
                     cubit.sendNotification(
                       event.title,
                       text,
@@ -264,7 +269,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   title: 'Напоминание про отметки',
                   telegramConfigs: state.telegramConfigs,
                   telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
-                  onConfirmationClick: (telegramConfigs) {
+                  onConfirmationClick: (telegramConfigs, refreshTable) {
                     cubit.sendRemind(
                       event,
                       telegramConfigs,
@@ -272,6 +277,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   },
                 ),
               );
+            },
+            onRefreshClick: (event) {
+              cubit.updateEvents(dateTimeFrom: event.date);
             },
             onEditClick: (event) {
               showDialog(

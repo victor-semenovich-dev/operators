@@ -21,8 +21,10 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
   final Function(TableEvent event) onAppointClick;
+  final Function(TableEvent event) onCancelAppointmentsClick;
   final Function(TableEvent event) onNotificationClick;
   final Function(TableEvent event) onRemindClick;
+  final Function(TableEvent event) onRefreshClick;
   final Function(TableEvent event) onEditClick;
   final Function(TableEvent event) onHideClick;
   final Function(TableEvent event) onDeleteClick;
@@ -33,8 +35,10 @@ class TableWidget extends StatelessWidget {
     required this.onRoleSelected,
     required this.onCanHelpSelected,
     required this.onAppointClick,
+    required this.onCancelAppointmentsClick,
     required this.onNotificationClick,
     required this.onRemindClick,
+    required this.onRefreshClick,
     required this.onEditClick,
     required this.onHideClick,
     required this.onDeleteClick,
@@ -136,12 +140,20 @@ class TableWidget extends StatelessWidget {
                           onPressed: () => onAppointClick(event),
                         ),
                         FocusedMenuItem(
+                          title: Text('Отменить назначение'),
+                          onPressed: () => onCancelAppointmentsClick(event),
+                        ),
+                        FocusedMenuItem(
                           title: Text('Уведомление: участие'),
                           onPressed: () => onNotificationClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Напоминание: отметки'),
                           onPressed: () => onRemindClick(event),
+                        ),
+                        FocusedMenuItem(
+                          title: Text('Обновить таблицу'),
+                          onPressed: () => onRefreshClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Редактировать'),

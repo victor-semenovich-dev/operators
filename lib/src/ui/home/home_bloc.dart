@@ -69,7 +69,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void onRoleSelected(TableUser user, TableEvent event, Role? role) {
-    tableRepository.setRole(user, event, role);
+    tableRepository.setRole(user.id, event.id, role);
   }
 
   void onCanHelpSelected(TableUser user, TableEvent event, bool? canHelp) {
@@ -254,10 +254,10 @@ class HomeCubit extends Cubit<HomeState> {
 
     final pcOperator = resultAppointment.pcOperator;
     if (pcOperator != null) {
-      tableRepository.setRole(pcOperator, event, Role.PC);
+      tableRepository.setRole(pcOperator.id, event.id, Role.PC);
     }
     resultAppointment.videoOperators.forEach((videoOperator) {
-      tableRepository.setRole(videoOperator, event, Role.CAMERA);
+      tableRepository.setRole(videoOperator.id, event.id, Role.CAMERA);
     });
 
     return resultAppointment;
@@ -292,6 +292,14 @@ class HomeCubit extends Cubit<HomeState> {
         videoOperators: appointVideoOperators,
       );
     }
+  }
+
+  void cancelAppointments(TableEvent event) {
+    event.state.forEach((userId, userState) {
+      if (userState.role != null) {
+        tableRepository.setRole(userId, event.id, null);
+      }
+    });
   }
 
   String getAppointmentNotificationText(Appointment appointment) {
@@ -467,10 +475,10 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isResetPasswordCompleted: false));
   }
 
-  void updateEvents() async {
+  void updateEvents({DateTime? dateTimeFrom}) async {
     emit(state.copyWith(syncInProgress: true));
-    final result =
-        await SyncEventsUseCase(eventsRepository, tableRepository).perform();
+    final result = await SyncEventsUseCase(eventsRepository, tableRepository)
+        .perform(dateTime: dateTimeFrom);
     emit(state.copyWith(syncInProgress: false, syncResult: result));
   }
 

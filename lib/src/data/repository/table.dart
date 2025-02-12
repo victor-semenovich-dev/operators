@@ -90,11 +90,9 @@ class TableRepository {
         newValue == null ? null : formatDateTimeMinutes.format(DateTime.now()));
   }
 
-  void setRole(TableUser user, TableEvent event, Role? role) {
-    _dbRef
-        .child('events/${event.id}/state/${user.id}/role')
-        .set(roleToString(role));
-    _dbRef.child('events/${event.id}/state/${user.id}/roleDateTime').set(
+  void setRole(int userId, int eventId, Role? role) {
+    _dbRef.child('events/$eventId/state/$userId/role').set(roleToString(role));
+    _dbRef.child('events/$eventId/state/$userId/roleDateTime').set(
         role == null ? null : formatDateTimeMinutes.format(DateTime.now()));
   }
 

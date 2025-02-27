@@ -384,7 +384,7 @@ class HomeCubit extends Cubit<HomeState> {
           final usersPart = users
               .map((user) => user.telegram != null ? user.telegram : user.name)
               .join('\n');
-          final message = '$commonPart\n\n$usersPart';
+          final message = '$commonPart';
 
           if (config.messageThreadId == null) {
             await telegramRepository.sendMessageToTelegramChat(

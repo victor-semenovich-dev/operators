@@ -136,6 +136,10 @@ class TableWidget extends StatelessWidget {
                       onPressed: () {},
                       menuItems: [
                         FocusedMenuItem(
+                          title: Text('Напоминание: отметки'),
+                          onPressed: () => onRemindClick(event),
+                        ),
+                        FocusedMenuItem(
                           title: Text('Назначить операторов'),
                           onPressed: () => onAppointClick(event),
                         ),
@@ -146,10 +150,6 @@ class TableWidget extends StatelessWidget {
                         FocusedMenuItem(
                           title: Text('Уведомление: участие'),
                           onPressed: () => onNotificationClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Напоминание: отметки'),
-                          onPressed: () => onRemindClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Обновить таблицу'),

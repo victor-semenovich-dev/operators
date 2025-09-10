@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/repository/events.dart';
 import 'package:operators/src/data/repository/table.dart';
@@ -8,22 +9,29 @@ class SyncEventsUseCase {
 
   SyncEventsUseCase(this.eventsRepository, this.tableRepository);
 
-  Future<SyncResult> perform() async {
+  Future<SyncResult> perform({DateTime? dateTime}) async {
+    final dateTimeFrom = dateTime ?? DateTime.now();
     int deleted = 0;
     int hidden = 0;
     int added = 0;
     int updated = 0;
     try {
-      final futureEvents = (await eventsRepository.loadFutureEvents())
-          .where((e) => e.date.difference(DateTime.now()) < Duration(days: 7));
+      final futureEvents =
+          (await eventsRepository.loadFutureEvents(dateTime: dateTimeFrom))
+              .where((e) {
+        final difference = e.date.difference(dateTimeFrom);
+        return difference > Duration.zero && difference <= Duration(days: 7);
+      });
       final allTableEvents = await tableRepository.eventsStream.first;
 
-      final now = DateTime.now();
       for (final event in allTableEvents) {
-        if (now.difference(event.date) > Duration(days: 90)) {
+        if (dateTimeFrom.difference(event.date) >= Duration(days: 90)) {
+          debugPrint('delete event: ${event.title}');
           await tableRepository.deleteEvent(event.id);
           deleted++;
-        } else if (event.isActive && event.date.isBefore(now)) {
+        } else if (event.isActive &&
+            (event.date == dateTimeFrom || event.date.isBefore(dateTimeFrom))) {
+          debugPrint('hide event: ${event.title}');
           await tableRepository.updateEvent(event.id, isActive: false);
           hidden++;
         }
@@ -38,12 +46,13 @@ class SyncEventsUseCase {
           }
         }
         if (tableEvent == null) {
+          debugPrint('add event: ${futureEvent.title}');
           await tableRepository.addOrUpdateEvent(
               futureEvent.date, futureEvent.title);
           added++;
         } else {
-          await tableRepository.updateEvent(tableEvent.id,
-              title: futureEvent.title, isActive: true);
+          debugPrint('update event: ${futureEvent.title}');
+          await tableRepository.updateEvent(tableEvent.id, isActive: true);
           updated++;
         }
       }

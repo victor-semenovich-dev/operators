@@ -69,7 +69,7 @@ class HomeCubit extends Cubit<HomeState> {
   }
 
   void onRoleSelected(TableUser user, TableEvent event, Role? role) {
-    tableRepository.setRole(user, event, role);
+    tableRepository.setRole(user.id, event.id, role);
   }
 
   void onCanHelpSelected(TableUser user, TableEvent event, bool? canHelp) {
@@ -158,9 +158,16 @@ class HomeCubit extends Cubit<HomeState> {
     return rating?.lastDate ?? DateTime.fromMillisecondsSinceEpoch(0);
   }
 
-  int _compareByRating(TableUser user1, TableUser user2, Role role) {
-    final rating1 = getRating(user1);
-    final rating2 = getRating(user2);
+  int _compareByRating(
+    TableUser user1,
+    TableUser user2,
+    Role role, {
+    DateTime? dateTime,
+  }) {
+    final rating1 =
+        dateTime == null ? getRating(user1) : _getRating(user1, dateTime);
+    final rating2 =
+        dateTime == null ? getRating(user2) : _getRating(user2, dateTime);
     final rating1Value = _getValue(rating1, role);
     final rating2Value = _getValue(rating2, role);
     final lastDate1 = _getLastDate(rating1, role);
@@ -206,6 +213,114 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
+  Appointment appoint(TableEvent event) {
+    final allOperators = state.allUsers;
+    final canHelpOperators = event.state.entries
+        .where((entry) => entry.value.canHelp)
+        .map((entry) => entry.key)
+        .map((id) => allOperators.firstWhere((user) => user.id == id));
+    final canHelpPcOperators = canHelpOperators
+        .where((operator) => operator.roles.contains(Role.PC))
+        .sortedByCompare(
+            (user) => user,
+            (u1, u2) =>
+                _compareByRating(u1, u2, Role.PC, dateTime: event.date));
+    final canHelpVideoOperators = canHelpOperators
+        .where((operator) => operator.roles.contains(Role.CAMERA))
+        .sortedByCompare(
+            (user) => user,
+            (u1, u2) =>
+                _compareByRating(u1, u2, Role.CAMERA, dateTime: event.date));
+
+    final appointment1 = _buildAppointment(
+      pcOperators: canHelpPcOperators,
+      videoOperators: canHelpVideoOperators,
+      pcFirst: true,
+    );
+    final appointment2 = _buildAppointment(
+      pcOperators: canHelpPcOperators,
+      videoOperators: canHelpVideoOperators,
+      pcFirst: false,
+    );
+    Appointment resultAppointment;
+    if (appointment1.pcOperator == null && appointment2.pcOperator != null) {
+      resultAppointment = appointment2;
+    } else if (appointment1.videoOperators.length <
+        appointment2.videoOperators.length) {
+      resultAppointment = appointment2;
+    } else {
+      resultAppointment = appointment1;
+    }
+
+    final pcOperator = resultAppointment.pcOperator;
+    if (pcOperator != null) {
+      tableRepository.setRole(pcOperator.id, event.id, Role.PC);
+    }
+    resultAppointment.videoOperators.forEach((videoOperator) {
+      tableRepository.setRole(videoOperator.id, event.id, Role.CAMERA);
+    });
+
+    return resultAppointment;
+  }
+
+  Appointment _buildAppointment({
+    required List<TableUser> pcOperators,
+    required List<TableUser> videoOperators,
+    required bool pcFirst,
+  }) {
+    if (pcFirst) {
+      final appointPcOperator = pcOperators.firstOrNull;
+      final appointVideoOperators = videoOperators
+          .where((operator) => operator.id != appointPcOperator?.id)
+          .take(3)
+          .sortedBy((operator) => operator.name);
+      return Appointment(
+        pcOperator: appointPcOperator,
+        videoOperators: appointVideoOperators,
+      );
+    } else {
+      final appointVideoOperators =
+          videoOperators.take(3).sortedBy((operator) => operator.name);
+      final appointPcOperator = pcOperators
+          .where((pcOperator) =>
+              appointVideoOperators.firstWhereOrNull(
+                  (videoOperator) => videoOperator.id == pcOperator.id) ==
+              null)
+          .firstOrNull;
+      return Appointment(
+        pcOperator: appointPcOperator,
+        videoOperators: appointVideoOperators,
+      );
+    }
+  }
+
+  void cancelAppointments(TableEvent event) {
+    event.state.forEach((userId, userState) {
+      if (userState.role != null) {
+        tableRepository.setRole(userId, event.id, null);
+      }
+    });
+  }
+
+  String getAppointmentNotificationText(Appointment appointment) {
+    final buffer = StringBuffer();
+    var isFirst = true;
+    final pcOperator = appointment.pcOperator;
+    if (pcOperator != null) {
+      buffer.write('${pcOperator.name} - ${roleToReadableString(Role.PC)}');
+      isFirst = false;
+    }
+    appointment.videoOperators.forEach((videoOperator) {
+      if (!isFirst) {
+        buffer.write('\n');
+      }
+      buffer.write(
+          '${videoOperator.name} - ${roleToReadableString(Role.CAMERA)}');
+      isFirst = false;
+    });
+    return buffer.toString();
+  }
+
   String getNotificationText(TableEvent event) {
     final buffer = StringBuffer();
     final allUsers = state.allUsers;
@@ -238,9 +353,12 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
-  List<TableUser> getMissedMarksUsers(TableEvent event) {
+  List<TableUser> _getMissedMarksUsers(TableEvent event, Role role) {
     return state.tableData?.users
-            .where((user) => event.state[user.id]?.canHelp == null)
+            .where((user) =>
+                user.roles.contains(role) &&
+                event.state[user.id]?.canHelp == null)
+            .sortedBy((user) => user.name)
             .toList() ??
         [];
   }
@@ -253,33 +371,37 @@ class HomeCubit extends Cubit<HomeState> {
 
   void sendRemind(
     TableEvent event,
-    List<TableUser> users,
     List<TelegramConfig> telegramConfigs,
   ) async {
-    for (final config in telegramConfigs) {
-      final message =
-          config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
-      if (message != null) {
-        if (config.messageThreadId == null) {
-          telegramRepository.sendMessageToTelegramChat(message, config.chatId);
-        } else {
-          telegramRepository.sendMessageToTelegramChatThread(
-              message, config.chatId, config.messageThreadId!);
+    try {
+      for (final config in telegramConfigs) {
+        final role = config.role;
+        final List<TableUser> users =
+            role != null ? _getMissedMarksUsers(event, role) : [];
+        if (users.isNotEmpty) {
+          final commonPart =
+              config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
+          final usersPart = users
+              .map((user) => user.telegram != null ? user.telegram : user.name)
+              .join('\n');
+          final message = '$commonPart';
+
+          if (config.messageThreadId == null) {
+            await telegramRepository.sendMessageToTelegramChat(
+                message, config.chatId);
+          } else {
+            await telegramRepository.sendMessageToTelegramChatThread(
+                message, config.chatId, config.messageThreadId!);
+          }
         }
       }
+      telegramRepository.lastTimeRemind = DateTime.now();
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.SUCCESS));
+    } catch (e) {
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.FAILURE));
     }
-    telegramRepository.lastTimeRemind = DateTime.now();
-
-    final result = await fcmRepository.sendNotificationToUsers(
-      'Напоминание',
-      'Отметься на служение "${event.title}"',
-      users
-          .map((e) => e.uid)
-          .where((uid) => uid != null)
-          .map((e) => e!)
-          .toList(),
-    );
-    emit(state.copyWith(sendNotificationResult: result));
   }
 
   void sendNotification(
@@ -287,18 +409,22 @@ class HomeCubit extends Cubit<HomeState> {
     String body,
     List<TelegramConfig> telegramConfigs,
   ) async {
-    for (final config in telegramConfigs) {
-      if (config.messageThreadId == null) {
-        telegramRepository.sendMessageToTelegramChat(
-            "$title\n\n$body", config.chatId);
-      } else {
-        telegramRepository.sendMessageToTelegramChatThread(
-            "$title\n\n$body", config.chatId, config.messageThreadId!);
+    try {
+      for (final config in telegramConfigs) {
+        if (config.messageThreadId == null) {
+          await telegramRepository.sendMessageToTelegramChat(
+              "$title\n\n$body", config.chatId);
+        } else {
+          await telegramRepository.sendMessageToTelegramChatThread(
+              "$title\n\n$body", config.chatId, config.messageThreadId!);
+        }
       }
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.SUCCESS));
+    } catch (e) {
+      emit(state.copyWith(
+          sendNotificationResult: SendNotificationResult.FAILURE));
     }
-
-    final result = await fcmRepository.sendNotification(title, body);
-    emit(state.copyWith(sendNotificationResult: result));
   }
 
   String? getNotificationResultReadableText() {
@@ -349,10 +475,10 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isResetPasswordCompleted: false));
   }
 
-  void updateEvents() async {
+  void updateEvents({DateTime? dateTimeFrom}) async {
     emit(state.copyWith(syncInProgress: true));
-    final result =
-        await SyncEventsUseCase(eventsRepository, tableRepository).perform();
+    final result = await SyncEventsUseCase(eventsRepository, tableRepository)
+        .perform(dateTime: dateTimeFrom);
     emit(state.copyWith(syncInProgress: false, syncResult: result));
   }
 
@@ -422,7 +548,8 @@ class HomeState with _$HomeState {
   TableUser? get currentUser => tableData?.users
       .firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
 
-  bool get showIntercomOption => true;
+  bool get showIntercomOption =>
+      currentUser?.roles.contains(Role.CAMERA) == true;
 
   List<TableEvent> get inactiveEvents => allEvents
       .where((e) => !e.isActive)
@@ -447,4 +574,11 @@ class Rating {
       return "$value (${DateFormat("dd.MM").format(lastDate!)})";
     }
   }
+}
+
+class Appointment {
+  final TableUser? pcOperator;
+  final List<TableUser> videoOperators;
+
+  Appointment({required this.pcOperator, required this.videoOperators});
 }

@@ -22,7 +22,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void initState() {
     final wsAddress = preferences
         .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.51.7:8080')
+            defaultValue: 'ws://172.16.52.16:8080')
         .getValue();
 
     _socketAddressController = TextEditingController(
@@ -86,6 +86,22 @@ class _IntercomRouteState extends State<IntercomRoute> {
           ListItem(
             'Камера 4',
             () => _validateAndOpenCameraRoute(3),
+          ),
+          const Divider(
+            color: Colors.black,
+            height: 1,
+          ),
+          ListItem(
+            'Камера 5',
+            () => _validateAndOpenCameraRoute(4),
+          ),
+          const Divider(
+            color: Colors.black,
+            height: 1,
+          ),
+          ListItem(
+            'Камера 6',
+            () => _validateAndOpenCameraRoute(5),
           ),
           const Divider(
             color: Colors.black,

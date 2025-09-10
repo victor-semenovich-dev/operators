@@ -16,6 +16,8 @@ class CameraRepository {
     CameraState(2),
     CameraState(3),
     CameraState(4),
+    CameraState(5),
+    CameraState(6),
   ];
 
   CameraRepository._internal();

@@ -1,10 +1,14 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/intercom2/ui/route/camera/camera_route.dart'
     as camera2;
 import 'package:operators/src/intercom2/ui/route/mixer/mixer_route.dart'
     as mixer2;
+import 'package:operators/src/intercom2/ui/widget/custom_alert_dialog.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../main.dart';
 import '../../repository/camera_state.dart';
@@ -35,7 +39,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void initState() {
     final wsAddress = preferences
         .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.51.7:8080')
+            defaultValue: 'ws://172.16.52.16:8080')
         .getValue();
 
     _socketAddressController = TextEditingController(
@@ -46,6 +50,20 @@ class _IntercomRouteState extends State<IntercomRoute> {
         _isAddressFormatCorrect = true;
       });
     });
+
+    if (kIsWeb) {
+      final serverLocation = preferences
+          .getString(KEY_INTERCOM_SERVER_LOCATION,
+              defaultValue: VALUE_LOCATION_EU)
+          .getValue();
+      if (serverLocation == VALUE_LOCATION_LOCAL) {
+        onLocationChanged(VALUE_LOCATION_EU);
+      }
+
+      Future.delayed(Duration.zero).then(
+        (_) => _showLocalSocketNotSupportedDialog(),
+      );
+    }
 
     super.initState();
   }
@@ -64,7 +82,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
       ),
       body: PreferenceBuilder<String>(
           preference: preferences.getString(KEY_INTERCOM_SERVER_LOCATION,
-              defaultValue: VALUE_LOCATION_LOCAL),
+              defaultValue: kIsWeb ? VALUE_LOCATION_EU : VALUE_LOCATION_LOCAL),
           builder: (context, serverLocation) {
             if (serverLocation == VALUE_LOCATION_USA) {
               intercomFirebaseDatabase = usaFirebaseDatabase;
@@ -114,6 +132,22 @@ class _IntercomRouteState extends State<IntercomRoute> {
                   color: Colors.black,
                   height: 1,
                 ),
+                ListItem(
+                  'Камера 5',
+                  () => _validateAndOpenCameraRoute(serverLocation, 4),
+                ),
+                const Divider(
+                  color: Colors.black,
+                  height: 1,
+                ),
+                ListItem(
+                  'Камера 6',
+                  () => _validateAndOpenCameraRoute(serverLocation, 5),
+                ),
+                const Divider(
+                  color: Colors.black,
+                  height: 1,
+                ),
                 RadioListTile(
                   value: VALUE_LOCATION_USA,
                   groupValue: serverLocation,
@@ -129,14 +163,14 @@ class _IntercomRouteState extends State<IntercomRoute> {
                 RadioListTile(
                   value: VALUE_LOCATION_LOCAL,
                   groupValue: serverLocation,
-                  onChanged: onLocationChanged,
+                  onChanged: kIsWeb ? null : onLocationChanged,
                   title: Text('Локальный сокет'),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
                   child: TextField(
                     controller: _socketAddressController,
-                    enabled: serverLocation == VALUE_LOCATION_LOCAL,
+                    enabled: !kIsWeb && serverLocation == VALUE_LOCATION_LOCAL,
                     decoration: InputDecoration(
                       labelText: 'Адрес сокета',
                       errorText: _isAddressFormatCorrect
@@ -230,5 +264,36 @@ class _IntercomRouteState extends State<IntercomRoute> {
       });
     }
     return null;
+  }
+
+  void _showLocalSocketNotSupportedDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return CustomAlertDialog(
+          child: RichText(
+            text: TextSpan(
+              text: 'Эта версия приложения не поддерживает подключение '
+                  'через локальный сокет. Чтобы подключиться к нему, '
+                  'перейди по ссылке ',
+              // style: DefaultTextStyle.of(context).style,
+              children: <TextSpan>[
+                TextSpan(
+                  text: 'http://172.16.52.16:8000/',
+                  style: const TextStyle(
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      launchUrl(Uri.parse('http://172.16.52.16:8000/'));
+                    },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

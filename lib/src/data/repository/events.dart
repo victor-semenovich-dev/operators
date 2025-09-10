@@ -26,40 +26,40 @@ class EventsRepository {
     interceptors: [HttpLoggingInterceptor()],
   );
 
-  Future<List<Event>> loadFutureEvents() async {
+  Future<List<Event>> loadFutureEvents({DateTime? dateTime}) async {
+    final dateTimeFrom = dateTime ?? DateTime.now();
     if (kIsWeb) {
-      final now = DateTime.now();
-      DateTime thursday = now.copyWith(
-        day: now.day + (DateTime.thursday - now.weekday),
+      DateTime thursday = dateTimeFrom.copyWith(
+        day: dateTimeFrom.day + (DateTime.thursday - dateTimeFrom.weekday),
         hour: 19,
         minute: 0,
         second: 0,
         millisecond: 0,
         microsecond: 0,
       );
-      DateTime sundayMorning = now.copyWith(
-        day: now.day + (DateTime.sunday - now.weekday),
+      DateTime sundayMorning = dateTimeFrom.copyWith(
+        day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
         hour: 10,
         minute: 0,
         second: 0,
         millisecond: 0,
         microsecond: 0,
       );
-      DateTime sundayEvening = now.copyWith(
-        day: now.day + (DateTime.sunday - now.weekday),
+      DateTime sundayEvening = dateTimeFrom.copyWith(
+        day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
         hour: 18,
         minute: 0,
         second: 0,
         millisecond: 0,
         microsecond: 0,
       );
-      if (thursday.isBefore(now)) {
+      if (thursday.isBefore(dateTimeFrom)) {
         thursday = thursday.copyWith(day: thursday.day + 7);
       }
-      if (sundayMorning.isBefore(now)) {
+      if (sundayMorning.isBefore(dateTimeFrom)) {
         sundayMorning = sundayMorning.copyWith(day: sundayMorning.day + 7);
       }
-      if (sundayEvening.isBefore(now)) {
+      if (sundayEvening.isBefore(dateTimeFrom)) {
         sundayEvening = sundayEvening.copyWith(day: sundayEvening.day + 7);
       }
       final eventsList = [

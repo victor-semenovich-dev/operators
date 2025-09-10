@@ -109,7 +109,11 @@ class MixerRoute extends StatelessWidget {
               const Divider(color: Colors.black, height: 1),
               Expanded(
                 child: _singleCameraWidget(context, 2, cameraList[2]),
-              )
+              ),
+              const Divider(color: Colors.black, height: 1),
+              Expanded(
+                child: _singleCameraWidget(context, 4, cameraList[4]),
+              ),
             ],
           ),
         ),
@@ -123,7 +127,11 @@ class MixerRoute extends StatelessWidget {
               const Divider(color: Colors.black, height: 1),
               Expanded(
                 child: _singleCameraWidget(context, 3, cameraList[3]),
-              )
+              ),
+              const Divider(color: Colors.black, height: 1),
+              Expanded(
+                child: _singleCameraWidget(context, 5, cameraList[5]),
+              ),
             ],
           ),
         )

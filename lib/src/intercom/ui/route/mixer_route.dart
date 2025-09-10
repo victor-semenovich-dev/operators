@@ -116,7 +116,16 @@ class _MixerRouteState extends State<MixerRoute> {
                                               snapshot.data![2],
                                               CameraContext.MIXER,
                                             ),
-                                          )
+                                          ),
+                                          const Divider(
+                                              color: Colors.black, height: 1),
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![4],
+                                              CameraContext.MIXER,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -140,7 +149,16 @@ class _MixerRouteState extends State<MixerRoute> {
                                               snapshot.data![3],
                                               CameraContext.MIXER,
                                             ),
-                                          )
+                                          ),
+                                          const Divider(
+                                              color: Colors.black, height: 1),
+                                          Expanded(
+                                            child: CameraWidget(
+                                              widget.user,
+                                              snapshot.data![5],
+                                              CameraContext.MIXER,
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     )

@@ -144,6 +144,7 @@ class MixerRoute extends StatelessWidget {
       cameraContext: CameraContext.MIXER,
       cameraId: id,
       stateLive: camera.live,
+      statePreview: camera.preview,
       stateReady: camera.ready,
       stateAttention: camera.attention,
       stateChange: camera.change,

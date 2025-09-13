@@ -22,7 +22,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void initState() {
     final wsAddress = preferences
         .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.52.16:8080')
+            defaultValue: 'ws://172.16.51.12:8080')
         .getValue();
 
     _socketAddressController = TextEditingController(

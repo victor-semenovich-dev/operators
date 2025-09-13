@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:operators/main.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../widget/list_item.dart';
 import 'camera/camera_route.dart';
@@ -117,6 +118,22 @@ class _IntercomRouteState extends State<IntercomRoute> {
                     _isAddressFormatCorrect ? null : 'Неверный формат адреса',
               ),
             ),
+          ),
+          FutureBuilder<PackageInfo>(
+            future: PackageInfo.fromPlatform(),
+            builder: (context, snapshot) {
+              final packageInfo = snapshot.data;
+              if (packageInfo != null) {
+                return Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'v${packageInfo.version} (${packageInfo.buildNumber})',
+                  ),
+                );
+              } else {
+                return Container();
+              }
+            },
           ),
         ],
       ),

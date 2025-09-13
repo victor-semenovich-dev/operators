@@ -73,6 +73,7 @@ class CameraRoute extends StatelessWidget {
                           cameraContext: CameraContext.CAMERA,
                           cameraId: id,
                           stateLive: camera.live,
+                          statePreview: camera.preview,
                           stateReady: camera.ready,
                           stateAttention: camera.attention,
                           stateChange: camera.change,

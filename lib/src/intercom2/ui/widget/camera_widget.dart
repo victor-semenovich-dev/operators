@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 import '../../../../main.dart';
+import '../../model/camera_context.dart';
 import '../painter/CameraPainter.dart';
 import '../route/mixer/mixer_settings_route.dart';
-import '../../model/camera_context.dart';
 
 class CameraWidget extends StatefulWidget {
   final Function() onTap;
@@ -15,6 +15,7 @@ class CameraWidget extends StatefulWidget {
   final Future<void> Function(String message) sendMessage;
   final int cameraId; // 0 based
   final bool stateLive;
+  final bool statePreview;
   final bool stateReady;
   final bool stateAttention;
   final bool stateChange;
@@ -28,6 +29,7 @@ class CameraWidget extends StatefulWidget {
     required this.cameraId,
     required this.stateLive,
     required this.stateReady,
+    required this.statePreview,
     required this.stateAttention,
     required this.stateChange,
     required this.onTap,
@@ -137,8 +139,11 @@ class _CameraWidgetState extends State<CameraWidget>
               painter: CameraPainter(showCross: widget.stateChange),
               child: Stack(children: [
                 Container(
-                  color:
-                      (widget.stateLive) ? Colors.red[300] : Colors.transparent,
+                  color: (widget.stateLive)
+                      ? Colors.red[300]
+                      : (widget.statePreview
+                          ? Colors.green[300]
+                          : Colors.transparent),
                   child: Center(
                     child: Text('${widget.cameraId + 1}',
                         style: TextStyle(fontSize: widget.textSize)),

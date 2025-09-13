@@ -39,7 +39,7 @@ class _IntercomRouteState extends State<IntercomRoute> {
   void initState() {
     final wsAddress = preferences
         .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.52.16:8080')
+            defaultValue: 'ws://172.16.51.13:8080')
         .getValue();
 
     _socketAddressController = TextEditingController(
@@ -279,14 +279,14 @@ class _IntercomRouteState extends State<IntercomRoute> {
               // style: DefaultTextStyle.of(context).style,
               children: <TextSpan>[
                 TextSpan(
-                  text: 'http://172.16.52.16:8000/',
+                  text: 'http://172.16.51.13:8000/',
                   style: const TextStyle(
                     color: Colors.blue,
                     decoration: TextDecoration.underline,
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
-                      launchUrl(Uri.parse('http://172.16.52.16:8000/'));
+                      launchUrl(Uri.parse('http://172.16.51.13:8000/'));
                     },
                 ),
               ],

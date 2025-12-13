@@ -298,6 +298,12 @@ class TableWidget extends StatelessWidget {
                         ),
                       if (event.state[user.id]?.canHelp == true)
                         FocusedMenuItem(
+                          title: Text('Роль: видеопульт'),
+                          onPressed: () =>
+                              onRoleSelected(user, event, Role.VIDEO_MIXER),
+                        ),
+                      if (event.state[user.id]?.canHelp == true)
+                        FocusedMenuItem(
                           title: Text('Роль: ничего'),
                           onPressed: () => onRoleSelected(user, event, null),
                         ),
@@ -352,6 +358,8 @@ class TableWidget extends StatelessWidget {
           return Icon(Icons.computer, size: 48);
         case Role.CAMERA:
           return Icon(Icons.videocam_outlined, size: 48);
+        case Role.VIDEO_MIXER:
+          return Icon(Icons.video_call_outlined, size: 48);
         default:
           return Container();
       }

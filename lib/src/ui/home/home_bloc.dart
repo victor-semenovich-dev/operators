@@ -350,6 +350,8 @@ class HomeCubit extends Cubit<HomeState> {
         isFirst = false;
       }
     }
+    buffer.write('\n\n');
+    buffer.write('Не забудьте про наушники, если вы за камерой');
     return buffer.toString();
   }
 

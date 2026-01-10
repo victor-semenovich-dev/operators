@@ -47,7 +47,7 @@ class EventUserState {
   });
 }
 
-enum Role { PC, CAMERA }
+enum Role { PC, VIDEO_MIXER, CAMERA }
 
 Role? stringToRole(String? str) {
   switch (str) {
@@ -55,6 +55,8 @@ Role? stringToRole(String? str) {
       return Role.PC;
     case 'camera':
       return Role.CAMERA;
+    case 'videoMixer':
+      return Role.VIDEO_MIXER;
     default:
       return null;
   }
@@ -66,6 +68,8 @@ String? roleToString(Role? role) {
       return 'pc';
     case Role.CAMERA:
       return 'camera';
+    case Role.VIDEO_MIXER:
+      return 'videoMixer';
     default:
       return null;
   }
@@ -83,6 +87,8 @@ Widget roleToWidget(Role role, double leftPadding, double rightPadding) {
         padding: EdgeInsets.only(left: leftPadding, right: rightPadding),
         child: Icon(Icons.videocam_outlined, size: 16),
       );
+    default:
+      return Container();
   }
 }
 
@@ -92,6 +98,8 @@ String? roleToReadableString(Role? role) {
       return 'компьютер';
     case Role.CAMERA:
       return 'камера';
+    case Role.VIDEO_MIXER:
+      return 'видеопульт';
     default:
       return null;
   }

@@ -135,21 +135,21 @@ class _CameraWidgetState extends State<CameraWidget>
               }
             },
             onLongPress: widget.onLongPress,
-            child: CustomPaint(
-              painter: CameraPainter(showCross: widget.stateChange),
-              child: Stack(children: [
-                Container(
-                  color: (widget.stateLive)
-                      ? Colors.red[300]
-                      : (widget.statePreview
-                          ? Colors.green[300]
-                          : Colors.transparent),
-                  child: Center(
-                    child: Text('${widget.cameraId + 1}',
-                        style: TextStyle(fontSize: widget.textSize)),
-                  ),
+            child: Stack(children: [
+              Container(
+                color: (widget.stateLive)
+                    ? Colors.red[300]
+                    : (widget.statePreview
+                        ? Colors.green[300]
+                        : Colors.transparent),
+                child: Center(
+                  child: Text('${widget.cameraId + 1}',
+                      style: TextStyle(fontSize: widget.textSize)),
                 ),
-                Container(
+              ),
+              CustomPaint(
+                painter: CameraPainter(showCross: widget.stateChange),
+                child: Container(
                   alignment: Alignment.topRight,
                   margin: EdgeInsets.all(widget.circleMargin),
                   child: ClipOval(
@@ -168,21 +168,21 @@ class _CameraWidgetState extends State<CameraWidget>
                         )),
                   ),
                 ),
-                GestureDetector(
-                  onTap: () {
-                    _sendMessage(context);
-                  },
-                  child: Container(
-                    alignment: Alignment.topLeft,
-                    padding: EdgeInsets.all(widget.circleMargin),
-                    child: Icon(
-                      Icons.message,
-                      size: widget.circleSize,
-                    ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  _sendMessage(context);
+                },
+                child: Container(
+                  alignment: Alignment.topLeft,
+                  padding: EdgeInsets.all(widget.circleMargin),
+                  child: Icon(
+                    Icons.message,
+                    size: widget.circleSize,
                   ),
                 ),
-              ]),
-            ),
+              ),
+            ]),
           );
         });
   }

@@ -19,29 +19,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   HomeState? _lastState;
 
-  // Future<void> _initBackgroundFetch() async {
-  //   await BackgroundFetch.configure(
-  //     BackgroundFetchConfig(
-  //       minimumFetchInterval: 12 * 60,
-  //       startOnBoot: true,
-  //       requiredNetworkType: NetworkType.ANY,
-  //     ),
-  //     (String taskId) async {
-  //       final now = DateTime.now();
-  //       if (now.hour >= 21 || now.hour < 9) {
-  //         final useCase = SyncEventsUseCase(context.read(), context.read());
-  //         await useCase.perform();
-  //       }
-  //       BackgroundFetch.finish(taskId);
-  //     },
-  //     (String taskId) async {
-  //       // timeout
-  //       BackgroundFetch.finish(taskId);
-  //     },
-  //   );
-  //   await BackgroundFetch.start();
-  // }
-
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
@@ -71,14 +48,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ));
           cubit.consumeSyncEventsResult();
         }
-
-        // if (!kIsWeb && _lastState?.isAdmin != state.isAdmin) {
-        //   if (state.isAdmin) {
-        //     _initBackgroundFetch();
-        //   } else {
-        //     BackgroundFetch.stop();
-        //   }
-        // }
 
         if (_lastState == null ||
             _lastState?.currentUser?.id != state.currentUser?.id) {

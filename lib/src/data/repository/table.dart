@@ -201,7 +201,7 @@ class TableRepository {
         : formatDateTimeMinutes.parse(roleDateTimeStr);
 
     return EventUserState(
-      canHelp: data['canHelp'],
+      canHelp: data['canHelp'] ?? false,
       canHelpDateTime: canHelpDateTime,
       role: stringToRole(data['role']),
       roleDateTime: roleDateTime,

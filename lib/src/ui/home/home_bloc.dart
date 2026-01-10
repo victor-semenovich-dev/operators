@@ -350,8 +350,6 @@ class HomeCubit extends Cubit<HomeState> {
         isFirst = false;
       }
     }
-    buffer.write('\n\n');
-    buffer.write('Не забудьте про наушники, если вы за камерой');
     return buffer.toString();
   }
 
@@ -377,24 +375,16 @@ class HomeCubit extends Cubit<HomeState> {
   ) async {
     try {
       for (final config in telegramConfigs) {
-        final role = config.role;
-        final List<TableUser> users =
-            role != null ? _getMissedMarksUsers(event, role) : [];
-        if (users.isNotEmpty) {
-          final commonPart =
-              config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
-          final usersPart = users
-              .map((user) => user.telegram != null ? user.telegram : user.name)
-              .join('\n');
-          final message = '$commonPart';
+        final commonPart =
+            config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
+        final message = '$commonPart';
 
-          if (config.messageThreadId == null) {
-            await telegramRepository.sendMessageToTelegramChat(
-                message, config.chatId);
-          } else {
-            await telegramRepository.sendMessageToTelegramChatThread(
-                message, config.chatId, config.messageThreadId!);
-          }
+        if (config.messageThreadId == null) {
+          await telegramRepository.sendMessageToTelegramChat(
+              message, config.chatId);
+        } else {
+          await telegramRepository.sendMessageToTelegramChatThread(
+              message, config.chatId, config.messageThreadId!);
         }
       }
       telegramRepository.lastTimeRemind = DateTime.now();

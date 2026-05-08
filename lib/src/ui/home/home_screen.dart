@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:operators/src/intercom/ui/route/home_route.dart';
+import 'package:operators/src/intercom/ui/route/settings_route.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:operators/src/ui/home/widget/add_edit_event.dart';
@@ -147,6 +148,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       case 'password':
                         context.read<HomeCubit>().resetPassword();
                         break;
+                      case 'settings':
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SettingsRoute(),
+                          ),
+                        );
+                        break;
                       case 'logout':
                         context.read<HomeCubit>().logout();
                         break;
@@ -175,6 +184,11 @@ class _HomeScreenState extends State<HomeScreen> {
                         value: 'password',
                         child: Text('Сменить пароль'),
                       ),
+                      if (state.isAdmin)
+                        PopupMenuItem<String>(
+                          value: 'settings',
+                          child: Text('Настройки'),
+                        ),
                       PopupMenuItem<String>(
                         value: 'logout',
                         child: Text('Выход'),

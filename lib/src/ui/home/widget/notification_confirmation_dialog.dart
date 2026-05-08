@@ -28,12 +28,14 @@ class NotificationConfirmationDialog extends StatefulWidget {
 
 class _NotificationConfirmationDialogState
     extends State<NotificationConfirmationDialog> {
+  late TextEditingController _controller;
   List<TelegramConfigValue> _telegramConfigsState = [];
   bool _refreshTable = false;
 
   @override
   void initState() {
     super.initState();
+    _controller = TextEditingController(text: widget.message);
     for (final telegramConfig in widget.telegramConfigs) {
       _telegramConfigsState.add(
         TelegramConfigValue(telegramConfig, widget.telegramInitialValue),
@@ -56,12 +58,14 @@ class _NotificationConfirmationDialogState
       contentPadding: EdgeInsets.zero,
       content: Wrap(
         children: [
-          widget.message != null
-              ? Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Text(widget.message ?? ''),
-                )
-              : Container(height: 16),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: TextField(
+              controller: _controller,
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+            ),
+          ),
           ...telegramWidgets,
           if (widget.showRefreshTable)
             CheckboxListTile(

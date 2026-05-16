@@ -11,15 +11,15 @@ import 'package:operators/src/data/model/telegram.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/data/repository/auth.dart';
 import 'package:operators/src/data/repository/events.dart';
-import 'package:operators/src/data/repository/fcm.dart';
 import 'package:operators/src/data/repository/table.dart';
 import 'package:operators/src/data/repository/telegram.dart';
 import 'package:operators/src/data/usecase/sync_events.dart';
 
+import '../../data/model/send_notification_result.dart';
+
 part '../../../generated/src/ui/home/home_bloc.freezed.dart';
 
 class HomeCubit extends Cubit<HomeState> {
-  final FcmRepository fcmRepository;
   final AuthRepository authRepository;
   final TableRepository tableRepository;
   final EventsRepository eventsRepository;
@@ -32,8 +32,8 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _usersSubscription;
   late StreamSubscription _telegramConfigsSubscription;
 
-  HomeCubit(this.fcmRepository, this.authRepository, this.tableRepository,
-      this.eventsRepository, this.telegramRepository)
+  HomeCubit(this.authRepository, this.tableRepository, this.eventsRepository,
+      this.telegramRepository)
       : super(HomeState()) {
     _firebaseUserSubscription =
         authRepository.userStream.listen((firebaseUser) {
@@ -311,10 +311,6 @@ class HomeCubit extends Cubit<HomeState> {
         return 'Уведомление отправлено';
       case SendNotificationResult.FAILURE:
         return 'Не удалось отправить уведомление';
-      case SendNotificationResult.FAILURE_TOPIC:
-        return 'Ошибка отправки уведомления на мобильные клиенты';
-      case SendNotificationResult.FAILURE_WEB:
-        return 'Ошибка отправки уведомления на веб клиенты';
       default:
         return null;
     }

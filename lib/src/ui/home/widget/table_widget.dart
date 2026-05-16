@@ -20,7 +20,6 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event, Role? role) onRoleSelected;
   final Function(TableUser user, TableEvent event, bool? canHelp)
       onCanHelpSelected;
-  final Function(TableEvent event) onAppointClick;
   final Function(TableEvent event) onCancelAppointmentsClick;
   final Function(TableEvent event) onNotificationClick;
   final Function(TableEvent event) onRemindClick;
@@ -34,7 +33,6 @@ class TableWidget extends StatelessWidget {
     required this.onToggleCanHelp,
     required this.onRoleSelected,
     required this.onCanHelpSelected,
-    required this.onAppointClick,
     required this.onCancelAppointmentsClick,
     required this.onNotificationClick,
     required this.onRemindClick,
@@ -140,16 +138,12 @@ class TableWidget extends StatelessWidget {
                           onPressed: () => onRemindClick(event),
                         ),
                         FocusedMenuItem(
-                          title: Text('Назначить операторов'),
-                          onPressed: () => onAppointClick(event),
+                          title: Text('Уведомление: участие'),
+                          onPressed: () => onNotificationClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Отменить назначение'),
                           onPressed: () => onCancelAppointmentsClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Уведомление: участие'),
-                          onPressed: () => onNotificationClick(event),
                         ),
                         FocusedMenuItem(
                           title: Text('Обновить таблицу'),

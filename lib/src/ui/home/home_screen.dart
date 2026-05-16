@@ -203,30 +203,6 @@ class _HomeScreenState extends State<HomeScreen> {
             onToggleCanHelp: context.read<HomeCubit>().toggleCanHelp,
             onRoleSelected: context.read<HomeCubit>().onRoleSelected,
             onCanHelpSelected: context.read<HomeCubit>().onCanHelpSelected,
-            onAppointClick: (event) {
-              final appointment = cubit.appoint(event);
-              final text = cubit.getAppointmentNotificationText(appointment);
-              showDialog(
-                context: context,
-                builder: (context) => NotificationConfirmationDialog(
-                  title: event.title,
-                  message: text,
-                  telegramConfigs: state.telegramConfigs,
-                  showRefreshTable: true,
-                  onConfirmationClick:
-                      (message, telegramConfigs, refreshTable) {
-                    cubit.sendNotification(
-                      event.title,
-                      text,
-                      telegramConfigs,
-                    );
-                    if (refreshTable) {
-                      cubit.updateEvents(dateTimeFrom: event.date);
-                    }
-                  },
-                ),
-              );
-            },
             onCancelAppointmentsClick: cubit.cancelAppointments,
             onNotificationClick: (event) {
               final text = cubit.getNotificationText(event);

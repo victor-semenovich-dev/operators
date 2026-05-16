@@ -213,112 +213,12 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Appointment appoint(TableEvent event) {
-    final allOperators = state.allUsers;
-    final canHelpOperators = event.state.entries
-        .where((entry) => entry.value.canHelp)
-        .map((entry) => entry.key)
-        .map((id) => allOperators.firstWhere((user) => user.id == id));
-    final canHelpPcOperators = canHelpOperators
-        .where((operator) => operator.roles.contains(Role.PC))
-        .sortedByCompare(
-            (user) => user,
-            (u1, u2) =>
-                _compareByRating(u1, u2, Role.PC, dateTime: event.date));
-    final canHelpVideoOperators = canHelpOperators
-        .where((operator) => operator.roles.contains(Role.CAMERA))
-        .sortedByCompare(
-            (user) => user,
-            (u1, u2) =>
-                _compareByRating(u1, u2, Role.CAMERA, dateTime: event.date));
-
-    final appointment1 = _buildAppointment(
-      pcOperators: canHelpPcOperators,
-      videoOperators: canHelpVideoOperators,
-      pcFirst: true,
-    );
-    final appointment2 = _buildAppointment(
-      pcOperators: canHelpPcOperators,
-      videoOperators: canHelpVideoOperators,
-      pcFirst: false,
-    );
-    Appointment resultAppointment;
-    if (appointment1.pcOperator == null && appointment2.pcOperator != null) {
-      resultAppointment = appointment2;
-    } else if (appointment1.videoOperators.length <
-        appointment2.videoOperators.length) {
-      resultAppointment = appointment2;
-    } else {
-      resultAppointment = appointment1;
-    }
-
-    final pcOperator = resultAppointment.pcOperator;
-    if (pcOperator != null) {
-      tableRepository.setRole(pcOperator.id, event.id, Role.PC);
-    }
-    resultAppointment.videoOperators.forEach((videoOperator) {
-      tableRepository.setRole(videoOperator.id, event.id, Role.CAMERA);
-    });
-
-    return resultAppointment;
-  }
-
-  Appointment _buildAppointment({
-    required List<TableUser> pcOperators,
-    required List<TableUser> videoOperators,
-    required bool pcFirst,
-  }) {
-    if (pcFirst) {
-      final appointPcOperator = pcOperators.firstOrNull;
-      final appointVideoOperators = videoOperators
-          .where((operator) => operator.id != appointPcOperator?.id)
-          .take(3)
-          .sortedBy((operator) => operator.name);
-      return Appointment(
-        pcOperator: appointPcOperator,
-        videoOperators: appointVideoOperators,
-      );
-    } else {
-      final appointVideoOperators =
-          videoOperators.take(3).sortedBy((operator) => operator.name);
-      final appointPcOperator = pcOperators
-          .where((pcOperator) =>
-              appointVideoOperators.firstWhereOrNull(
-                  (videoOperator) => videoOperator.id == pcOperator.id) ==
-              null)
-          .firstOrNull;
-      return Appointment(
-        pcOperator: appointPcOperator,
-        videoOperators: appointVideoOperators,
-      );
-    }
-  }
-
   void cancelAppointments(TableEvent event) {
     event.state.forEach((userId, userState) {
       if (userState.role != null) {
         tableRepository.setRole(userId, event.id, null);
       }
     });
-  }
-
-  String getAppointmentNotificationText(Appointment appointment) {
-    final buffer = StringBuffer();
-    var isFirst = true;
-    final pcOperator = appointment.pcOperator;
-    if (pcOperator != null) {
-      buffer.write('${pcOperator.name} - ${roleToReadableString(Role.PC)}');
-      isFirst = false;
-    }
-    appointment.videoOperators.forEach((videoOperator) {
-      if (!isFirst) {
-        buffer.write('\n');
-      }
-      buffer.write(
-          '${videoOperator.name} - ${roleToReadableString(Role.CAMERA)}');
-      isFirst = false;
-    });
-    return buffer.toString();
   }
 
   String getNotificationText(TableEvent event) {
@@ -351,16 +251,6 @@ class HomeCubit extends Cubit<HomeState> {
       }
     }
     return buffer.toString();
-  }
-
-  List<TableUser> _getMissedMarksUsers(TableEvent event, Role role) {
-    return state.tableData?.users
-            .where((user) =>
-                user.roles.contains(role) &&
-                event.state[user.id]?.canHelp == null)
-            .sortedBy((user) => user.name)
-            .toList() ??
-        [];
   }
 
   bool getRemindTelegramDefaultValue() {
@@ -566,11 +456,4 @@ class Rating {
       return "$value (${DateFormat("dd.MM").format(lastDate!)})";
     }
   }
-}
-
-class Appointment {
-  final TableUser? pcOperator;
-  final List<TableUser> videoOperators;
-
-  Appointment({required this.pcOperator, required this.videoOperators});
 }

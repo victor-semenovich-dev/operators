@@ -87,7 +87,9 @@ class _IntercomRouteState extends State<IntercomRoute> {
             if (serverLocation == VALUE_LOCATION_USA) {
               intercomFirebaseDatabase = usaFirebaseDatabase;
             } else if (serverLocation == VALUE_LOCATION_EU) {
-              intercomFirebaseDatabase = euFirebaseDatabase;
+              if (euFirebaseDatabase != null) {
+                intercomFirebaseDatabase = euFirebaseDatabase!;
+              }
             }
 
             return ListView(
@@ -157,7 +159,11 @@ class _IntercomRouteState extends State<IntercomRoute> {
                 RadioListTile(
                   value: VALUE_LOCATION_EU,
                   groupValue: serverLocation,
-                  onChanged: onLocationChanged,
+                  onChanged: (value) {
+                    if (euFirebaseDatabase != null) {
+                      onLocationChanged(value);
+                    }
+                  },
                   title: Text('Belgium (europe-west1)'),
                 ),
                 RadioListTile(

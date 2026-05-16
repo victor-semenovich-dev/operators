@@ -9,24 +9,30 @@ import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 
 late StreamingSharedPreferences preferences;
 
-late FirebaseApp euFirebaseApp;
-
 late FirebaseDatabase usaFirebaseDatabase;
-late FirebaseDatabase euFirebaseDatabase;
+FirebaseDatabase? euFirebaseDatabase = null;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  preferences = await StreamingSharedPreferences.instance;
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  euFirebaseApp = await Firebase.initializeApp(
+
+  // Запускаем асинхронные задачи одновременно
+  final futureResults = await Future.wait([
+    StreamingSharedPreferences.instance,
+    Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    ),
+  ]);
+
+  preferences = futureResults[0] as StreamingSharedPreferences;
+
+  Firebase.initializeApp(
     name: 'eu',
     options: EuFirebaseOptions.currentPlatform,
-  );
+  ).then((app) {
+    euFirebaseDatabase = FirebaseDatabase.instanceFor(app: app);
+  });
 
   usaFirebaseDatabase = FirebaseDatabase.instance;
-  euFirebaseDatabase = FirebaseDatabase.instanceFor(app: euFirebaseApp);
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,

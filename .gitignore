@@ -30,7 +30,6 @@
 .pub-cache/
 .pub/
 /build/
-config.json
 
 # Web related
 

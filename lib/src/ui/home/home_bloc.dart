@@ -60,10 +60,6 @@ class HomeCubit extends Cubit<HomeState> {
     });
   }
 
-  void updateUserFcmData() {
-    fcmRepository.updateUserFcmData();
-  }
-
   void toggleCanHelp(TableUser user, TableEvent event) {
     tableRepository.toggleCanHelp(user, event);
   }

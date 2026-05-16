@@ -12,14 +12,7 @@ import 'package:operators/src/ui/home/widget/sort_dropdown.dart';
 import 'package:operators/src/ui/home/widget/table_inactive_events_dialog.dart';
 import 'package:operators/src/ui/home/widget/table_widget.dart';
 
-class HomeScreen extends StatefulWidget {
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  HomeState? _lastState;
-
+class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<HomeCubit, HomeState>(
@@ -49,12 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
           ));
           cubit.consumeSyncEventsResult();
         }
-
-        if (_lastState == null ||
-            _lastState?.currentUser?.id != state.currentUser?.id) {
-          cubit.updateUserFcmData();
-        }
-        _lastState = state;
       },
       builder: (context, state) {
         final cubit = context.read<HomeCubit>();

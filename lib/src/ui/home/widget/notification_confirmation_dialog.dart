@@ -8,8 +8,11 @@ class NotificationConfirmationDialog extends StatefulWidget {
   final bool telegramInitialValue;
   final bool showRefreshTable;
 
-  final Function(List<TelegramConfig> telegramConfigs, bool refreshTable)
-      onConfirmationClick;
+  final Function(
+    String message,
+    List<TelegramConfig> telegramConfigs,
+    bool refreshTable,
+  ) onConfirmationClick;
 
   const NotificationConfirmationDialog({
     super.key,
@@ -17,7 +20,7 @@ class NotificationConfirmationDialog extends StatefulWidget {
     this.message,
     required this.onConfirmationClick,
     required this.telegramConfigs,
-    this.telegramInitialValue = true,
+    this.telegramInitialValue = false,
     this.showRefreshTable = false,
   });
 
@@ -88,11 +91,13 @@ class _NotificationConfirmationDialogState
           child: const Text('OK'),
           onPressed: () {
             widget.onConfirmationClick(
-                _telegramConfigsState
-                    .where((s) => s.isChecked)
-                    .map((s) => s.config)
-                    .toList(),
-                _refreshTable);
+              _controller.text,
+              _telegramConfigsState
+                  .where((s) => s.isChecked)
+                  .map((s) => s.config)
+                  .toList(),
+              _refreshTable,
+            );
             Navigator.of(context).pop();
           },
         ),

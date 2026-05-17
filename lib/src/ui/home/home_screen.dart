@@ -110,6 +110,19 @@ class HomeScreen extends StatelessWidget {
                   tooltip: 'Меню',
                   onSelected: (value) async {
                     switch (value) {
+                      case 'send_message':
+                        showDialog(
+                          context: context,
+                          builder: (context) => NotificationConfirmationDialog(
+                            title: 'Отправить сообщение',
+                            telegramConfigs: state.telegramConfigs,
+                            onConfirmationClick:
+                                (message, telegramConfigs, refreshTable) {
+                              cubit.sendMessage(message, telegramConfigs);
+                            },
+                          ),
+                        );
+                        break;
                       case 'send_reminder':
                         showDialog(
                           context: context,
@@ -164,6 +177,11 @@ class HomeScreen extends StatelessWidget {
                   },
                   itemBuilder: (context) {
                     return [
+                      if (state.isAdmin)
+                        PopupMenuItem<String>(
+                          value: 'send_message',
+                          child: Text('Отправить сообщение'),
+                        ),
                       if (state.isAdmin)
                         PopupMenuItem<String>(
                           value: 'send_reminder',

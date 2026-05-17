@@ -75,7 +75,8 @@ class TelegramRepository {
     return TelegramConfig(
       title: data['title'],
       chatId: data['chatId'].toString(),
-      messageThreadId: data['messageThreadId'].toString(),
+      messageThreadId: data['messageThreadId']?.toString(),
+      order: data['order'] ?? 0,
     );
   }
 }

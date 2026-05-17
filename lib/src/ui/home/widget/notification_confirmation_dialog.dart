@@ -39,7 +39,9 @@ class _NotificationConfirmationDialogState
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.message);
-    for (final telegramConfig in widget.telegramConfigs) {
+    final sortedConfigs = List<TelegramConfig>.from(widget.telegramConfigs)
+      ..sort((a, b) => a.order.compareTo(b.order));
+    for (final telegramConfig in sortedConfigs) {
       _telegramConfigsState.add(
         TelegramConfigValue(telegramConfig, widget.telegramInitialValue),
       );

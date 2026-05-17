@@ -192,20 +192,16 @@ class HomeScreen extends StatelessWidget {
             onCanHelpSelected: context.read<HomeCubit>().onCanHelpSelected,
             onCancelAppointmentsClick: cubit.cancelAppointments,
             onNotificationClick: (event) {
-              final text = cubit.getNotificationText(event);
               showDialog(
                 context: context,
                 builder: (context) => NotificationConfirmationDialog(
-                  title: event.title,
-                  message: text,
+                  title: 'Уведомление об участии',
+                  message:
+                      '${event.title}\n\n${cubit.getNotificationText(event)}',
                   telegramConfigs: state.telegramConfigs,
                   onConfirmationClick:
                       (message, telegramConfigs, refreshTable) {
-                    cubit.sendNotification(
-                      event.title,
-                      message,
-                      telegramConfigs,
-                    );
+                    cubit.sendMessage(message, telegramConfigs);
                   },
                 ),
               );
@@ -215,10 +211,11 @@ class HomeScreen extends StatelessWidget {
                 context: context,
                 builder: (context) => NotificationConfirmationDialog(
                   title: 'Напоминание про отметки',
+                  message: state.messages['marksReminder'],
                   telegramConfigs: state.telegramConfigs,
                   onConfirmationClick:
                       (message, telegramConfigs, refreshTable) {
-                    cubit.sendRemind(telegramConfigs);
+                    cubit.sendMessage(message, telegramConfigs);
                   },
                 ),
               );

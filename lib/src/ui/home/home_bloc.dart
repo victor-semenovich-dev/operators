@@ -254,21 +254,6 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
-  void sendRemind(
-    List<TelegramConfig> telegramConfigs,
-  ) async {
-    final message = state.messages['marksReminder'] ?? '';
-    sendMessage(message, telegramConfigs);
-  }
-
-  void sendNotification(
-    String title,
-    String body,
-    List<TelegramConfig> telegramConfigs,
-  ) async {
-    sendMessage("$title\n\n$body", telegramConfigs);
-  }
-
   void sendMessage(String message, List<TelegramConfig> telegramConfigs) async {
     try {
       final requestList = telegramConfigs.map((config) {

@@ -12,7 +12,7 @@ part of '../../../../src/ui/authorization/authorization_bloc.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$AuthorizationState {
@@ -63,22 +63,22 @@ class _$AuthorizationStateCopyWithImpl<$Res, $Val extends AuthorizationState>
 }
 
 /// @nodoc
-abstract class _$$_AuthorizationStateCopyWith<$Res>
+abstract class _$$AuthorizationStateImplCopyWith<$Res>
     implements $AuthorizationStateCopyWith<$Res> {
-  factory _$$_AuthorizationStateCopyWith(_$_AuthorizationState value,
-          $Res Function(_$_AuthorizationState) then) =
-      __$$_AuthorizationStateCopyWithImpl<$Res>;
+  factory _$$AuthorizationStateImplCopyWith(_$AuthorizationStateImpl value,
+          $Res Function(_$AuthorizationStateImpl) then) =
+      __$$AuthorizationStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? error, bool isLoggedIn});
 }
 
 /// @nodoc
-class __$$_AuthorizationStateCopyWithImpl<$Res>
-    extends _$AuthorizationStateCopyWithImpl<$Res, _$_AuthorizationState>
-    implements _$$_AuthorizationStateCopyWith<$Res> {
-  __$$_AuthorizationStateCopyWithImpl(
-      _$_AuthorizationState _value, $Res Function(_$_AuthorizationState) _then)
+class __$$AuthorizationStateImplCopyWithImpl<$Res>
+    extends _$AuthorizationStateCopyWithImpl<$Res, _$AuthorizationStateImpl>
+    implements _$$AuthorizationStateImplCopyWith<$Res> {
+  __$$AuthorizationStateImplCopyWithImpl(_$AuthorizationStateImpl _value,
+      $Res Function(_$AuthorizationStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_AuthorizationStateCopyWithImpl<$Res>
     Object? error = freezed,
     Object? isLoggedIn = null,
   }) {
-    return _then(_$_AuthorizationState(
+    return _then(_$AuthorizationStateImpl(
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -102,8 +102,8 @@ class __$$_AuthorizationStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_AuthorizationState implements _AuthorizationState {
-  const _$_AuthorizationState({this.error = null, this.isLoggedIn = false});
+class _$AuthorizationStateImpl implements _AuthorizationState {
+  const _$AuthorizationStateImpl({this.error = null, this.isLoggedIn = false});
 
   @override
   @JsonKey()
@@ -118,10 +118,10 @@ class _$_AuthorizationState implements _AuthorizationState {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_AuthorizationState &&
+            other is _$AuthorizationStateImpl &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.isLoggedIn, isLoggedIn) ||
                 other.isLoggedIn == isLoggedIn));
@@ -133,14 +133,14 @@ class _$_AuthorizationState implements _AuthorizationState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_AuthorizationStateCopyWith<_$_AuthorizationState> get copyWith =>
-      __$$_AuthorizationStateCopyWithImpl<_$_AuthorizationState>(
+  _$$AuthorizationStateImplCopyWith<_$AuthorizationStateImpl> get copyWith =>
+      __$$AuthorizationStateImplCopyWithImpl<_$AuthorizationStateImpl>(
           this, _$identity);
 }
 
 abstract class _AuthorizationState implements AuthorizationState {
   const factory _AuthorizationState(
-      {final String? error, final bool isLoggedIn}) = _$_AuthorizationState;
+      {final String? error, final bool isLoggedIn}) = _$AuthorizationStateImpl;
 
   @override
   String? get error;
@@ -148,6 +148,6 @@ abstract class _AuthorizationState implements AuthorizationState {
   bool get isLoggedIn;
   @override
   @JsonKey(ignore: true)
-  _$$_AuthorizationStateCopyWith<_$_AuthorizationState> get copyWith =>
+  _$$AuthorizationStateImplCopyWith<_$AuthorizationStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

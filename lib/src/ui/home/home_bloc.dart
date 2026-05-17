@@ -31,6 +31,7 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _eventsSubscription;
   late StreamSubscription _usersSubscription;
   late StreamSubscription _telegramConfigsSubscription;
+  late StreamSubscription _messagesSubscription;
 
   HomeCubit(this.authRepository, this.tableRepository, this.eventsRepository,
       this.telegramRepository)
@@ -57,6 +58,10 @@ class HomeCubit extends Cubit<HomeState> {
     _telegramConfigsSubscription =
         telegramRepository.telegramConfigsStream.listen((telegramConfigs) {
       emit(state.copyWith(telegramConfigs: telegramConfigs));
+    });
+    _messagesSubscription =
+        telegramRepository.messagesStream.listen((messages) {
+      emit(state.copyWith(messages: messages));
     });
   }
 
@@ -249,37 +254,11 @@ class HomeCubit extends Cubit<HomeState> {
     return buffer.toString();
   }
 
-  bool getRemindTelegramDefaultValue() {
-    final lastTime = telegramRepository.lastTimeRemind;
-    return lastTime == null ||
-        DateTime.now().difference(lastTime) > Duration(days: 1);
-  }
-
   void sendRemind(
-    TableEvent event,
     List<TelegramConfig> telegramConfigs,
   ) async {
-    try {
-      for (final config in telegramConfigs) {
-        final commonPart =
-            config.messages[MARKS_REMINDER_KEY]?.replaceAll('\\n', '\n');
-        final message = '$commonPart';
-
-        if (config.messageThreadId == null) {
-          await telegramRepository.sendMessageToTelegramChat(
-              message, config.chatId);
-        } else {
-          await telegramRepository.sendMessageToTelegramChatThread(
-              message, config.chatId, config.messageThreadId!);
-        }
-      }
-      telegramRepository.lastTimeRemind = DateTime.now();
-      emit(state.copyWith(
-          sendNotificationResult: SendNotificationResult.SUCCESS));
-    } catch (e) {
-      emit(state.copyWith(
-          sendNotificationResult: SendNotificationResult.FAILURE));
-    }
+    final message = state.messages['marksReminder'] ?? '';
+    sendMessage(message, telegramConfigs);
   }
 
   void sendNotification(
@@ -287,18 +266,28 @@ class HomeCubit extends Cubit<HomeState> {
     String body,
     List<TelegramConfig> telegramConfigs,
   ) async {
+    sendMessage("$title\n\n$body", telegramConfigs);
+  }
+
+  void sendMessage(String message, List<TelegramConfig> telegramConfigs) async {
     try {
-      for (final config in telegramConfigs) {
+      final requestList = telegramConfigs.map((config) {
         if (config.messageThreadId == null) {
-          await telegramRepository.sendMessageToTelegramChat(
-              "$title\n\n$body", config.chatId);
+          return telegramRepository.sendMessageToTelegramChat(
+              message, config.chatId);
         } else {
-          await telegramRepository.sendMessageToTelegramChatThread(
-              "$title\n\n$body", config.chatId, config.messageThreadId!);
+          return telegramRepository.sendMessageToTelegramChatThread(
+              message, config.chatId, config.messageThreadId!);
         }
+      });
+      final resultList = await Future.wait(requestList);
+      if (resultList.every((success) => success)) {
+        emit(state.copyWith(
+            sendNotificationResult: SendNotificationResult.SUCCESS));
+      } else {
+        emit(state.copyWith(
+            sendNotificationResult: SendNotificationResult.FAILURE));
       }
-      emit(state.copyWith(
-          sendNotificationResult: SendNotificationResult.SUCCESS));
     } catch (e) {
       emit(state.copyWith(
           sendNotificationResult: SendNotificationResult.FAILURE));
@@ -392,6 +381,7 @@ class HomeCubit extends Cubit<HomeState> {
     await _eventsSubscription.cancel();
     await _usersSubscription.cancel();
     await _telegramConfigsSubscription.cancel();
+    await _messagesSubscription.cancel();
     return super.close();
   }
 }
@@ -413,6 +403,7 @@ class HomeState with _$HomeState {
     @Default([]) List<TableUser> sortedAllUsers,
     @Default([]) List<TableUser> sortedTableUsers,
     @Default([]) List<TelegramConfig> telegramConfigs,
+    @Default({}) Map<String, String> messages,
     @Default(SortType.BY_NAME) SortType sortType,
     @Default(false) bool showAllUsers,
   }) = _HomeState;

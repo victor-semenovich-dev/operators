@@ -10,3 +10,5 @@ Android: fvm flutter build apk --release
 Web: fvm flutter build web
 
 Web deploy: firebase deploy --only hosting:operators/dev
+
+Freezed generation: fvm flutter pub run build_runner build

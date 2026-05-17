@@ -6,19 +6,16 @@ import 'package:operators/src/data/model/telegram.dart';
 import 'package:operators/src/data/remote/service/telegram.dart';
 import 'package:rxdart/rxdart.dart';
 
-const MARKS_REMINDER_KEY = 'marksReminder';
-
-const TEST_CHANNEL_ID = '-970906901';
-
 class TelegramRepository {
   late ChopperClient _chopper;
-
-  DateTime? lastTimeRemind;
 
   final DatabaseReference _dbRef = FirebaseDatabase.instance.ref("/telegram");
   final _telegramConfigsSubject = BehaviorSubject<List<TelegramConfig>>();
   late Stream<List<TelegramConfig>> telegramConfigsStream =
       _telegramConfigsSubject.stream;
+
+  final _messagesSubject = BehaviorSubject<Map<String, String>>();
+  late Stream<Map<String, String>> messagesStream = _messagesSubject.stream;
 
   TelegramRepository() {
     preferences
@@ -39,41 +36,44 @@ class TelegramRepository {
       }
       _telegramConfigsSubject.add(telegramConfigList);
     });
+
+    FirebaseDatabase.instance.ref("/messages").onValue.listen((event) {
+      try {
+        final snapshotMap = event.snapshot.value as Map;
+        Map<String, String> messagesMap = {};
+        for (String key in snapshotMap.keys) {
+          messagesMap[key] = snapshotMap[key];
+        }
+        _messagesSubject.add(messagesMap);
+      } catch (e) {
+        debugPrint(e.toString());
+      }
+    });
   }
 
-  Future<void> sendMessageToTelegramChat(
+  Future<bool> sendMessageToTelegramChat(
       String message, String channelId) async {
     debugPrint(
         'sendMessageToTelegramChat: ${_chopper.baseUrl}, $channelId, $message');
-    await _chopper
+    final response = await _chopper
         .getService<TelegramService>()
         .sendMessage(channelId, message);
+    return response.isSuccessful;
   }
 
-  Future<void> sendMessageToTelegramChatThread(
+  Future<bool> sendMessageToTelegramChatThread(
       String message, String channelId, String threadId) async {
     debugPrint(
         'sendMessageToTelegramChatThread: ${_chopper.baseUrl}, $channelId, $message');
-    await _chopper
+    final response = await _chopper
         .getService<TelegramService>()
         .sendMessageToThread(channelId, threadId, message);
+    return response.isSuccessful;
   }
 
   static TelegramConfig _parseTelegramConfig(Map data) {
-    final messages = <String, String>{};
-    final messagesData = data['messages'];
-    if (messagesData != null) {
-      // this code is needed to convert the <dynamic, dynamic> map
-      // to the <String, String> one
-      final messagesMap = messagesData as Map;
-      for (final key in messagesMap.keys) {
-        messages[key] = messagesMap[key];
-      }
-    }
-
     return TelegramConfig(
       title: data['title'],
-      messages: messages,
       chatId: data['chatId'].toString(),
       messageThreadId: data['messageThreadId'].toString(),
     );

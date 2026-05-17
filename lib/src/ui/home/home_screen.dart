@@ -216,13 +216,9 @@ class HomeScreen extends StatelessWidget {
                 builder: (context) => NotificationConfirmationDialog(
                   title: 'Напоминание про отметки',
                   telegramConfigs: state.telegramConfigs,
-                  telegramInitialValue: cubit.getRemindTelegramDefaultValue(),
                   onConfirmationClick:
                       (message, telegramConfigs, refreshTable) {
-                    cubit.sendRemind(
-                      event,
-                      telegramConfigs,
-                    );
+                    cubit.sendRemind(telegramConfigs);
                   },
                 ),
               );

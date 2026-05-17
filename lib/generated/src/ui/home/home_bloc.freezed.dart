@@ -12,7 +12,7 @@ part of '../../../../src/ui/home/home_bloc.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$HomeState {
@@ -30,6 +30,7 @@ mixin _$HomeState {
   List<TableUser> get sortedTableUsers => throw _privateConstructorUsedError;
   List<TelegramConfig> get telegramConfigs =>
       throw _privateConstructorUsedError;
+  Map<String, String> get messages => throw _privateConstructorUsedError;
   SortType get sortType => throw _privateConstructorUsedError;
   bool get showAllUsers => throw _privateConstructorUsedError;
 
@@ -56,6 +57,7 @@ abstract class $HomeStateCopyWith<$Res> {
       List<TableUser> sortedAllUsers,
       List<TableUser> sortedTableUsers,
       List<TelegramConfig> telegramConfigs,
+      Map<String, String> messages,
       SortType sortType,
       bool showAllUsers});
 }
@@ -85,6 +87,7 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
     Object? sortedAllUsers = null,
     Object? sortedTableUsers = null,
     Object? telegramConfigs = null,
+    Object? messages = null,
     Object? sortType = null,
     Object? showAllUsers = null,
   }) {
@@ -137,6 +140,10 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
           ? _value.telegramConfigs
           : telegramConfigs // ignore: cast_nullable_to_non_nullable
               as List<TelegramConfig>,
+      messages: null == messages
+          ? _value.messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
       sortType: null == sortType
           ? _value.sortType
           : sortType // ignore: cast_nullable_to_non_nullable
@@ -150,10 +157,11 @@ class _$HomeStateCopyWithImpl<$Res, $Val extends HomeState>
 }
 
 /// @nodoc
-abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
-  factory _$$_HomeStateCopyWith(
-          _$_HomeState value, $Res Function(_$_HomeState) then) =
-      __$$_HomeStateCopyWithImpl<$Res>;
+abstract class _$$HomeStateImplCopyWith<$Res>
+    implements $HomeStateCopyWith<$Res> {
+  factory _$$HomeStateImplCopyWith(
+          _$HomeStateImpl value, $Res Function(_$HomeStateImpl) then) =
+      __$$HomeStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call(
@@ -169,16 +177,17 @@ abstract class _$$_HomeStateCopyWith<$Res> implements $HomeStateCopyWith<$Res> {
       List<TableUser> sortedAllUsers,
       List<TableUser> sortedTableUsers,
       List<TelegramConfig> telegramConfigs,
+      Map<String, String> messages,
       SortType sortType,
       bool showAllUsers});
 }
 
 /// @nodoc
-class __$$_HomeStateCopyWithImpl<$Res>
-    extends _$HomeStateCopyWithImpl<$Res, _$_HomeState>
-    implements _$$_HomeStateCopyWith<$Res> {
-  __$$_HomeStateCopyWithImpl(
-      _$_HomeState _value, $Res Function(_$_HomeState) _then)
+class __$$HomeStateImplCopyWithImpl<$Res>
+    extends _$HomeStateCopyWithImpl<$Res, _$HomeStateImpl>
+    implements _$$HomeStateImplCopyWith<$Res> {
+  __$$HomeStateImplCopyWithImpl(
+      _$HomeStateImpl _value, $Res Function(_$HomeStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -196,10 +205,11 @@ class __$$_HomeStateCopyWithImpl<$Res>
     Object? sortedAllUsers = null,
     Object? sortedTableUsers = null,
     Object? telegramConfigs = null,
+    Object? messages = null,
     Object? sortType = null,
     Object? showAllUsers = null,
   }) {
-    return _then(_$_HomeState(
+    return _then(_$HomeStateImpl(
       currentFirebaseUser: freezed == currentFirebaseUser
           ? _value.currentFirebaseUser
           : currentFirebaseUser // ignore: cast_nullable_to_non_nullable
@@ -248,6 +258,10 @@ class __$$_HomeStateCopyWithImpl<$Res>
           ? _value._telegramConfigs
           : telegramConfigs // ignore: cast_nullable_to_non_nullable
               as List<TelegramConfig>,
+      messages: null == messages
+          ? _value._messages
+          : messages // ignore: cast_nullable_to_non_nullable
+              as Map<String, String>,
       sortType: null == sortType
           ? _value.sortType
           : sortType // ignore: cast_nullable_to_non_nullable
@@ -262,8 +276,8 @@ class __$$_HomeStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_HomeState extends _HomeState {
-  const _$_HomeState(
+class _$HomeStateImpl extends _HomeState {
+  const _$HomeStateImpl(
       {this.currentFirebaseUser = null,
       this.isResetPasswordCompleted = false,
       this.sendNotificationResult = null,
@@ -276,6 +290,7 @@ class _$_HomeState extends _HomeState {
       final List<TableUser> sortedAllUsers = const [],
       final List<TableUser> sortedTableUsers = const [],
       final List<TelegramConfig> telegramConfigs = const [],
+      final Map<String, String> messages = const {},
       this.sortType = SortType.BY_NAME,
       this.showAllUsers = false})
       : _allEvents = allEvents,
@@ -283,6 +298,7 @@ class _$_HomeState extends _HomeState {
         _sortedAllUsers = sortedAllUsers,
         _sortedTableUsers = sortedTableUsers,
         _telegramConfigs = telegramConfigs,
+        _messages = messages,
         super._();
 
   @override
@@ -352,6 +368,15 @@ class _$_HomeState extends _HomeState {
     return EqualUnmodifiableListView(_telegramConfigs);
   }
 
+  final Map<String, String> _messages;
+  @override
+  @JsonKey()
+  Map<String, String> get messages {
+    if (_messages is EqualUnmodifiableMapView) return _messages;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableMapView(_messages);
+  }
+
   @override
   @JsonKey()
   final SortType sortType;
@@ -361,14 +386,14 @@ class _$_HomeState extends _HomeState {
 
   @override
   String toString() {
-    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers, sortedAllUsers: $sortedAllUsers, sortedTableUsers: $sortedTableUsers, telegramConfigs: $telegramConfigs, sortType: $sortType, showAllUsers: $showAllUsers)';
+    return 'HomeState(currentFirebaseUser: $currentFirebaseUser, isResetPasswordCompleted: $isResetPasswordCompleted, sendNotificationResult: $sendNotificationResult, syncResult: $syncResult, syncInProgress: $syncInProgress, tableData: $tableData, isAdmin: $isAdmin, allEvents: $allEvents, allUsers: $allUsers, sortedAllUsers: $sortedAllUsers, sortedTableUsers: $sortedTableUsers, telegramConfigs: $telegramConfigs, messages: $messages, sortType: $sortType, showAllUsers: $showAllUsers)';
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_HomeState &&
+            other is _$HomeStateImpl &&
             (identical(other.currentFirebaseUser, currentFirebaseUser) ||
                 other.currentFirebaseUser == currentFirebaseUser) &&
             (identical(
@@ -392,6 +417,7 @@ class _$_HomeState extends _HomeState {
                 .equals(other._sortedTableUsers, _sortedTableUsers) &&
             const DeepCollectionEquality()
                 .equals(other._telegramConfigs, _telegramConfigs) &&
+            const DeepCollectionEquality().equals(other._messages, _messages) &&
             (identical(other.sortType, sortType) ||
                 other.sortType == sortType) &&
             (identical(other.showAllUsers, showAllUsers) ||
@@ -413,14 +439,15 @@ class _$_HomeState extends _HomeState {
       const DeepCollectionEquality().hash(_sortedAllUsers),
       const DeepCollectionEquality().hash(_sortedTableUsers),
       const DeepCollectionEquality().hash(_telegramConfigs),
+      const DeepCollectionEquality().hash(_messages),
       sortType,
       showAllUsers);
 
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>
-      __$$_HomeStateCopyWithImpl<_$_HomeState>(this, _$identity);
+  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
+      __$$HomeStateImplCopyWithImpl<_$HomeStateImpl>(this, _$identity);
 }
 
 abstract class _HomeState extends HomeState {
@@ -437,8 +464,9 @@ abstract class _HomeState extends HomeState {
       final List<TableUser> sortedAllUsers,
       final List<TableUser> sortedTableUsers,
       final List<TelegramConfig> telegramConfigs,
+      final Map<String, String> messages,
       final SortType sortType,
-      final bool showAllUsers}) = _$_HomeState;
+      final bool showAllUsers}) = _$HomeStateImpl;
   const _HomeState._() : super._();
 
   @override
@@ -466,11 +494,13 @@ abstract class _HomeState extends HomeState {
   @override
   List<TelegramConfig> get telegramConfigs;
   @override
+  Map<String, String> get messages;
+  @override
   SortType get sortType;
   @override
   bool get showAllUsers;
   @override
   @JsonKey(ignore: true)
-  _$$_HomeStateCopyWith<_$_HomeState> get copyWith =>
+  _$$HomeStateImplCopyWith<_$HomeStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

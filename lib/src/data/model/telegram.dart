@@ -1,12 +1,10 @@
 class TelegramConfig {
   final String title;
-  final Map<String, String> messages;
   final String chatId;
   final String? messageThreadId;
 
   TelegramConfig({
     required this.title,
-    required this.messages,
     required this.chatId,
     this.messageThreadId,
   });

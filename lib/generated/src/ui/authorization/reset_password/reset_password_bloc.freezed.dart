@@ -12,7 +12,7 @@ part of '../../../../../src/ui/authorization/reset_password/reset_password_bloc.
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#custom-getters-and-methods');
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$ResetPasswordState {
@@ -63,22 +63,22 @@ class _$ResetPasswordStateCopyWithImpl<$Res, $Val extends ResetPasswordState>
 }
 
 /// @nodoc
-abstract class _$$_ResetPasswordStateCopyWith<$Res>
+abstract class _$$ResetPasswordStateImplCopyWith<$Res>
     implements $ResetPasswordStateCopyWith<$Res> {
-  factory _$$_ResetPasswordStateCopyWith(_$_ResetPasswordState value,
-          $Res Function(_$_ResetPasswordState) then) =
-      __$$_ResetPasswordStateCopyWithImpl<$Res>;
+  factory _$$ResetPasswordStateImplCopyWith(_$ResetPasswordStateImpl value,
+          $Res Function(_$ResetPasswordStateImpl) then) =
+      __$$ResetPasswordStateImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String? error, bool isResetCompleted});
 }
 
 /// @nodoc
-class __$$_ResetPasswordStateCopyWithImpl<$Res>
-    extends _$ResetPasswordStateCopyWithImpl<$Res, _$_ResetPasswordState>
-    implements _$$_ResetPasswordStateCopyWith<$Res> {
-  __$$_ResetPasswordStateCopyWithImpl(
-      _$_ResetPasswordState _value, $Res Function(_$_ResetPasswordState) _then)
+class __$$ResetPasswordStateImplCopyWithImpl<$Res>
+    extends _$ResetPasswordStateCopyWithImpl<$Res, _$ResetPasswordStateImpl>
+    implements _$$ResetPasswordStateImplCopyWith<$Res> {
+  __$$ResetPasswordStateImplCopyWithImpl(_$ResetPasswordStateImpl _value,
+      $Res Function(_$ResetPasswordStateImpl) _then)
       : super(_value, _then);
 
   @pragma('vm:prefer-inline')
@@ -87,7 +87,7 @@ class __$$_ResetPasswordStateCopyWithImpl<$Res>
     Object? error = freezed,
     Object? isResetCompleted = null,
   }) {
-    return _then(_$_ResetPasswordState(
+    return _then(_$ResetPasswordStateImpl(
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -102,8 +102,8 @@ class __$$_ResetPasswordStateCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$_ResetPasswordState implements _ResetPasswordState {
-  const _$_ResetPasswordState(
+class _$ResetPasswordStateImpl implements _ResetPasswordState {
+  const _$ResetPasswordStateImpl(
       {this.error = null, this.isResetCompleted = false});
 
   @override
@@ -119,10 +119,10 @@ class _$_ResetPasswordState implements _ResetPasswordState {
   }
 
   @override
-  bool operator ==(dynamic other) {
+  bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$_ResetPasswordState &&
+            other is _$ResetPasswordStateImpl &&
             (identical(other.error, error) || other.error == error) &&
             (identical(other.isResetCompleted, isResetCompleted) ||
                 other.isResetCompleted == isResetCompleted));
@@ -134,15 +134,15 @@ class _$_ResetPasswordState implements _ResetPasswordState {
   @JsonKey(ignore: true)
   @override
   @pragma('vm:prefer-inline')
-  _$$_ResetPasswordStateCopyWith<_$_ResetPasswordState> get copyWith =>
-      __$$_ResetPasswordStateCopyWithImpl<_$_ResetPasswordState>(
+  _$$ResetPasswordStateImplCopyWith<_$ResetPasswordStateImpl> get copyWith =>
+      __$$ResetPasswordStateImplCopyWithImpl<_$ResetPasswordStateImpl>(
           this, _$identity);
 }
 
 abstract class _ResetPasswordState implements ResetPasswordState {
   const factory _ResetPasswordState(
       {final String? error,
-      final bool isResetCompleted}) = _$_ResetPasswordState;
+      final bool isResetCompleted}) = _$ResetPasswordStateImpl;
 
   @override
   String? get error;
@@ -150,6 +150,6 @@ abstract class _ResetPasswordState implements ResetPasswordState {
   bool get isResetCompleted;
   @override
   @JsonKey(ignore: true)
-  _$$_ResetPasswordStateCopyWith<_$_ResetPasswordState> get copyWith =>
+  _$$ResetPasswordStateImplCopyWith<_$ResetPasswordStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

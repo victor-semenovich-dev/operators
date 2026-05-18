@@ -6,12 +6,10 @@ class NotificationConfirmationDialog extends StatefulWidget {
   final String? message;
   final List<TelegramConfig> telegramConfigs;
   final bool telegramInitialValue;
-  final bool showRefreshTable;
 
   final Function(
     String message,
     List<TelegramConfig> telegramConfigs,
-    bool refreshTable,
   ) onConfirmationClick;
 
   const NotificationConfirmationDialog({
@@ -21,7 +19,6 @@ class NotificationConfirmationDialog extends StatefulWidget {
     required this.onConfirmationClick,
     required this.telegramConfigs,
     this.telegramInitialValue = false,
-    this.showRefreshTable = false,
   });
 
   @override
@@ -33,7 +30,6 @@ class _NotificationConfirmationDialogState
     extends State<NotificationConfirmationDialog> {
   late TextEditingController _controller;
   List<TelegramConfigValue> _telegramConfigsState = [];
-  bool _refreshTable = false;
 
   @override
   void initState() {
@@ -46,7 +42,6 @@ class _NotificationConfirmationDialogState
         TelegramConfigValue(telegramConfig, widget.telegramInitialValue),
       );
     }
-    _refreshTable = widget.showRefreshTable;
   }
 
   @override
@@ -61,7 +56,8 @@ class _NotificationConfirmationDialogState
     return AlertDialog(
       title: widget.title == null ? null : Text(widget.title ?? ''),
       contentPadding: EdgeInsets.zero,
-      content: Wrap(
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Padding(
             padding: const EdgeInsets.all(16.0),
@@ -71,15 +67,15 @@ class _NotificationConfirmationDialogState
               maxLines: null,
             ),
           ),
-          ...telegramWidgets,
-          if (widget.showRefreshTable)
-            CheckboxListTile(
-              value: _refreshTable,
-              onChanged: (value) {
-                setState(() => _refreshTable = value ?? false);
-              },
-              title: Text('Убрать событие'),
+          Flexible(
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  ...telegramWidgets,
+                ],
+              ),
             ),
+          ),
         ],
       ),
       actions: <Widget>[
@@ -98,7 +94,6 @@ class _NotificationConfirmationDialogState
                   .where((s) => s.isChecked)
                   .map((s) => s.config)
                   .toList(),
-              _refreshTable,
             );
             Navigator.of(context).pop();
           },

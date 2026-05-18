@@ -116,8 +116,7 @@ class HomeScreen extends StatelessWidget {
                           builder: (context) => NotificationConfirmationDialog(
                             title: 'Отправить сообщение',
                             telegramConfigs: state.telegramConfigs,
-                            onConfirmationClick:
-                                (message, telegramConfigs, refreshTable) {
+                            onConfirmationClick: (message, telegramConfigs) {
                               cubit.sendMessage(message, telegramConfigs);
                             },
                           ),
@@ -130,8 +129,7 @@ class HomeScreen extends StatelessWidget {
                             title: 'Напоминание про отметки',
                             message: state.messages['marksReminder'] ?? '',
                             telegramConfigs: state.telegramConfigs,
-                            onConfirmationClick:
-                                (message, telegramConfigs, refreshTable) {
+                            onConfirmationClick: (message, telegramConfigs) {
                               cubit.sendMessage(message, telegramConfigs);
                             },
                           ),
@@ -236,8 +234,7 @@ class HomeScreen extends StatelessWidget {
                   message:
                       '${event.title}\n\n${cubit.getNotificationText(event)}',
                   telegramConfigs: state.telegramConfigs,
-                  onConfirmationClick:
-                      (message, telegramConfigs, refreshTable) {
+                  onConfirmationClick: (message, telegramConfigs) {
                     cubit.sendMessage(message, telegramConfigs);
                   },
                 ),

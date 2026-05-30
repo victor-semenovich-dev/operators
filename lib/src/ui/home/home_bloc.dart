@@ -90,7 +90,7 @@ class HomeCubit extends Cubit<HomeState> {
             pcValue++;
           if (pcLastDate == null || e.date.isAfter(pcLastDate!))
             pcLastDate = e.date;
-        } else if (role == Role.CAMERA) {
+        } else if (role == Role.CAMERA || role == Role.VIDEO_MIXER) {
           if (e.date.isAfter(DateTime.now().subtract(Duration(days: 31))))
             cameraValue++;
           if (cameraLastDate == null || e.date.isAfter(cameraLastDate!))

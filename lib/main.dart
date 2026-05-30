@@ -15,7 +15,7 @@ FirebaseDatabase? euFirebaseDatabase = null;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Запускаем асинхронные задачи одновременно
+  // Запускаем только критически важные задачи для старта
   final futureResults = await Future.wait([
     StreamingSharedPreferences.instance,
     Firebase.initializeApp(
@@ -24,15 +24,10 @@ void main() async {
   ]);
 
   preferences = futureResults[0] as StreamingSharedPreferences;
-
-  Firebase.initializeApp(
-    name: 'eu',
-    options: EuFirebaseOptions.currentPlatform,
-  ).then((app) {
-    euFirebaseDatabase = FirebaseDatabase.instanceFor(app: app);
-  });
-
   usaFirebaseDatabase = FirebaseDatabase.instance;
+
+  // Инициализируем EU в фоне или лениво, не дожидаясь здесь
+  _initEuFirebase();
 
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
@@ -40,4 +35,16 @@ void main() async {
   ]);
 
   runApp(OperatorsApp());
+}
+
+Future<void> _initEuFirebase() async {
+  try {
+    final euApp = await Firebase.initializeApp(
+      name: 'eu',
+      options: EuFirebaseOptions.currentPlatform,
+    );
+    euFirebaseDatabase = FirebaseDatabase.instanceFor(app: euApp);
+  } catch (e) {
+    debugPrint('Error initializing EU Firebase: $e');
+  }
 }

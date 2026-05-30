@@ -95,7 +95,9 @@
           serviceWorkerVersion: serviceWorkerVersion,
         }
       }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine();
+        return engineInitializer.initializeEngine({
+          renderer: "html" // Используем HTML рендерер для более быстрой загрузки
+        });
       }).then(function(appRunner) {
         return appRunner.runApp();
       }).then(function() {

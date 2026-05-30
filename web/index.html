@@ -20,7 +20,7 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
 
   <!-- iOS meta tags & icons -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Участие операторов">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -74,12 +74,11 @@
     }
   </style>
 
-  <script>
-    // The value below is injected by flutter build, do not touch.
-    var serviceWorkerVersion = null;
-  </script>
   <!-- This script adds the flutter initialization JS code -->
   <script src="flutter.js" defer></script>
+  <script>
+    {{flutter_build_config}}
+  </script>
 </head>
 <body>
   <div id="loading-indicator">
@@ -90,28 +89,27 @@
   <script>
     window.addEventListener('load', function(ev) {
       // Download main.dart.js
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        }
-      }).then(function(engineInitializer) {
-        return engineInitializer.initializeEngine({
-          renderer: "html" // Используем HTML рендерер для более быстрой загрузки
-        });
-      }).then(function(appRunner) {
-        return appRunner.runApp();
-      }).then(function() {
-        // Убираем сплэш-скрин после того, как приложение запустилось
-        var loadingIndicator = document.getElementById('loading-indicator');
-        if (loadingIndicator) {
-          loadingIndicator.classList.add('fade-out');
-          setTimeout(function() {
-            loadingIndicator.remove();
-          }, 500);
+      _flutter.loader.load({
+        serviceWorkerSettings: {
+          serviceWorkerVersion: {{flutter_service_worker_version}},
+        },
+        onEntrypointLoaded: function(engineInitializer) {
+          engineInitializer.initializeEngine({
+            renderer: "html" // Используем HTML рендерер для более быстрой загрузки
+          }).then(function(appRunner) {
+            return appRunner.runApp();
+          }).then(function() {
+            // Убираем сплэш-скрин после того, как приложение запустилось
+            var loadingIndicator = document.getElementById('loading-indicator');
+            if (loadingIndicator) {
+              loadingIndicator.classList.add('fade-out');
+              setTimeout(function() {
+                loadingIndicator.remove();
+              }, 500);
+            }
+          });
         }
       });
-
-      navigator.serviceWorker.register('/firebase-messaging-sw.js');
     });
   </script>
 </body>

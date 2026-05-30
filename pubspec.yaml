@@ -101,8 +101,7 @@ flutter:
 
 flutter_icons:
   android: "launcher_icon"
-  ios: true
+  ios: false
   image_path: "app_icon.png"
-  image_path_ios: "app_icon_wb.png"
   web:
     generate: true

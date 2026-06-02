@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:operators/src/ui/widget/advanced_safe_area.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import '../../../data/model/user.dart';
@@ -84,7 +85,7 @@ class _CameraRouteState extends State<CameraRoute> with WidgetsBindingObserver {
                                   circleSize: 80,
                                   circleMargin: 32,
                                 ),
-                                SafeArea(
+                                AdvancedSafeArea(
                                   child: Align(
                                       alignment: Alignment.bottomCenter,
                                       child: Container(

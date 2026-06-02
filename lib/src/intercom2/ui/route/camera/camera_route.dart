@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:operators/src/ui/widget/advanced_safe_area.dart';
 
 import '../../../model/camera_context.dart';
 import '../../widget/camera_widget.dart';
@@ -89,7 +90,7 @@ class CameraRoute extends StatelessWidget {
                           },
                         ),
                       if (camera != null)
-                        SafeArea(
+                        AdvancedSafeArea(
                           child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Container(

@@ -7,6 +7,8 @@ import 'package:intl/intl.dart';
 import 'package:operators/src/data/model/event.dart';
 import 'package:operators/src/data/model/table.dart';
 import 'package:operators/src/data/model/user.dart';
+import 'package:operators/src/data/util/platform_utils.dart'
+    if (dart.library.html) 'package:operators/src/data/util/platform_utils_web.dart';
 import 'package:operators/src/ui/authorization/authorization_provider.dart';
 import 'package:operators/src/ui/home/home_bloc.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -66,7 +68,9 @@ class TableWidget extends StatelessWidget {
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             child: SafeArea(
-              minimum: const EdgeInsets.only(bottom: 48),
+              minimum: isPwaStandalone()
+                  ? const EdgeInsets.only(bottom: 48)
+                  : EdgeInsets.zero,
               child: Column(children: rows),
             ),
           ),

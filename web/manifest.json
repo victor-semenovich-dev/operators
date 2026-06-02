@@ -1,11 +1,11 @@
 {
-    "name": "operators",
-    "short_name": "operators",
+    "name": "Участие операторов",
+    "short_name": "Операторы DEV",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "orientation": "portrait-primary",
+    "background_color": "#ffffff",
+    "theme_color": "#ffffff",
+    "orientation": "portrait",
     "prefer_related_applications": false,
     "icons": [
         {

@@ -66,9 +66,8 @@ class TableWidget extends StatelessWidget {
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
             child: SafeArea(
-              child: Column(
-                children: rows,
-              ),
+              minimum: const EdgeInsets.only(bottom: 48),
+              child: Column(children: rows),
             ),
           ),
         ),

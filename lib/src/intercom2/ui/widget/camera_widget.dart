@@ -2,7 +2,7 @@ import 'package:flash/flash.dart';
 import 'package:flash/flash_helper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
+import 'package:operators/src/core/widget/preference_builder.dart';
 
 import '../../../../main.dart';
 import '../../model/camera_context.dart';

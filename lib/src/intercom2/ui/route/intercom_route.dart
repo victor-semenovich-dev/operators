@@ -20,10 +20,8 @@ class _IntercomRouteState extends State<IntercomRoute> {
 
   @override
   void initState() {
-    final wsAddress = preferences
-        .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.51.13:8080')
-        .getValue();
+    final wsAddress = preferences.getValue<String>(
+        KEY_INTERCOM_WEB_SOCKET, 'ws://172.16.51.13:8080');
 
     _socketAddressController = TextEditingController(
       text: wsAddress,

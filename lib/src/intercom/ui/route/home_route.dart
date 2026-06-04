@@ -1,13 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:operators/src/core/widget/preference_builder.dart';
 import 'package:operators/src/data/model/user.dart';
 import 'package:operators/src/intercom2/ui/route/camera/camera_route.dart'
     as camera2;
 import 'package:operators/src/intercom2/ui/route/mixer/mixer_route.dart'
     as mixer2;
 import 'package:operators/src/intercom2/ui/widget/custom_alert_dialog.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../main.dart';
@@ -37,10 +37,8 @@ class _IntercomRouteState extends State<IntercomRoute> {
 
   @override
   void initState() {
-    final wsAddress = preferences
-        .getString(KEY_INTERCOM_WEB_SOCKET,
-            defaultValue: 'ws://172.16.51.13:8080')
-        .getValue();
+    final wsAddress = preferences.getValue<String>(
+        KEY_INTERCOM_WEB_SOCKET, 'ws://172.16.51.13:8080');
 
     _socketAddressController = TextEditingController(
       text: wsAddress,
@@ -52,10 +50,8 @@ class _IntercomRouteState extends State<IntercomRoute> {
     });
 
     if (kIsWeb) {
-      final serverLocation = preferences
-          .getString(KEY_INTERCOM_SERVER_LOCATION,
-              defaultValue: VALUE_LOCATION_EU)
-          .getValue();
+      final serverLocation = preferences.getValue<String>(
+          KEY_INTERCOM_SERVER_LOCATION, VALUE_LOCATION_EU);
       if (serverLocation == VALUE_LOCATION_LOCAL) {
         onLocationChanged(VALUE_LOCATION_EU);
       }

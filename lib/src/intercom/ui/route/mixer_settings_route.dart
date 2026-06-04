@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
+import 'package:operators/src/core/widget/preference_builder.dart';
 
 import '../../../../main.dart';
 

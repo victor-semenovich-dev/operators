@@ -5,9 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:operators/firebase_options.dart';
 import 'package:operators/firebase_options_eu.dart';
 import 'package:operators/src/app.dart';
-import 'package:streaming_shared_preferences/streaming_shared_preferences.dart';
+import 'package:operators/src/core/preferences_service.dart';
 
-late StreamingSharedPreferences preferences;
+late PreferencesService preferences;
 
 late FirebaseDatabase usaFirebaseDatabase;
 FirebaseDatabase? euFirebaseDatabase = null;
@@ -17,13 +17,13 @@ void main() async {
 
   // Запускаем только критически важные задачи для старта
   final futureResults = await Future.wait([
-    StreamingSharedPreferences.instance,
+    PreferencesService.getInstance(),
     Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     ),
   ]);
 
-  preferences = futureResults[0] as StreamingSharedPreferences;
+  preferences = futureResults[0] as PreferencesService;
   usaFirebaseDatabase = FirebaseDatabase.instance;
 
   // Инициализируем EU в фоне или лениво, не дожидаясь здесь

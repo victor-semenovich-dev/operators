@@ -15,9 +15,7 @@ class _SettingsRouteState extends State<SettingsRoute> {
   void initState() {
     super.initState();
     _telegramApiKeyController = TextEditingController(
-      text: preferences
-          .getString('telegram_bot_api_key', defaultValue: '')
-          .getValue(),
+      text: preferences.getValue<String>('telegram_bot_api_key', ''),
     );
   }
 

@@ -1,17 +1,18 @@
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
-import 'dart:js_util' as js_util;
+import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
+import 'package:web/web.dart' as web;
 
 bool isPwaStandalone() {
   // Проверка стандартного медиа-запроса (Android/Desktop)
   final isStandalone =
-      html.window.matchMedia('(display-mode: standalone)').matches == true;
+      web.window.matchMedia('(display-mode: standalone)').matches;
 
   // Безопасная проверка свойства 'standalone' для iOS Safari
-  final navigator = html.window.navigator;
+  final navigator = web.window.navigator;
   bool isIosStandalone = false;
-  if (js_util.hasProperty(navigator, 'standalone')) {
-    isIosStandalone = js_util.getProperty(navigator, 'standalone') == true;
+  if (navigator.hasProperty('standalone'.toJS).toDart) {
+    isIosStandalone =
+        (navigator.getProperty('standalone'.toJS) as JSBoolean).toDart;
   }
 
   return isStandalone || isIosStandalone;

@@ -27,9 +27,9 @@ class StateButton extends StatelessWidget {
       opacity: onClick == null ? 0.5 : 1.0,
       child: ElevatedButton(
         style: ButtonStyle(
-          padding: MaterialStateProperty.all(
+          padding: WidgetStateProperty.all(
               const EdgeInsets.symmetric(vertical: 32, horizontal: 16)),
-          backgroundColor: MaterialStateProperty.all(backgroundColor),
+          backgroundColor: WidgetStateProperty.all(backgroundColor),
         ),
         onPressed: onClick,
         child: Text(

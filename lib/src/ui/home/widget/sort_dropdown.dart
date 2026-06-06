@@ -54,10 +54,10 @@ class SortDropdown extends StatelessWidget {
             borderRadius: BorderRadius.circular(24),
           ),
           overlayColor: kIsWeb
-              ? MaterialStateProperty.resolveWith((states) {
-                  if (states.contains(MaterialState.hovered) ||
-                      states.contains(MaterialState.pressed)) {
-                    return Colors.black.withOpacity(0.03);
+              ? WidgetStateProperty.resolveWith((states) {
+                  if (states.contains(WidgetState.hovered) ||
+                      states.contains(WidgetState.pressed)) {
+                    return Colors.black.withValues(alpha: 0.03);
                   }
                   return Colors.transparent;
                 })

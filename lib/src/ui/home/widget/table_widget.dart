@@ -20,7 +20,7 @@ class TableWidget extends StatelessWidget {
   final Function(TableUser user, TableEvent event) onToggleCanHelp;
   final Function(TableUser user, TableEvent event, Role? role) onRoleSelected;
   final Function(TableUser user, TableEvent event, bool? canHelp)
-      onCanHelpSelected;
+  onCanHelpSelected;
   final Function(TableEvent event) onCancelAppointmentsClick;
   final Function(TableEvent event) onNotificationClick;
   final Function(TableEvent event) onRefreshClick;
@@ -49,10 +49,14 @@ class TableWidget extends StatelessWidget {
     }
 
     var rows = <Widget>[];
-    final dividerWidget =
-        Container(width: double.infinity, height: 1, color: Colors.black);
-    final users =
-        state.showAllUsers ? state.sortedAllUsers : state.sortedTableUsers;
+    final dividerWidget = Container(
+      width: double.infinity,
+      height: 1,
+      color: Colors.black,
+    );
+    final users = state.showAllUsers
+        ? state.sortedAllUsers
+        : state.sortedTableUsers;
     users.forEach((user) {
       rows
         ..add(_userRow(context, tableData, user))
@@ -66,9 +70,7 @@ class TableWidget extends StatelessWidget {
         Expanded(
           child: SingleChildScrollView(
             physics: ClampingScrollPhysics(),
-            child: AdvancedSafeArea(
-              child: Column(children: rows),
-            ),
+            child: AdvancedSafeArea(child: Column(children: rows)),
           ),
         ),
       ],
@@ -79,33 +81,36 @@ class TableWidget extends StatelessWidget {
     List<Widget> children = <Widget>[];
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
-        children.add(Expanded(
-          flex: 3,
-          child: Container(
-            color: COLOR_GREY,
-            width: double.infinity,
-            height: ROW_HEIGHT,
-            child: FutureBuilder<PackageInfo>(
-              future: PackageInfo.fromPlatform(),
-              builder: (context, snapshot) {
-                final packageInfo = snapshot.data;
-                if (packageInfo != null) {
-                  return Center(
-                    child: Text(
-                      'v${packageInfo.version} (${packageInfo.buildNumber})',
-                    ),
-                  );
-                } else {
-                  return Container();
-                }
-              },
+        children.add(
+          Expanded(
+            flex: 3,
+            child: Container(
+              color: COLOR_GREY,
+              width: double.infinity,
+              height: ROW_HEIGHT,
+              child: FutureBuilder<PackageInfo>(
+                future: PackageInfo.fromPlatform(),
+                builder: (context, snapshot) {
+                  final packageInfo = snapshot.data;
+                  if (packageInfo != null) {
+                    return Center(
+                      child: Text(
+                        'v${packageInfo.version} (${packageInfo.buildNumber})',
+                      ),
+                    );
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
             ),
           ),
-        ));
+        );
       } else {
         TableEvent event = tableData.events[i - 1];
-        children
-            .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
+        children.add(
+          Container(width: 1, height: ROW_HEIGHT, color: Colors.black),
+        );
         final baseWidget = Container(
           color: COLOR_GREY,
           width: double.infinity,
@@ -124,40 +129,41 @@ class TableWidget extends StatelessWidget {
         );
         children.add(
           Expanded(
-              flex: 2,
-              child: state.isAdmin
-                  ? FocusedMenuHolder(
-                      child: baseWidget,
-                      onPressed: () {},
-                      menuItems: [
-                        FocusedMenuItem(
-                          title: Text('Уведомление: участие'),
-                          onPressed: () => onNotificationClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Отменить назначение'),
-                          onPressed: () => onCancelAppointmentsClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Обновить таблицу'),
-                          onPressed: () => onRefreshClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Редактировать'),
-                          onPressed: () => onEditClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Скрыть'),
-                          onPressed: () => onHideClick(event),
-                        ),
-                        FocusedMenuItem(
-                          title: Text('Удалить'),
-                          onPressed: () => onDeleteClick(event),
-                        ),
-                      ],
-                      menuWidth: MediaQuery.of(context).size.width * 0.50,
-                    )
-                  : baseWidget),
+            flex: 2,
+            child: state.isAdmin
+                ? FocusedMenuHolder(
+                    child: baseWidget,
+                    onPressed: () {},
+                    menuItems: [
+                      FocusedMenuItem(
+                        title: Text('Уведомление: участие'),
+                        onPressed: () => onNotificationClick(event),
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Отменить назначение'),
+                        onPressed: () => onCancelAppointmentsClick(event),
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Обновить таблицу'),
+                        onPressed: () => onRefreshClick(event),
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Редактировать'),
+                        onPressed: () => onEditClick(event),
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Скрыть'),
+                        onPressed: () => onHideClick(event),
+                      ),
+                      FocusedMenuItem(
+                        title: Text('Удалить'),
+                        onPressed: () => onDeleteClick(event),
+                      ),
+                    ],
+                    menuWidth: MediaQuery.of(context).size.width * 0.50,
+                  )
+                : baseWidget,
+          ),
         );
       }
     }
@@ -168,59 +174,65 @@ class TableWidget extends StatelessWidget {
     List<Widget> children = <Widget>[];
     List<Rating> rating = context.read<HomeCubit>().getRating(user);
     Rating? pcRating = rating.firstWhereOrNull((r) => r.role == Role.PC);
-    Rating? cameraRating =
-        rating.firstWhereOrNull((r) => r.role == Role.CAMERA);
+    Rating? cameraRating = rating.firstWhereOrNull(
+      (r) => r.role == Role.CAMERA,
+    );
     for (int i = 0; i <= tableData.events.length; i++) {
       if (i == 0) {
-        children.add(Expanded(
-          flex: 3,
-          child: Container(
-            color: COLOR_GREY,
-            width: double.infinity,
-            height: ROW_HEIGHT,
-            child: Stack(
-              children: [
-                Center(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    child: Text(
-                      user.name,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: user.isActive ? Colors.black : Colors.black38,
+        children.add(
+          Expanded(
+            flex: 3,
+            child: Container(
+              color: COLOR_GREY,
+              width: double.infinity,
+              height: ROW_HEIGHT,
+              child: Stack(
+                children: [
+                  Center(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                      child: Text(
+                        user.name,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: context.read<HomeCubit>().isUserActive(user)
+                              ? Colors.black
+                              : Colors.black38,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                if (user.roles.contains(Role.PC))
-                  Align(
-                    alignment: Alignment.topLeft,
-                    child: roleToWidget(Role.PC, 4, 0),
-                  ),
-                if (pcRating != null)
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: _ratingWidget(pcRating),
-                  ),
-                if (user.roles.contains(Role.CAMERA))
-                  Align(
-                    alignment: Alignment.bottomLeft,
-                    child: roleToWidget(Role.CAMERA, 4, 0),
-                  ),
-                if (cameraRating != null)
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: _ratingWidget(cameraRating),
-                  ),
-              ],
+                  if (user.roles.contains(Role.PC))
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: roleToWidget(Role.PC, 4, 0),
+                    ),
+                  if (pcRating != null)
+                    Align(
+                      alignment: Alignment.topRight,
+                      child: _ratingWidget(pcRating),
+                    ),
+                  if (user.roles.contains(Role.CAMERA))
+                    Align(
+                      alignment: Alignment.bottomLeft,
+                      child: roleToWidget(Role.CAMERA, 4, 0),
+                    ),
+                  if (cameraRating != null)
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: _ratingWidget(cameraRating),
+                    ),
+                ],
+              ),
             ),
           ),
-        ));
+        );
       } else {
         TableEvent event = tableData.events[i - 1];
-        children
-            .add(Container(width: 1, height: ROW_HEIGHT, color: Colors.black));
+        children.add(
+          Container(width: 1, height: ROW_HEIGHT, color: Colors.black),
+        );
         var color = Colors.white;
         if (event.state.containsKey(user.id)) {
           if (event.state[user.id]?.role == null) {
@@ -242,20 +254,20 @@ class TableWidget extends StatelessWidget {
               );
             } else if (state.currentFirebaseUser?.uid == user.uid) {
               if (event.state[user.id]?.role != null) {
-                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text(
-                    'Нельзя изменить отметку после назначения',
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Нельзя изменить отметку после назначения'),
                   ),
-                ));
+                );
               } else {
                 onToggleCanHelp(user, event);
               }
             } else {
-              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                content: Text(
-                  'Можно отмечаться только в своих ячейках',
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Можно отмечаться только в своих ячейках'),
                 ),
-              ));
+              );
             }
           },
           child: Container(
@@ -323,7 +335,11 @@ class TableWidget extends StatelessWidget {
   }
 
   Widget _getChildWidget(
-      BuildContext context, TableUser user, TableEvent event, bool isAdmin) {
+    BuildContext context,
+    TableUser user,
+    TableEvent event,
+    bool isAdmin,
+  ) {
     if (event.state[user.id]?.role == null) {
       final canHelpDateTime = event.state[user.id]?.canHelpDateTime;
       return canHelpDateTime == null || !isAdmin
@@ -369,7 +385,10 @@ class TableWidget extends StatelessWidget {
 class MyBehavior extends ScrollBehavior {
   @override
   Widget buildOverscrollIndicator(
-      BuildContext context, Widget child, ScrollableDetails details) {
+    BuildContext context,
+    Widget child,
+    ScrollableDetails details,
+  ) {
     return child;
   }
 }

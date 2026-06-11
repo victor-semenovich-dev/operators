@@ -56,17 +56,33 @@ class TableRepository {
     );
 
     final events = allEvents
-        .where((event) =>
-            event.isActive || _forcedVisibleEventIds.contains(event.id))
+        .where(
+          (event) =>
+              event.isActive || _forcedVisibleEventIds.contains(event.id),
+        )
         .toList();
     events.sort((e1, e2) => e1.date.compareTo(e2.date));
 
-    final users = allUsers.where((user) => user.isActive).toList();
+    _eventsSubject.add(allEvents);
+    _usersSubject.add(allUsers);
+
+    final users = allUsers.where((user) => isUserActive(user)).toList();
     users.sort((u1, u2) => u1.name.compareTo(u2.name));
 
     _tableSubject.add(TableData(events: events, users: users));
-    _eventsSubject.add(allEvents);
-    _usersSubject.add(allUsers);
+  }
+
+  bool isUserActive(TableUser user) {
+    List<TableEvent> events = _eventsSubject.value;
+    for (var e in events) {
+      if (e.date.isAfter(DateTime.now().subtract(Duration(days: 31)))) {
+        EventUserState? state = e.state[user.id];
+        if (state?.canHelp == true) {
+          return true;
+        }
+      }
+    }
+    return false;
   }
 
   void setForcedVisibleEvents(List<TableEvent> events) {
@@ -86,14 +102,22 @@ class TableRepository {
       newValue = true;
     }
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(newValue);
-    _dbRef.child('events/${event.id}/state/${user.id}/canHelpDateTime').set(
-        newValue == null ? null : formatDateTimeMinutes.format(DateTime.now()));
+    _dbRef
+        .child('events/${event.id}/state/${user.id}/canHelpDateTime')
+        .set(
+          newValue == null
+              ? null
+              : formatDateTimeMinutes.format(DateTime.now()),
+        );
   }
 
   void setRole(int userId, int eventId, Role? role) {
     _dbRef.child('events/$eventId/state/$userId/role').set(roleToString(role));
-    _dbRef.child('events/$eventId/state/$userId/roleDateTime').set(
-        role == null ? null : formatDateTimeMinutes.format(DateTime.now()));
+    _dbRef
+        .child('events/$eventId/state/$userId/roleDateTime')
+        .set(
+          role == null ? null : formatDateTimeMinutes.format(DateTime.now()),
+        );
   }
 
   void setCanHelp(TableUser user, TableEvent event, bool? canHelp) {
@@ -160,14 +184,12 @@ class TableRepository {
           .cast();
     }
 
-    bool isActive = userData['isActive'] != false;
     return TableUser(
       id: id,
       name: name,
       shortName: shortName,
       uid: uid,
       roles: roles,
-      isActive: isActive,
       telegram: telegram,
     );
   }
@@ -186,7 +208,12 @@ class TableRepository {
       );
     }
     return TableEvent(
-        id: id, title: title, date: date, isActive: isActive, state: state);
+      id: id,
+      title: title,
+      date: date,
+      isActive: isActive,
+      state: state,
+    );
   }
 
   static EventUserState _parseEventUserState(Map data) {
@@ -221,14 +248,24 @@ class TableRepository {
         for (int i = 0; i < data.length; i++) {
           if (data[i] != null) {
             _parseSnapshotItem(
-                i, data[i], parseItem, processItem, preParseCondition);
+              i,
+              data[i],
+              parseItem,
+              processItem,
+              preParseCondition,
+            );
           }
         }
       } else if (data is Map) {
         for (String key in data.keys) {
           int id = int.parse(key);
           _parseSnapshotItem(
-              id, data[key], parseItem, processItem, preParseCondition);
+            id,
+            data[key],
+            parseItem,
+            processItem,
+            preParseCondition,
+          );
         }
       }
     } catch (e, stacktrace) {

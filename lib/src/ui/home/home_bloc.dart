@@ -33,11 +33,15 @@ class HomeCubit extends Cubit<HomeState> {
   late StreamSubscription _telegramConfigsSubscription;
   late StreamSubscription _messagesSubscription;
 
-  HomeCubit(this.authRepository, this.tableRepository, this.eventsRepository,
-      this.telegramRepository)
-      : super(HomeState()) {
-    _firebaseUserSubscription =
-        authRepository.userStream.listen((firebaseUser) {
+  HomeCubit(
+    this.authRepository,
+    this.tableRepository,
+    this.eventsRepository,
+    this.telegramRepository,
+  ) : super(HomeState()) {
+    _firebaseUserSubscription = authRepository.userStream.listen((
+      firebaseUser,
+    ) {
       emit(state.copyWith(currentFirebaseUser: firebaseUser));
     });
     _tableDataSubscription = tableRepository.tableStream.listen((tableData) {
@@ -55,12 +59,13 @@ class HomeCubit extends Cubit<HomeState> {
       emit(state.copyWith(allUsers: users));
       _sortUsers();
     });
-    _telegramConfigsSubscription =
-        telegramRepository.telegramConfigsStream.listen((telegramConfigs) {
-      emit(state.copyWith(telegramConfigs: telegramConfigs));
-    });
-    _messagesSubscription =
-        telegramRepository.messagesStream.listen((messages) {
+    _telegramConfigsSubscription = telegramRepository.telegramConfigsStream
+        .listen((telegramConfigs) {
+          emit(state.copyWith(telegramConfigs: telegramConfigs));
+        });
+    _messagesSubscription = telegramRepository.messagesStream.listen((
+      messages,
+    ) {
       emit(state.copyWith(messages: messages));
     });
   }
@@ -75,6 +80,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   void onCanHelpSelected(TableUser user, TableEvent event, bool? canHelp) {
     tableRepository.setCanHelp(user, event, canHelp);
+  }
+
+  bool isUserActive(TableUser user) {
+    return tableRepository.isUserActive(user);
   }
 
   List<Rating> _getRating(TableUser user, DateTime dateTime) {
@@ -142,8 +151,10 @@ class HomeCubit extends Cubit<HomeState> {
       emit(
         state.copyWith(
           sortedTableUsers: users.sortedByCompare((user) => user, comparator),
-          sortedAllUsers:
-              state.allUsers.sortedByCompare((user) => user, comparator),
+          sortedAllUsers: state.allUsers.sortedByCompare(
+            (user) => user,
+            comparator,
+          ),
         ),
       );
     }
@@ -165,10 +176,12 @@ class HomeCubit extends Cubit<HomeState> {
     Role role, {
     DateTime? dateTime,
   }) {
-    final rating1 =
-        dateTime == null ? getRating(user1) : _getRating(user1, dateTime);
-    final rating2 =
-        dateTime == null ? getRating(user2) : _getRating(user2, dateTime);
+    final rating1 = dateTime == null
+        ? getRating(user1)
+        : _getRating(user1, dateTime);
+    final rating2 = dateTime == null
+        ? getRating(user2)
+        : _getRating(user2, dateTime);
     final rating1Value = _getValue(rating1, role);
     final rating2Value = _getValue(rating2, role);
     final lastDate1 = _getLastDate(rating1, role);
@@ -245,7 +258,7 @@ class HomeCubit extends Cubit<HomeState> {
         }
         final userName =
             allUsers.firstWhereOrNull((user) => user.id == entry.key)?.name ??
-                '?';
+            '?';
         final roleStr = roleToReadableString(entry.value.role) ?? '?';
         buffer.write('$userName - $roleStr');
         isFirst = false;
@@ -259,23 +272,35 @@ class HomeCubit extends Cubit<HomeState> {
       final requestList = telegramConfigs.map((config) {
         if (config.messageThreadId == null) {
           return telegramRepository.sendMessageToTelegramChat(
-              message, config.chatId);
+            message,
+            config.chatId,
+          );
         } else {
           return telegramRepository.sendMessageToTelegramChatThread(
-              message, config.chatId, config.messageThreadId!);
+            message,
+            config.chatId,
+            config.messageThreadId!,
+          );
         }
       });
       final resultList = await Future.wait(requestList);
       if (resultList.every((success) => success)) {
-        emit(state.copyWith(
-            sendNotificationResult: SendNotificationResult.SUCCESS));
+        emit(
+          state.copyWith(
+            sendNotificationResult: SendNotificationResult.SUCCESS,
+          ),
+        );
       } else {
-        emit(state.copyWith(
-            sendNotificationResult: SendNotificationResult.FAILURE));
+        emit(
+          state.copyWith(
+            sendNotificationResult: SendNotificationResult.FAILURE,
+          ),
+        );
       }
     } catch (e) {
-      emit(state.copyWith(
-          sendNotificationResult: SendNotificationResult.FAILURE));
+      emit(
+        state.copyWith(sendNotificationResult: SendNotificationResult.FAILURE),
+      );
     }
   }
 
@@ -325,8 +350,10 @@ class HomeCubit extends Cubit<HomeState> {
 
   void updateEvents({DateTime? dateTimeFrom}) async {
     emit(state.copyWith(syncInProgress: true));
-    final result = await SyncEventsUseCase(eventsRepository, tableRepository)
-        .perform(dateTime: dateTimeFrom);
+    final result = await SyncEventsUseCase(
+      eventsRepository,
+      tableRepository,
+    ).perform(dateTime: dateTimeFrom);
     emit(state.copyWith(syncInProgress: false, syncResult: result));
   }
 
@@ -395,8 +422,9 @@ class HomeState with _$HomeState {
 
   bool get isLoggedIn => currentFirebaseUser != null;
 
-  TableUser? get currentUser => tableData?.users
-      .firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
+  TableUser? get currentUser => tableData?.users.firstWhereOrNull(
+    (user) => user.uid == currentFirebaseUser?.uid,
+  );
 
   bool get showIntercomOption =>
       currentUser?.roles.contains(Role.CAMERA) == true;

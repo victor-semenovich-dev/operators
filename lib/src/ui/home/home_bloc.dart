@@ -43,6 +43,7 @@ class HomeCubit extends Cubit<HomeState> {
       firebaseUser,
     ) {
       emit(state.copyWith(currentFirebaseUser: firebaseUser));
+      _sortUsers();
     });
     _tableDataSubscription = tableRepository.tableStream.listen((tableData) {
       emit(state.copyWith(tableData: tableData));
@@ -127,6 +128,10 @@ class HomeCubit extends Cubit<HomeState> {
     final tableData = state.tableData;
     if (tableData != null) {
       final users = tableData.users;
+      final currentUser = state.currentUser;
+      if (currentUser != null && !users.contains(currentUser)) {
+        users.add(currentUser);
+      }
 
       int Function(TableUser, TableUser) comparator;
 
@@ -422,9 +427,8 @@ class HomeState with _$HomeState {
 
   bool get isLoggedIn => currentFirebaseUser != null;
 
-  TableUser? get currentUser => tableData?.users.firstWhereOrNull(
-    (user) => user.uid == currentFirebaseUser?.uid,
-  );
+  TableUser? get currentUser =>
+      allUsers.firstWhereOrNull((user) => user.uid == currentFirebaseUser?.uid);
 
   bool get showIntercomOption =>
       currentUser?.roles.contains(Role.CAMERA) == true;

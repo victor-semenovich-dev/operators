@@ -233,16 +233,38 @@ class TableWidget extends StatelessWidget {
         children.add(
           Container(width: 1, height: ROW_HEIGHT, color: Colors.black),
         );
-        var color = Colors.white;
-        if (event.state.containsKey(user.id)) {
-          if (event.state[user.id]?.role == null) {
-            if (event.state[user.id]?.canHelp == true) {
+        final userState = event.state[user.id];
+        final matchesRequirements =
+            event.required == null ||
+            user.roles.any((role) => event.required!.containsKey(role));
+
+        Color color;
+        if (userState?.role != null) {
+          color = Colors.blue;
+        } else {
+          if (matchesRequirements) {
+            if (userState?.canHelp == true) {
               color = Colors.green;
-            } else if (event.state[user.id]?.canHelp == false) {
+            } else if (userState?.canHelp == false) {
               color = Colors.red[400]!;
+            } else {
+              color = Colors.white;
             }
           } else {
-            color = Colors.blue;
+            // Не подходит под требования: используем COLOR_GREY как подложку
+            if (userState?.canHelp == true) {
+              color = Color.alphaBlend(
+                Colors.green.withValues(alpha: 0.5),
+                COLOR_GREY,
+              );
+            } else if (userState?.canHelp == false) {
+              color = Color.alphaBlend(
+                Colors.red[400]!.withValues(alpha: 0.5),
+                COLOR_GREY,
+              );
+            } else {
+              color = COLOR_GREY;
+            }
           }
         }
         final itemWidget = GestureDetector(

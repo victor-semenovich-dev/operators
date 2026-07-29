@@ -282,6 +282,15 @@ class TableWidget extends StatelessWidget {
                   ),
                 );
               } else {
+                if (!matchesRequirements && userState == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Ваше участие не требуется для этого служения, но вы всё равно можете отметиться',
+                      ),
+                    ),
+                  );
+                }
                 onToggleCanHelp(user, event);
               }
             } else {

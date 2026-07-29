@@ -145,6 +145,9 @@ class TableRepository {
 
   void setCanHelp(TableUser user, TableEvent event, bool? canHelp) {
     _dbRef.child('events/${event.id}/state/${user.id}/canHelp').set(canHelp);
+    _dbRef
+        .child('events/${event.id}/state/${user.id}/canHelpDateTime')
+        .set(null);
   }
 
   Future<void> addOrUpdateEvent(DateTime date, String title) async {

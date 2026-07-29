@@ -353,12 +353,12 @@ class HomeCubit extends Cubit<HomeState> {
     emit(state.copyWith(isResetPasswordCompleted: false));
   }
 
-  void updateEvents({DateTime? dateTimeFrom}) async {
+  void updateEvents() async {
     emit(state.copyWith(syncInProgress: true));
     final result = await SyncEventsUseCase(
       eventsRepository,
       tableRepository,
-    ).perform(dateTime: dateTimeFrom);
+    ).perform();
     emit(state.copyWith(syncInProgress: false, syncResult: result));
   }
 

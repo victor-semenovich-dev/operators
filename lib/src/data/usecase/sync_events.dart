@@ -9,19 +9,21 @@ class SyncEventsUseCase {
 
   SyncEventsUseCase(this.eventsRepository, this.tableRepository);
 
-  Future<SyncResult> perform({DateTime? dateTime}) async {
-    final dateTimeFrom = dateTime ?? DateTime.now();
+  Future<SyncResult> perform() async {
+    final dateTimeFrom = DateTime.now();
     int deleted = 0;
     int hidden = 0;
     int added = 0;
     int updated = 0;
     try {
       final futureEvents =
-          (await eventsRepository.loadFutureEvents(dateTime: dateTimeFrom))
-              .where((e) {
-        final difference = e.date.difference(dateTimeFrom);
-        return difference > Duration.zero && difference <= Duration(days: 7);
-      });
+          (await eventsRepository.loadFutureEvents(
+            dateTime: dateTimeFrom,
+          )).where((e) {
+            final difference = e.date.difference(dateTimeFrom);
+            return difference > Duration.zero &&
+                difference <= Duration(days: 7);
+          });
       final allTableEvents = await tableRepository.eventsStream.first;
 
       for (final event in allTableEvents) {
@@ -48,7 +50,9 @@ class SyncEventsUseCase {
         if (tableEvent == null) {
           debugPrint('add event: ${futureEvent.title}');
           await tableRepository.addOrUpdateEvent(
-              futureEvent.date, futureEvent.title);
+            futureEvent.date,
+            futureEvent.title,
+          );
           added++;
         } else {
           debugPrint('update event: ${futureEvent.title}');
@@ -57,7 +61,11 @@ class SyncEventsUseCase {
         }
       }
       return SyncResult(
-          deleted: deleted, hidden: hidden, added: added, updated: updated);
+        deleted: deleted,
+        hidden: hidden,
+        added: added,
+        updated: updated,
+      );
     } catch (e) {
       return SyncResult(
         deleted: deleted,

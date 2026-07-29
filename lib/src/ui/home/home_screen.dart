@@ -20,26 +20,28 @@ class HomeScreen extends StatelessWidget {
         final cubit = context.read<HomeCubit>();
 
         if (state.isResetPasswordCompleted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text('Письмо со сбросом пароля отправлено на почту'),
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Письмо со сбросом пароля отправлено на почту'),
+            ),
+          );
           cubit.consumeResetPasswordState();
         }
 
-        final sendNotificationResult =
-            cubit.getNotificationResultReadableText();
+        final sendNotificationResult = cubit
+            .getNotificationResultReadableText();
         if (sendNotificationResult != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(sendNotificationResult),
-          ));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(sendNotificationResult)));
           cubit.consumeSendNotificationResult();
         }
 
         final syncResult = cubit.getSyncResultText();
         if (syncResult != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(syncResult),
-          ));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(syncResult)));
           cubit.consumeSyncEventsResult();
         }
       },
@@ -50,8 +52,8 @@ class HomeScreen extends StatelessWidget {
             title: !state.isLoggedIn
                 ? Text('Только просмотр')
                 : state.currentUser == null
-                    ? Container()
-                    : Text(state.currentUser?.name ?? ''),
+                ? Container()
+                : Text(state.currentUser?.name ?? ''),
             actions: [
               if (state.showIntercomOption)
                 IconButton(
@@ -59,9 +61,8 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => IntercomRoute(
-                          user: state.currentUser,
-                        ),
+                        builder: (context) =>
+                            IntercomRoute(user: state.currentUser),
                       ),
                     );
                   },
@@ -193,9 +194,11 @@ class HomeScreen extends StatelessWidget {
                       if (state.isAdmin)
                         PopupMenuItem<String>(
                           value: 'toggle_inactive_users',
-                          child: Text(state.showAllUsers
-                              ? 'Скрыть неактивных пользователей'
-                              : 'Показать всех пользователей'),
+                          child: Text(
+                            state.showAllUsers
+                                ? 'Скрыть неактивных пользователей'
+                                : 'Показать всех пользователей',
+                          ),
                         ),
                       if (state.isAdmin)
                         PopupMenuItem<String>(
@@ -217,7 +220,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ];
                   },
-                )
+                ),
             ],
           ),
           body: TableWidget(
@@ -239,9 +242,6 @@ class HomeScreen extends StatelessWidget {
                   },
                 ),
               );
-            },
-            onRefreshClick: (event) {
-              cubit.updateEvents(dateTimeFrom: event.date);
             },
             onEditClick: (event) {
               showDialog(

@@ -23,7 +23,6 @@ class TableWidget extends StatelessWidget {
   onCanHelpSelected;
   final Function(TableEvent event) onCancelAppointmentsClick;
   final Function(TableEvent event) onNotificationClick;
-  final Function(TableEvent event) onRefreshClick;
   final Function(TableEvent event) onEditClick;
   final Function(TableEvent event) onHideClick;
   final Function(TableEvent event) onDeleteClick;
@@ -35,7 +34,6 @@ class TableWidget extends StatelessWidget {
     required this.onCanHelpSelected,
     required this.onCancelAppointmentsClick,
     required this.onNotificationClick,
-    required this.onRefreshClick,
     required this.onEditClick,
     required this.onHideClick,
     required this.onDeleteClick,
@@ -142,10 +140,6 @@ class TableWidget extends StatelessWidget {
                       FocusedMenuItem(
                         title: Text('Отменить назначение'),
                         onPressed: () => onCancelAppointmentsClick(event),
-                      ),
-                      FocusedMenuItem(
-                        title: Text('Обновить таблицу'),
-                        onPressed: () => onRefreshClick(event),
                       ),
                       FocusedMenuItem(
                         title: Text('Редактировать'),

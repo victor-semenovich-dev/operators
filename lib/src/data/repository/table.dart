@@ -78,7 +78,12 @@ class TableRepository {
       if (e.date.isAfter(DateTime.now().subtract(Duration(days: 31)))) {
         EventUserState? state = e.state[user.id];
         if (state?.canHelp == true) {
-          return true;
+          final matchesRequirements =
+              e.required == null ||
+              user.roles.any((role) => e.required!.containsKey(role));
+          if (matchesRequirements) {
+            return true;
+          }
         }
       }
     }

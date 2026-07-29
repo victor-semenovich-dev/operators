@@ -127,7 +127,7 @@ class HomeCubit extends Cubit<HomeState> {
   void _sortUsers() {
     final tableData = state.tableData;
     if (tableData != null) {
-      final users = tableData.users;
+      final users = List<TableUser>.from(tableData.users);
       final currentUser = state.currentUser;
       if (currentUser != null && !users.contains(currentUser)) {
         users.add(currentUser);

@@ -1,12 +1,8 @@
-import 'package:chopper/chopper.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:intl/intl.dart';
 import 'package:logging/logging.dart' as logging;
 import 'package:operators/src/data/model/event.dart';
-import 'package:operators/src/data/remote/converter/converter.dart';
-import 'package:operators/src/data/remote/dto/event.dart';
-import 'package:operators/src/data/remote/service/events.dart';
 
 class EventsRepository {
   EventsRepository() {
@@ -17,68 +13,48 @@ class EventsRepository {
     initializeDateFormatting();
   }
 
-  final _chopper = ChopperClient(
-    baseUrl: Uri.parse('http://api.geth.by'),
-    services: [EventsService.create()],
-    converter: JsonSerializableConverter({
-      EventDTO: EventDTO.fromJsonFactory,
-    }),
-    interceptors: [HttpLoggingInterceptor()],
-  );
-
   Future<List<Event>> loadFutureEvents({DateTime? dateTime}) async {
     final dateTimeFrom = dateTime ?? DateTime.now();
-    if (kIsWeb) {
-      DateTime thursday = dateTimeFrom.copyWith(
-        day: dateTimeFrom.day + (DateTime.thursday - dateTimeFrom.weekday),
-        hour: 19,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-        microsecond: 0,
-      );
-      DateTime sundayMorning = dateTimeFrom.copyWith(
-        day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
-        hour: 10,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-        microsecond: 0,
-      );
-      DateTime sundayEvening = dateTimeFrom.copyWith(
-        day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
-        hour: 18,
-        minute: 0,
-        second: 0,
-        millisecond: 0,
-        microsecond: 0,
-      );
-      if (thursday.isBefore(dateTimeFrom)) {
-        thursday = thursday.copyWith(day: thursday.day + 7);
-      }
-      if (sundayMorning.isBefore(dateTimeFrom)) {
-        sundayMorning = sundayMorning.copyWith(day: sundayMorning.day + 7);
-      }
-      if (sundayEvening.isBefore(dateTimeFrom)) {
-        sundayEvening = sundayEvening.copyWith(day: sundayEvening.day + 7);
-      }
-      final eventsList = [
-        Event(0, _formatDate(thursday), thursday),
-        Event(0, _formatDate(sundayMorning), sundayMorning),
-        Event(0, _formatDate(sundayEvening), sundayEvening),
-      ];
-      eventsList.sort((a, b) => a.date.compareTo(b.date));
-      return eventsList;
-    } else {
-      final eventsService = _chopper.getService<EventsService>();
-      final eventsResponse = await eventsService.getEvents();
-      final eventsList = eventsResponse.body;
-      return eventsList!
-          .where((e) => e.category == CategoryDTO.WORSHIP)
-          .map((e) {
-        return Event(e.id, _formatDate(e.date), e.date);
-      }).toList();
+    DateTime thursday = dateTimeFrom.copyWith(
+      day: dateTimeFrom.day + (DateTime.thursday - dateTimeFrom.weekday),
+      hour: 19,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+    DateTime sundayMorning = dateTimeFrom.copyWith(
+      day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
+      hour: 10,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+    DateTime sundayEvening = dateTimeFrom.copyWith(
+      day: dateTimeFrom.day + (DateTime.sunday - dateTimeFrom.weekday),
+      hour: 18,
+      minute: 0,
+      second: 0,
+      millisecond: 0,
+      microsecond: 0,
+    );
+    if (thursday.isBefore(dateTimeFrom)) {
+      thursday = thursday.copyWith(day: thursday.day + 7);
     }
+    if (sundayMorning.isBefore(dateTimeFrom)) {
+      sundayMorning = sundayMorning.copyWith(day: sundayMorning.day + 7);
+    }
+    if (sundayEvening.isBefore(dateTimeFrom)) {
+      sundayEvening = sundayEvening.copyWith(day: sundayEvening.day + 7);
+    }
+    final eventsList = [
+      Event(0, _formatDate(thursday), thursday),
+      Event(0, _formatDate(sundayMorning), sundayMorning),
+      Event(0, _formatDate(sundayEvening), sundayEvening),
+    ];
+    eventsList.sort((a, b) => a.date.compareTo(b.date));
+    return eventsList;
   }
 
   String _formatDate(DateTime date) {

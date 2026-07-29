@@ -207,12 +207,26 @@ class TableRepository {
         processItem: (id, item) => state[id] = item,
       );
     }
+
+    Map<Role, int>? required;
+    if (eventData.containsKey('required')) {
+      required = {};
+      Map requiredData = eventData['required'];
+      requiredData.forEach((key, value) {
+        Role? role = stringToRole(key);
+        if (role != null) {
+          required![role] = value;
+        }
+      });
+    }
+
     return TableEvent(
       id: id,
       title: title,
       date: date,
       isActive: isActive,
       state: state,
+      required: required,
     );
   }
 

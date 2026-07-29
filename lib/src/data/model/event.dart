@@ -19,17 +19,20 @@ class TableEvent {
   final DateTime date;
   final bool isActive;
   final Map<int, EventUserState> state;
+  final Map<Role, int>? required;
 
-  const TableEvent(
-      {required this.id,
-      required this.title,
-      required this.date,
-      required this.isActive,
-      required this.state});
+  const TableEvent({
+    required this.id,
+    required this.title,
+    required this.date,
+    required this.isActive,
+    required this.state,
+    this.required,
+  });
 
   @override
   String toString() {
-    return 'TableEvent{id: $id, title: $title, date: $date, isActive: $isActive, state: $state}';
+    return 'TableEvent{id: $id, title: $title, date: $date, isActive: $isActive, state: $state, required: $required}';
   }
 }
 

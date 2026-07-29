@@ -18,6 +18,9 @@ class TableRepository {
   final _usersSubject = BehaviorSubject<List<TableUser>>();
   late Stream<List<TableUser>> usersStream = _usersSubject.stream;
 
+  final _scheduleSubject = BehaviorSubject<List<ScheduleItem>>();
+  late Stream<List<ScheduleItem>> scheduleStream = _scheduleSubject.stream;
+
   List<int> _forcedVisibleEventIds = [];
 
   TableRepository() {
@@ -37,9 +40,11 @@ class TableRepository {
     final snapshot = event.snapshot;
     final eventsData = snapshot.child('events').value;
     final usersData = snapshot.child('users').value;
+    final scheduleData = snapshot.child('schedule').value;
 
     final allUsers = <TableUser>[];
     final allEvents = <TableEvent>[];
+    final schedule = <ScheduleItem>[];
 
     _parseSnapshotData(
       data: usersData,
@@ -55,6 +60,18 @@ class TableRepository {
       processItem: (id, item) => allEvents.add(item),
     );
 
+    if (scheduleData is List) {
+      for (int i = 0; i < scheduleData.length; i++) {
+        if (scheduleData[i] != null) {
+          schedule.add(_parseScheduleItem(scheduleData[i]));
+        }
+      }
+    }
+    final now = DateTime.now();
+    print(
+      'Generated from schedule: ${schedule.map((e) => e.toTableEvent(0, now)).toList()}',
+    );
+
     final events = allEvents
         .where(
           (event) =>
@@ -65,6 +82,7 @@ class TableRepository {
 
     _eventsSubject.add(allEvents);
     _usersSubject.add(allUsers);
+    _scheduleSubject.add(schedule);
 
     final users = allUsers.where((user) => isUserActive(user)).toList();
     users.sort((u1, u2) => u1.name.compareTo(u2.name));
@@ -196,6 +214,27 @@ class TableRepository {
       uid: uid,
       roles: roles,
       telegram: telegram,
+    );
+  }
+
+  static ScheduleItem _parseScheduleItem(Map data) {
+    Map<Role, int>? required;
+    if (data.containsKey('required')) {
+      required = {};
+      Map requiredData = data['required'];
+      requiredData.forEach((key, value) {
+        Role? role = stringToRole(key);
+        if (role != null) {
+          required![role] = value;
+        }
+      });
+    }
+
+    return ScheduleItem(
+      day: data['day'] ?? 0,
+      time: data['time'] ?? '',
+      title: data['title'] ?? '',
+      required: required,
     );
   }
 

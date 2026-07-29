@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Event {
   final int id;
@@ -33,6 +34,57 @@ class TableEvent {
   @override
   String toString() {
     return 'TableEvent{id: $id, title: $title, date: $date, isActive: $isActive, state: $state, required: $required}';
+  }
+}
+
+class ScheduleItem {
+  final int day;
+  final String time;
+  final String title;
+  final Map<Role, int>? required;
+
+  const ScheduleItem({
+    required this.day,
+    required this.time,
+    required this.title,
+    this.required,
+  });
+
+  @override
+  String toString() {
+    return 'ScheduleItem{day: $day, time: $time, title: $title, required: $required}';
+  }
+
+  TableEvent toTableEvent(int id, DateTime now) {
+    DateTime date = DateTime(now.year, now.month, now.day);
+    List<String> timeParts = time.split(':');
+    int hour = int.parse(timeParts[0]);
+    int minute = int.parse(timeParts[1]);
+
+    date = date.add(Duration(hours: hour, minutes: minute));
+
+    int targetWeekday = day == 0 ? 7 : day;
+    int daysToAdd = (targetWeekday - date.weekday + 7) % 7;
+
+    if (daysToAdd == 0 && date.isBefore(now)) {
+      daysToAdd = 7;
+    }
+    date = date.add(Duration(days: daysToAdd));
+
+    final titlePrefix = DateFormat('dd.MM').format(date);
+    final fullTitle = '$titlePrefix ($title)';
+
+    final isActive =
+        date.isAfter(now) && date.isBefore(now.add(const Duration(days: 7)));
+
+    return TableEvent(
+      id: id,
+      title: fullTitle,
+      date: date,
+      isActive: isActive,
+      state: {},
+      required: required,
+    );
   }
 }
 

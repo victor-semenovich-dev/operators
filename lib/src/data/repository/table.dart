@@ -67,9 +67,8 @@ class TableRepository {
         }
       }
     }
-    final now = DateTime.now();
     print(
-      'Generated from schedule: ${schedule.map((e) => e.toTableEvent(0, now)).toList()}',
+      'Generated from schedule: ${schedule.map((e) => e.toEvent()).toList()}',
     );
 
     final events = allEvents

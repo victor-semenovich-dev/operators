@@ -5,12 +5,13 @@ class Event {
   final int id;
   final String title;
   final DateTime date;
+  final Map<Role, int>? required;
 
-  Event(this.id, this.title, this.date);
+  Event(this.id, this.title, this.date, this.required);
 
   @override
   String toString() {
-    return 'Event{id: $id, title: $title, date: $date}';
+    return 'Event{id: $id, title: $title, date: $date, required: $required}';
   }
 }
 
@@ -55,8 +56,9 @@ class ScheduleItem {
     return 'ScheduleItem{day: $day, time: $time, title: $title, required: $required}';
   }
 
-  TableEvent toTableEvent(int id, DateTime now) {
-    DateTime date = DateTime(now.year, now.month, now.day);
+  Event toEvent({int id = 0}) {
+    DateTime from = DateTime.now();
+    DateTime date = DateTime(from.year, from.month, from.day);
     List<String> timeParts = time.split(':');
     int hour = int.parse(timeParts[0]);
     int minute = int.parse(timeParts[1]);
@@ -66,7 +68,7 @@ class ScheduleItem {
     int targetWeekday = day == 0 ? 7 : day;
     int daysToAdd = (targetWeekday - date.weekday + 7) % 7;
 
-    if (daysToAdd == 0 && date.isBefore(now)) {
+    if (daysToAdd == 0 && date.isBefore(from)) {
       daysToAdd = 7;
     }
     date = date.add(Duration(days: daysToAdd));
@@ -74,17 +76,7 @@ class ScheduleItem {
     final titlePrefix = DateFormat('dd.MM').format(date);
     final fullTitle = '$titlePrefix ($title)';
 
-    final isActive =
-        date.isAfter(now) && date.isBefore(now.add(const Duration(days: 7)));
-
-    return TableEvent(
-      id: id,
-      title: fullTitle,
-      date: date,
-      isActive: isActive,
-      state: {},
-      required: required,
-    );
+    return Event(id, fullTitle, date, required);
   }
 }
 

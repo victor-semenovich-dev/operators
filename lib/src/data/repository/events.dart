@@ -49,9 +49,9 @@ class EventsRepository {
       sundayEvening = sundayEvening.copyWith(day: sundayEvening.day + 7);
     }
     final eventsList = [
-      Event(0, _formatDate(thursday), thursday),
-      Event(0, _formatDate(sundayMorning), sundayMorning),
-      Event(0, _formatDate(sundayEvening), sundayEvening),
+      Event(0, _formatDate(thursday), thursday, null),
+      Event(0, _formatDate(sundayMorning), sundayMorning, null),
+      Event(0, _formatDate(sundayEvening), sundayEvening, null),
     ];
     eventsList.sort((a, b) => a.date.compareTo(b.date));
     return eventsList;
